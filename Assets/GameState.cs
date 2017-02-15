@@ -4,7 +4,7 @@ using UnityEngine.WSA;
 
 public class GameState : MonoBehaviour
 {
-    public Tile[][] GameGrid { get; }
+    private readonly Tile[][] _gameGrid;
 
 
     public void Start()
