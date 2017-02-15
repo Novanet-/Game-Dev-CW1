@@ -67,7 +67,7 @@ public class PlayerController : MonoBehaviour
         // For left, we have to subtract the direction
         else if (Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.LeftArrow))
         {
-            pos -= Vector2.right;
+            pos += Vector2.left;
             moving = true;
         }
         else if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow))
@@ -79,7 +79,7 @@ public class PlayerController : MonoBehaviour
         // Same as for the left, subtraction for down
         else if (Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.DownArrow))
         {
-            pos -= Vector2.up;
+            pos += Vector2.right;
             moving = true;
         }
     }
