@@ -15,7 +15,7 @@ public class GameController : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-        GameGrid = new Tile[64,64];
+        GameGrid = new Tile[16,16];
         for (var x = 0; x < GameGrid.GetUpperBound(0); x++)
         {
             for (var y = 0; y < GameGrid.GetUpperBound(1); y++)
