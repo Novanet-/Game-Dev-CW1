@@ -106,6 +106,8 @@ public class PlayerController : MonoBehaviour
         // pos is changed when there's input from the player
         transform.position = pos;
         moving = false;
+
+        //TODO: We also need to update the gamestate at this point, which contains a 2d array of tiles, for looking up tile info etc.
     }
 
     #endregion Private Methods
