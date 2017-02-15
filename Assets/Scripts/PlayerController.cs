@@ -79,7 +79,7 @@ public class PlayerController : MonoBehaviour
         // Same as for the left, subtraction for down
         else if (Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.DownArrow))
         {
-            pos += Vector2.right;
+            pos += Vector2.down;
             moving = true;
         }
     }
