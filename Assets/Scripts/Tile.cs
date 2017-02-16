@@ -21,7 +21,8 @@ public class Tile : MonoBehaviour
 
     private void Start()
     {
-        GetComponent<SpriteRenderer>().sprite = this._sprites[Random.Range(0, this._sprites.Length - 1)];
+        var spriteRenderer = GetComponent<SpriteRenderer>();
+        spriteRenderer.sprite = _sprites[Random.Range(0, _sprites.Length - 1)];
     }
 
     #endregion Private Methods
