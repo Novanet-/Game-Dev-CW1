@@ -119,6 +119,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: db7fdd75b7e63584caa1223cdc16530e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  GameBoard: {fileID: 1003379306}
 --- !u!212 &937675246
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -243,10 +244,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 32b0aef9210882a4789fffec41976e5f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Width: 16
-  Height: 16
   TilePrefab: {fileID: 1442128544956010, guid: b777f3c1225d6574d943ea1e995eb4be, type: 2}
   GameBoard: {fileID: 1003379305}
+  _width: 16
+  _height: 16
 --- !u!1 &2130414728
 GameObject:
   m_ObjectHideFlags: 0
