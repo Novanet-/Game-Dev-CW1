@@ -5,8 +5,10 @@ public class PlayerController : MonoBehaviour
 {
     #region Private Fields
 
+    private GameController _gameController;
+
     [SerializeField]
-    private GameController _gameBoard;
+    private GameObject _gameBoard;
 
     private bool _moving;
     private Vector2 _pos;
@@ -18,38 +20,13 @@ public class PlayerController : MonoBehaviour
 
     #region Public Methods
 
-    public void CheckInput()
+    public void Move(Vector2 direction)
     {
-        // WASD control
-        // We add the direction to our position,
-        // this moves the character 1 unit (32 pixels)
-        if (Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.RightArrow))
-        {
-            _pos += Vector2.right;
-            _moving = true;
-        }
+        
+        Debug.Log("" + _pos + " /" + direction + " /" +  _gameController);
+        _pos.x = Mathf.Clamp(_pos.x, 0, _gameController.Width - 1);
+        _pos.y = Mathf.Clamp(_pos.y, 0, _gameController.Height - 1);
 
-        // For left, we have to subtract the direction
-        else if (Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.LeftArrow))
-        {
-            _pos += Vector2.left;
-            _moving = true;
-        }
-        else if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow))
-        {
-            _pos += Vector2.up;
-            _moving = true;
-        }
-
-        // Same as for the left, subtraction for down
-        else if (Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.DownArrow))
-        {
-            _pos += Vector2.down;
-            _moving = true;
-        }
-
-        _pos.x = Mathf.Clamp(_pos.x, 0, _gameBoard.Width - 1);
-        _pos.y = Mathf.Clamp(_pos.y, 0, _gameBoard.Height - 1);
     }
 
     #endregion Public Methods
@@ -69,12 +46,13 @@ public class PlayerController : MonoBehaviour
         // First store our current position when the
         // script is initialized.
         _pos = transform.position;
+        _gameController = _gameBoard.GetComponent<GameController>();
     }
+
 
     // Update is called once per frame
     private void Update()
     {
-        CheckInput();
 
         if (!_moving) return;
 
@@ -83,7 +61,7 @@ public class PlayerController : MonoBehaviour
         _moving = false;
 
         //TODO: We also need to update the gamestate at this point, which contains a 2d array of tiles, for looking up tile info etc.
-        Tile newTile = _gameBoard.GetGameTile((int)_pos.x, (int)_pos.y);
+        Tile newTile = _gameController.GetGameTile((int)_pos.x, (int)_pos.y);
 
         newTile.LandedOn(this);
     }
