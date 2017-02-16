@@ -3,11 +3,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class Tile : MonoBehaviour
 {
-    private int foo;
-    private int bar;
+    [SerializeField] private Sprite[] sprites;
+
+    private void Start()
+    {
+        SpriteRenderer renderer = GetComponent<SpriteRenderer>();
+        renderer.sprite = sprites[Random.Range(0, sprites.Length - 1)];
+    }
 
     public void LandedOn(PlayerController player)
     {
