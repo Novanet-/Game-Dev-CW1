@@ -1,22 +1,29 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using UnityEngine;
-using Random = UnityEngine.Random;
+﻿using UnityEngine;
 
 public class Tile : MonoBehaviour
 {
+    #region Private Fields
+
     [SerializeField] private Sprite[] sprites;
 
-    private void Start()
-    {
-        SpriteRenderer renderer = GetComponent<SpriteRenderer>();
-        renderer.sprite = sprites[Random.Range(0, sprites.Length - 1)];
-    }
+    #endregion Private Fields
+
+    #region Public Methods
 
     public void LandedOn(PlayerController player)
     {
         Debug.Log("Landed on Tile at: " + transform.position.x + ", " + transform.position.y);
     }
+
+    #endregion Public Methods
+
+    #region Private Methods
+
+    private void Start()
+    {
+        var renderer = GetComponent<SpriteRenderer>();
+        renderer.sprite = sprites[Random.Range(0, sprites.Length - 1)];
+    }
+
+    #endregion Private Methods
 }

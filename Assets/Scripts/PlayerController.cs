@@ -1,59 +1,19 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 
 {
-    private Vector2 pos;
+    #region Private Fields
+
+    [SerializeField]
+    private GameController GameBoard;
+
     private bool moving;
+    private Vector2 pos;
 
-    [SerializeField] private GameController GameBoard;
-
-//    #region Public Enums
-//
-//    public enum MoveDirection
-//    {
-//        Up,
-//        Down,
-//        Left,
-//        Right
-//    }
-
-//    #endregion Public Enums
+    #endregion Private Fields
 
     #region Public Methods
-
-//    /// <exception cref="ArgumentOutOfRangeException">Condition.</exception>
-//    public Vector3 MoveTile(Transform player, MoveDirection moveDirection)
-//    {
-//        Vector3 currentPos = player.position;
-//
-//        Vector3 newPos = currentPos;
-//
-//        switch (moveDirection)
-//        {
-//            case MoveDirection.Up:
-//                newPos.y = currentPos.y + 1;
-//                break;
-//
-//            case MoveDirection.Down:
-//                newPos.y = currentPos.y - 1;
-//                break;
-//
-//            case MoveDirection.Left:
-//                newPos.y = currentPos.x - 1;
-//                break;
-//
-//            case MoveDirection.Right:
-//                newPos.y = currentPos.x + 1;
-//                break;
-//
-//            default:
-//                throw new ArgumentOutOfRangeException("moveDirection", moveDirection, null);
-//        }
-//
-//        return newPos;
-//    }
 
     public void CheckInput()
     {

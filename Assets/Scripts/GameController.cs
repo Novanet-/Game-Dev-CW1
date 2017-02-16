@@ -2,11 +2,25 @@
 
 public class GameController : MonoBehaviour
 {
-    public int Width
-    {
-        get { return _width; }
-        private set { _width = value; }
-    }
+    #region Public Fields
+
+    public Transform GameBoard;
+
+    public Tile[,] GameGrid;
+
+    public GameObject TilePrefab;
+
+    #endregion Public Fields
+
+    #region Private Fields
+
+    [SerializeField] private int _height;
+
+    [SerializeField] private int _width;
+
+    #endregion Private Fields
+
+    #region Public Properties
 
     public int Height
     {
@@ -14,37 +28,42 @@ public class GameController : MonoBehaviour
         private set { _height = value; }
     }
 
-    public Tile[,] GameGrid;
-
-    public GameObject TilePrefab;
-    public Transform GameBoard;
-
-    [SerializeField] private int _width;
-    [SerializeField] private int _height;
-
-
-    // Use this for initialization
-    void Start()
+    public int Width
     {
-        GameGrid = new Tile[Width, Height];
-        for (var x = 0; x <= GameGrid.GetUpperBound(0); x++)
-        {
-            for (var y = 0; y <= GameGrid.GetUpperBound(1); y++)
-            {
-                GameObject tileInstance = Instantiate(TilePrefab, new Vector3(x, y, 0), Quaternion.identity);
-                GameGrid[x, y] = tileInstance.GetComponent<Tile>();
-                //TODO: Assign data to each tile when created, to have different tile types
-            }
-        }
+        get { return _width; }
+        private set { _width = value; }
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-    }
+    #endregion Public Properties
+
+    #region Public Methods
 
     public Tile GetGameTile(int x, int y)
     {
         return GameGrid[x, y];
     }
+
+    #endregion Public Methods
+
+    #region Private Methods
+
+    // Use this for initialization
+    private void Start()
+    {
+        GameGrid = new Tile[Width, Height];
+        for (var x = 0; x <= GameGrid.GetUpperBound(0); x++)
+        for (var y = 0; y <= GameGrid.GetUpperBound(1); y++)
+        {
+            GameObject tileInstance = Instantiate(TilePrefab, new Vector3(x, y, 0), Quaternion.identity);
+            GameGrid[x, y] = tileInstance.GetComponent<Tile>();
+            //TODO: Assign data to each tile when created, to have different tile types
+        }
+    }
+
+    // Update is called once per frame
+    private void Update()
+    {
+    }
+
+    #endregion Private Methods
 }
