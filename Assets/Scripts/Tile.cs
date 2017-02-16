@@ -9,7 +9,7 @@ public class Tile : MonoBehaviour
     private int foo;
     private int bar;
 
-    public void landedOn(PlayerController player)
+    public void LandedOn(PlayerController player)
     {
         Debug.Log("Landed on Tile at: " + transform.position.x + ", " + transform.position.y);
     }
