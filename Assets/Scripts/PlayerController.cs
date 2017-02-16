@@ -85,8 +85,8 @@ public class PlayerController : MonoBehaviour
             Moving = true;
         }
 
-        Pos.x = Mathf.Clamp(Pos.x, 0, GameBoard.getWidth() - 1);
-        Pos.y = Mathf.Clamp(Pos.y, 0, GameBoard.getHeight() - 1);
+        Pos.x = Mathf.Clamp(Pos.x, 0, GameBoard.Width - 1);
+        Pos.y = Mathf.Clamp(Pos.y, 0, GameBoard.Height - 1);
     }
 
     #endregion Public Methods
