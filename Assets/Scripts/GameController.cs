@@ -1,7 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class GameController : MonoBehaviour
 {
@@ -46,7 +43,7 @@ public class GameController : MonoBehaviour
     {
     }
 
-    public Tile getGameTile(int x, int y)
+    public Tile GetGameTile(int x, int y)
     {
         return GameGrid[x, y];
     }
