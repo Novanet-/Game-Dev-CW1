@@ -150,7 +150,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 1900433001
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300004, guid: 62b98d263c0b05543b051b4eb6e46304, type: 3}
+  m_Sprite: {fileID: 21300000, guid: ab098a67d0e9fda4c95058f1855872db, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -243,6 +243,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 32b0aef9210882a4789fffec41976e5f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Width: 16
+  Height: 16
   TilePrefab: {fileID: 1442128544956010, guid: b777f3c1225d6574d943ea1e995eb4be, type: 2}
   GameBoard: {fileID: 1003379305}
 --- !u!1 &2130414728

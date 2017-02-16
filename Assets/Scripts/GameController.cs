@@ -24,6 +24,7 @@ public class GameController : MonoBehaviour
             for (var y = 0; y < GameGrid.GetUpperBound(1); y++)
             {
                 GameObject tileInstance = Instantiate(TilePrefab, new Vector3(x,y,0), Quaternion.identity);
+                GameGrid[x, y] =  tileInstance.GetComponent<Tile>();
                 //TODO: Assign data to each tile when created, to have different tile types
             }
         }
@@ -42,6 +43,11 @@ public class GameController : MonoBehaviour
     public int getHeight()
     {
         return Height;
+    }
+
+    public Tile getGameTile(int x, int y)
+    {
+        return GameGrid[x, y];
     }
 
 }
