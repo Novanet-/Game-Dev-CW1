@@ -4,7 +4,7 @@ public class Tile : MonoBehaviour
 {
     #region Private Fields
 
-    [SerializeField] private Sprite[] sprites;
+    [SerializeField] private Sprite[] _sprites;
 
     #endregion Private Fields
 
@@ -21,8 +21,7 @@ public class Tile : MonoBehaviour
 
     private void Start()
     {
-        var renderer = GetComponent<SpriteRenderer>();
-        renderer.sprite = sprites[Random.Range(0, sprites.Length - 1)];
+        GetComponent<SpriteRenderer>().sprite = this._sprites[Random.Range(0, this._sprites.Length - 1)];
     }
 
     #endregion Private Methods

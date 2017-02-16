@@ -5,9 +5,7 @@ public class GameController : MonoBehaviour
     #region Public Fields
 
     public Transform GameBoard;
-
     public Tile[,] GameGrid;
-
     public GameObject TilePrefab;
 
     #endregion Public Fields
@@ -15,7 +13,6 @@ public class GameController : MonoBehaviour
     #region Private Fields
 
     [SerializeField] private int _height;
-
     [SerializeField] private int _width;
 
     #endregion Private Fields
