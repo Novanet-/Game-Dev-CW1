@@ -5,14 +5,25 @@ using UnityEngine;
 
 public class GameController : MonoBehaviour
 {
-    [SerializeField] public int Width { get; private set; }
+    public int Width
+    {
+        get { return _width; }
+        private set { _width = value; }
+    }
 
-    [SerializeField] public int Height { get; private set; }
+    public int Height
+    {
+        get { return _height; }
+        private set { _height = value; }
+    }
 
     public Tile[,] GameGrid;
 
     public GameObject TilePrefab;
     public Transform GameBoard;
+
+    [SerializeField] private int _width;
+    [SerializeField] private int _height;
 
 
     // Use this for initialization
