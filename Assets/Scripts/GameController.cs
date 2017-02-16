@@ -5,26 +5,26 @@ using UnityEngine;
 
 public class GameController : MonoBehaviour
 {
+    [SerializeField] public int Width { get; private set; }
 
-    [SerializeField]
-    private int Width, Height;
+    [SerializeField] public int Height { get; private set; }
+
     public Tile[,] GameGrid;
 
     public GameObject TilePrefab;
     public Transform GameBoard;
 
 
-
     // Use this for initialization
     void Start()
     {
-        GameGrid = new Tile[Width,Height];
+        GameGrid = new Tile[Width, Height];
         for (var x = 0; x <= GameGrid.GetUpperBound(0); x++)
         {
             for (var y = 0; y <= GameGrid.GetUpperBound(1); y++)
             {
-                GameObject tileInstance = Instantiate(TilePrefab, new Vector3(x,y,0), Quaternion.identity);
-                GameGrid[x, y] =  tileInstance.GetComponent<Tile>();
+                GameObject tileInstance = Instantiate(TilePrefab, new Vector3(x, y, 0), Quaternion.identity);
+                GameGrid[x, y] = tileInstance.GetComponent<Tile>();
                 //TODO: Assign data to each tile when created, to have different tile types
             }
         }
@@ -35,19 +35,8 @@ public class GameController : MonoBehaviour
     {
     }
 
-    public int getWidth()
-    {
-        return Width;
-    }
-
-    public int getHeight()
-    {
-        return Height;
-    }
-
     public Tile getGameTile(int x, int y)
     {
         return GameGrid[x, y];
     }
-
 }
