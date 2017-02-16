@@ -113,7 +113,7 @@ public class PlayerController : MonoBehaviour
         moving = false;
 
         //TODO: We also need to update the gamestate at this point, which contains a 2d array of tiles, for looking up tile info etc.
-        Tile newTile = GameBoard.getGameTile((int)pos.x, (int)pos.y);
+        Tile newTile = GameBoard.GetGameTile((int)pos.x, (int)pos.y);
 
         newTile.LandedOn(this);
     }
