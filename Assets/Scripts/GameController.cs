@@ -6,16 +6,19 @@ using UnityEngine;
 public class GameController : MonoBehaviour
 {
 
+    [SerializeField]
+    private int Width, Height;
     public Tile[,] GameGrid;
 
     public GameObject TilePrefab;
     public Transform GameBoard;
 
 
+
     // Use this for initialization
     void Start()
     {
-        GameGrid = new Tile[16,16];
+        GameGrid = new Tile[Width,Height];
         for (var x = 0; x < GameGrid.GetUpperBound(0); x++)
         {
             for (var y = 0; y < GameGrid.GetUpperBound(1); y++)
@@ -30,4 +33,15 @@ public class GameController : MonoBehaviour
     void Update()
     {
     }
+
+    public int getWidth()
+    {
+        return Width;
+    }
+
+    public int getHeight()
+    {
+        return Height;
+    }
+
 }
