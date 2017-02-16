@@ -11,6 +11,9 @@ public class PlayerController : MonoBehaviour
     private bool moving;
     private Vector2 pos;
 
+
+    public int _money;
+
     #endregion Private Fields
 
     #region Public Methods
@@ -52,6 +55,13 @@ public class PlayerController : MonoBehaviour
     #endregion Public Methods
 
     #region Private Methods
+
+    public int money
+    {
+        get { return _money; }
+        set { _money = value; }
+    }
+
 
     // Use this for initialization
     private void Start()
