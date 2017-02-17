@@ -118,7 +118,7 @@ public class GameController : MonoBehaviour
         }
 
         CurrentPlayer = GetActivePlayer();
-        _playerMovesLeft = RollDice();
+        _playerMovesLeft = RollDice(6);
     }
 
 
@@ -150,7 +150,7 @@ public class GameController : MonoBehaviour
             {
                 if (_playerMovesLeft <= 0)
                 {
-                    _playerMovesLeft = RollDice();
+                    _playerMovesLeft = RollDice(6);
                     NextTurn();
                 }
 
@@ -211,9 +211,9 @@ public class GameController : MonoBehaviour
 
     #endregion Private Methods
 
-    private int RollDice()
+    private static int RollDice(int d)
     {
-        int rollDice = new System.Random().Next(1, 6);
+        int rollDice = new System.Random().Next(1, d);
         Debug.Log(string.Format("Rolled a {0}", rollDice));
         return rollDice;
     }
