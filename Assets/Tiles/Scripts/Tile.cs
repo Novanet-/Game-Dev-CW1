@@ -35,7 +35,7 @@ public class Tile : MonoBehaviour
         return CurrentPlayer == null;
     }
 
-    [NotNull] public PlayerController CurrentPlayer
+    [CanBeNull] public PlayerController CurrentPlayer
     {
         get { return _currentPlayer; }
         set { SetPlayer(value); }
