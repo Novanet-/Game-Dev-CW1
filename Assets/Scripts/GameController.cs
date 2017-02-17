@@ -1,16 +1,19 @@
 ﻿using UnityEngine;
+using Random = System.Random;
 
 public class GameController : MonoBehaviour
 {
-    private readonly int WALL = 1;
-
-    private readonly int PATH = 0;
-    private readonly int WALL = 1;
-    private readonly int RIVER = 2;
     #region Public Fields
 
     //    public Transform GameBoard;
     public Tile[,] GameGrid;
+
+    public GameObject PlayerPrefab, CoinPrefab;
+
+    #endregion Public Fields
+
+    #region Private Fields
+
     // P is a Path
     // W is Wall
     // R, S, T, U are River Tiles (Up, Down, Left, Right, respectively)
@@ -31,23 +34,26 @@ public class GameController : MonoBehaviour
         {'W', 'P', 'P', 'P', 'P', 'P', 'P', 'P', 'P', 'W', 'P', 'P', 'P', 'P', 'W', 'W'},
         {'W', 'P', 'P', 'P', 'P', 'P', 'P', 'P', 'P', 'W', 'W', 'P', 'W', 'W', 'W', 'W'},
         {'W', 'P', 'P', 'P', 'P', 'P', 'P', 'P', 'P', 'P', 'P', 'P', 'P', 'P', 'P', 'W'},
-        {'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W'},
-
+        {'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W'}
     };
-    public GameObject PlayerPrefab, CoinPrefab;
-    [SerializeField] private GameObject[] TilePrefabs;
 
-    #endregion Public Fields
-
-    #region Private Fields
-
-    [SerializeField] private int _height;
-    [SerializeField] private int _width;
-    [SerializeField] private PlayerController[] _playerControllers;
+    private readonly int PATH = 0;
+    private readonly int RIVER = 2;
+    private readonly int WALL = 1;
     [SerializeField] private int _activePlayerIndex;
+    [SerializeField] private int _height;
+
+    [SerializeField] private PlayerController[] _playerControllers;
 
     private int _playerMovesLeft;
+
+    [SerializeField] private int _width;
+
     private PlayerController CurrentPlayer;
+
+    [SerializeField] private int dieNumber = 6;
+
+    [SerializeField] private GameObject[] TilePrefabs;
 
     #endregion Private Fields
 
@@ -68,66 +74,6 @@ public class GameController : MonoBehaviour
     #endregion Public Properties
 
     #region Public Methods
-
-    public Tile GetGameTile(int x, int y)
-    {
-        return GameGrid[x, y];
-    }
-
-    #endregion Public Methods
-
-    #region Private Methods
-
-    // Use this for initialization
-    private void Start()
-    {
-        GameGrid = new Tile[Width, Height];
-        for (var x = 0; x <= GameGrid.GetUpperBound(0); x++)
-            for (var y = 0; y <= GameGrid.GetUpperBound(1); y++)
-            {
-                GameObject tileToMake = TilePrefabs[0];
-                switch (_map[15-y, x])
-                {
-                    case 'W':
-                        tileToMake = TilePrefabs[WALL];
-                        break;
-
-                    case 'R':
-                    case 'S':
-                    case 'T':
-                    case 'U':
-                        tileToMake = TilePrefabs[RIVER];
-                        break;
-
-                        default:
-                        tileToMake = TilePrefabs[PATH];
-                        break;
-                }
-                    GameObject tileInstance = Instantiate(tileToMake, new Vector3(x, y, 0), Quaternion.identity);
-                    GameGrid[x, y] = tileInstance.GetComponent<Tile>();
-
-            //TODO: Assign data to each tile when created, to have different tile types
-        }
-
-        _playerControllers = new PlayerController[4];
-        _activePlayerIndex = 0;
-        for (var i = 0; i < _playerControllers.Length; i++)
-        {
-            GameObject playerInstance = Instantiate(PlayerPrefab, new Vector3(i+1, i+1, 0), Quaternion.identity);
-            _playerControllers[i] = playerInstance.GetComponent<PlayerController>();
-        }
-
-        CurrentPlayer = GetActivePlayer();
-        _playerMovesLeft = RollDice(6);
-    }
-
-
-    // Update is called once per frame
-    private void Update()
-    {
-        CheckInput();
-    }
-
 
     public void CheckInput()
     {
@@ -150,7 +96,7 @@ public class GameController : MonoBehaviour
             {
                 if (_playerMovesLeft <= 0)
                 {
-                    _playerMovesLeft = RollDice(6);
+                    _playerMovesLeft = RollDice(dieNumber);
                     NextTurn();
                 }
 
@@ -175,13 +121,20 @@ public class GameController : MonoBehaviour
         }
     }
 
-    private Vector2 SetupMove(Vector2 direction, ref bool moved)
+    public Tile GetGameTile(int x, int y)
     {
-        moved = true;
-        --_playerMovesLeft;
-        Debug.Log(string.Format("{0} moves left", _playerMovesLeft));
+        return GameGrid[x, y];
+    }
 
-        return direction;
+    #endregion Public Methods
+
+    #region Private Methods
+
+    private static int RollDice(int d)
+    {
+        int rollDice = new Random().Next(1, d);
+        Debug.Log(string.Format("Rolled a {0}", rollDice));
+        return rollDice;
     }
 
     private PlayerController GetActivePlayer()
@@ -195,13 +148,13 @@ public class GameController : MonoBehaviour
         _activePlayerIndex = (_activePlayerIndex + 1) % _playerControllers.Length;
         if (_activePlayerIndex == 0)
         {
-            var pos = new Vector3(Random.Range(0, Width), Random.Range(0, Height));
+            var pos = new Vector3(UnityEngine.Random.Range(0, Width), UnityEngine.Random.Range(0, Height));
             Tile tile = GetGameTile((int) pos.x, (int) pos.y);
 
 
             while (!(tile.CurrentPlayer == null || tile.CanLandOn()))
             {
-                pos = new Vector3(Random.Range(0, Width), Random.Range(0, Height));
+                pos = new Vector3(UnityEngine.Random.Range(0, Width), UnityEngine.Random.Range(0, Height));
                 tile = GetGameTile((int) pos.x, (int) pos.y);
             }
 
@@ -209,12 +162,64 @@ public class GameController : MonoBehaviour
         }
     }
 
-    #endregion Private Methods
-
-    private static int RollDice(int d)
+    private Vector2 SetupMove(Vector2 direction, ref bool moved)
     {
-        int rollDice = new System.Random().Next(1, d);
-        Debug.Log(string.Format("Rolled a {0}", rollDice));
-        return rollDice;
+        moved = true;
+        --_playerMovesLeft;
+        Debug.Log(string.Format("{0} moves left", _playerMovesLeft));
+
+        return direction;
     }
+
+    // Use this for initialization
+    private void Start()
+    {
+        GameGrid = new Tile[Width, Height];
+        for (var x = 0; x <= GameGrid.GetUpperBound(0); x++)
+        for (var y = 0; y <= GameGrid.GetUpperBound(1); y++)
+        {
+            GameObject tileToMake = TilePrefabs[0];
+            switch (_map[15 - y, x])
+            {
+                case 'W':
+                    tileToMake = TilePrefabs[WALL];
+                    break;
+
+                case 'R':
+                case 'S':
+                case 'T':
+                case 'U':
+                    tileToMake = TilePrefabs[RIVER];
+                    break;
+
+                default:
+                    tileToMake = TilePrefabs[PATH];
+                    break;
+            }
+            GameObject tileInstance = Instantiate(tileToMake, new Vector3(x, y, 0), Quaternion.identity);
+            GameGrid[x, y] = tileInstance.GetComponent<Tile>();
+
+            //TODO: Assign data to each tile when created, to have different tile types
+        }
+
+        _playerControllers = new PlayerController[4];
+        _activePlayerIndex = 0;
+        for (var i = 0; i < _playerControllers.Length; i++)
+        {
+            GameObject playerInstance = Instantiate(PlayerPrefab, new Vector3(i + 1, i + 1, 0), Quaternion.identity);
+            _playerControllers[i] = playerInstance.GetComponent<PlayerController>();
+        }
+
+        CurrentPlayer = GetActivePlayer();
+        _playerMovesLeft = RollDice(dieNumber);
+    }
+
+
+    // Update is called once per frame
+    private void Update()
+    {
+        CheckInput();
+    }
+
+    #endregion Private Methods
 }
