@@ -38,8 +38,9 @@ public class PlayerController : MonoBehaviour
     public void Move(Vector2 direction)
     {
         Debug.Log("" + _pos + " /" + direction + " /" + _gameController);
-        _pos.x = Mathf.Clamp(_pos.x + direction.x, 0, _gameController.Width - 1);
-        _pos.y = Mathf.Clamp(_pos.y + direction.y, 0, _gameController.Height - 1);
+        _pos = _pos + direction;
+        _pos.x = Mathf.Clamp(_pos.x, 0, _gameController.Width - 1);
+        _pos.y = Mathf.Clamp(_pos.y, 0, _gameController.Height - 1);
 
         _moving = true;
     }
