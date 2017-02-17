@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Runtime.CompilerServices;
-using JetBrains.Annotations;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
@@ -34,7 +32,7 @@ public class PlayerController : MonoBehaviour
         _pos = _pos + direction;
         _pos.x = Mathf.Clamp(_pos.x, 0, _gameController.Width - 1);
         _pos.y = Mathf.Clamp(_pos.y, 0, _gameController.Height - 1);
-        Tile newTile = _gameController.GetGameTile((int)_pos.x, (int)_pos.y);
+        var newTile = _gameController.GetGameTile((int)_pos.x, (int)_pos.y);
         if (newTile.CanLandOn())
         {
             _gameController.GetGameTile((int) oldPos.x, (int) oldPos.y).Player = null;
@@ -56,14 +54,9 @@ public class PlayerController : MonoBehaviour
 
     #region Private Methods
 
-    // Use this for initialization
     private void Start()
     {
-        // First store our current position when the
-        // script is initialized.
         _pos = transform.position;
-//        _gameController = _gameBoard.GetComponent<GameController>();
-//        _gameController = GameBoard.GetComponent<GameController>();
         GameObject GameBoard = GameObject.Find("GameBoard");
         _gameController = GameBoard.GetComponent<GameController>();
         Tile tile = _gameController.GetGameTile((int) _pos.x, (int) _pos.y);

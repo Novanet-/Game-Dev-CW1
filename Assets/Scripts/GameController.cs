@@ -1,12 +1,16 @@
-﻿using UnityEngine;
+﻿using System.CodeDom;
+using UnityEngine;
 
 public class GameController : MonoBehaviour
 {
+
+    private readonly int WALL = 1;
     #region Public Fields
 
     //    public Transform GameBoard;
     public Tile[,] GameGrid;
-    public GameObject TilePrefab, PlayerPrefab, CoinPrefab;
+    public GameObject PlayerPrefab, CoinPrefab;
+    [SerializeField] private GameObject[] TilePrefabs;
 
     #endregion Public Fields
 
@@ -57,8 +61,14 @@ public class GameController : MonoBehaviour
         for (var x = 0; x <= GameGrid.GetUpperBound(0); x++)
             for (var y = 0; y <= GameGrid.GetUpperBound(1); y++)
             {
-                GameObject tileInstance = Instantiate(TilePrefab, new Vector3(x, y, 0), Quaternion.identity);
-                GameGrid[x, y] = tileInstance.GetComponent<Tile>();
+                GameObject tileToMake = TilePrefabs[0];
+                if ((x * 2 + y * 3) % 8 == 3)
+                {
+                    tileToMake = TilePrefabs[WALL];
+                }
+                    GameObject tileInstance = Instantiate(tileToMake, new Vector3(x, y, 0), Quaternion.identity);
+                    GameGrid[x, y] = tileInstance.GetComponent<Tile>();
+
                 //TODO: Assign data to each tile when created, to have different tile types
             }
 
@@ -70,6 +80,7 @@ public class GameController : MonoBehaviour
             _playerControllers[i] = playerInstance.GetComponent<PlayerController>();
         }
     }
+
 
     // Update is called once per frame
     void Update()
