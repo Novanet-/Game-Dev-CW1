@@ -13,9 +13,9 @@ TagManager:
   - UI
   - 
   - 
-  - 
-  - 
-  - 
+  - Background
+  - Tile
+  - Token
   - 
   - 
   - 
@@ -40,4 +40,16 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: Background
+    uniqueID: 1124938783
+    locked: 0
+  - name: Tile
+    uniqueID: 3436345987
+    locked: 0
+  - name: Coins
+    uniqueID: 2187706863
+    locked: 0
+  - name: Token
+    uniqueID: 1900433001
     locked: 0
