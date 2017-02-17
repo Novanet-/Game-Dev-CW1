@@ -6,7 +6,7 @@ public class PlayerController : MonoBehaviour
 {
     #region Private Fields
 
-    private int id = Random.Range(0, 1000000);
+    private int id;
 
     private GameController _gameController;
 
@@ -59,6 +59,7 @@ public class PlayerController : MonoBehaviour
 
     private void Start()
     {
+        id = UnityEngine.Random.Range(0, 1000000);
         _pos = transform.position;
         GameObject GameBoard = GameObject.Find("GameBoard");
         _gameController = GameBoard.GetComponent<GameController>();

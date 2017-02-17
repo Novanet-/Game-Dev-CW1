@@ -38,12 +38,12 @@ public class GameController : MonoBehaviour
     };
 
     private readonly int PATH = 0;
-    private readonly int RIVER = 2;
     private readonly int WALL = 1;
+    private readonly int RIVER = 2;
     [SerializeField] private int _activePlayerIndex;
     [SerializeField] private int _height;
 
-    [SerializeField] private PlayerController[] _playerControllers;
+    private PlayerController[] _playerControllers;
 
     private int _playerMovesLeft;
 

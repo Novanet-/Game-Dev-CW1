@@ -295,13 +295,14 @@ MonoBehaviour:
   PlayerPrefab: {fileID: 1942373800801728, guid: 99c21b357ae2b894488c006bcde5322f,
     type: 2}
   CoinPrefab: {fileID: 1091708721671586, guid: 89de11eecc767aa41bca766e8daad9b3, type: 2}
+  _activePlayerIndex: 0
+  _height: 16
+  _width: 16
+  dieNumber: 6
   TilePrefabs:
   - {fileID: 1442128544956010, guid: b777f3c1225d6574d943ea1e995eb4be, type: 2}
   - {fileID: 1735148349812292, guid: 610839de9d5b4254cbe815a5156640c4, type: 2}
-  _height: 16
-  _width: 16
-  _playerControllers: []
-  _activePlayerIndex: 0
+  - {fileID: 1428098173528816, guid: 8e6c88f666a29204cb8cb3b5d0c4a61b, type: 2}
 --- !u!1001 &2089172947
 Prefab:
   m_ObjectHideFlags: 0
