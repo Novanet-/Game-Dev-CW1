@@ -4,11 +4,36 @@ using UnityEngine;
 public class GameController : MonoBehaviour
 {
 
+    private readonly int PATH = 0;
     private readonly int WALL = 1;
+    private readonly int RIVER = 2;
     #region Public Fields
 
     //    public Transform GameBoard;
     public Tile[,] GameGrid;
+    // P is a Path
+    // W is Wall
+    // R, S, T, U are River Tiles (Up, Down, Left, Right, respectively)
+    private readonly char[,] _map =
+    {
+        {'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W'},
+        {'W', 'P', 'P', 'P', 'P', 'P', 'W', 'W', 'W', 'P', 'P', 'P', 'P', 'P', 'P', 'W'},
+        {'W', 'P', 'W', 'W', 'P', 'W', 'W', 'P', 'P', 'P', 'W', 'P', 'W', 'P', 'W', 'W'},
+        {'W', 'P', 'W', 'W', 'P', 'W', 'W', 'P', 'W', 'W', 'W', 'P', 'P', 'P', 'W', 'W'},
+        {'U', 'U', 'U', 'U', 'U', 'U', 'U', 'U', 'S', 'P', 'P', 'P', 'W', 'W', 'W', 'W'},
+        {'U', 'U', 'U', 'U', 'U', 'U', 'S', 'U', 'S', 'W', 'W', 'W', 'W', 'W', 'W', 'W'},
+        {'W', 'P', 'P', 'P', 'P', 'P', 'S', 'W', 'S', 'W', 'W', 'W', 'W', 'W', 'P', 'W'},
+        {'W', 'P', 'P', 'P', 'P', 'P', 'P', 'W', 'S', 'P', 'P', 'P', 'P', 'W', 'P', 'W'},
+        {'W', 'P', 'P', 'P', 'P', 'P', 'P', 'W', 'S', 'W', 'W', 'P', 'W', 'W', 'P', 'W'},
+        {'W', 'P', 'P', 'P', 'P', 'P', 'P', 'W', 'U', 'P', 'P', 'P', 'P', 'W', 'P', 'W'},
+        {'W', 'P', 'P', 'P', 'P', 'P', 'P', 'W', 'P', 'W', 'P', 'W', 'P', 'P', 'P', 'W'},
+        {'W', 'P', 'P', 'P', 'P', 'P', 'P', 'P', 'P', 'W', 'P', 'W', 'W', 'P', 'W', 'W'},
+        {'W', 'P', 'P', 'P', 'P', 'P', 'P', 'P', 'P', 'W', 'P', 'P', 'P', 'P', 'W', 'W'},
+        {'W', 'P', 'P', 'P', 'P', 'P', 'P', 'P', 'P', 'W', 'W', 'P', 'W', 'W', 'W', 'W'},
+        {'W', 'P', 'P', 'P', 'P', 'P', 'P', 'P', 'P', 'P', 'P', 'P', 'P', 'P', 'P', 'W'},
+        {'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W'},
+
+    };
     public GameObject PlayerPrefab, CoinPrefab;
     [SerializeField] private GameObject[] TilePrefabs;
 
@@ -62,9 +87,22 @@ public class GameController : MonoBehaviour
             for (var y = 0; y <= GameGrid.GetUpperBound(1); y++)
             {
                 GameObject tileToMake = TilePrefabs[0];
-                if ((x * 2 + y * 3) % 8 == 3)
+                switch (_map[15-y, x])
                 {
-                    tileToMake = TilePrefabs[WALL];
+                    case 'W':
+                        tileToMake = TilePrefabs[WALL];
+                        break;
+
+                    case 'R':
+                    case 'S':
+                    case 'T':
+                    case 'U':
+                        tileToMake = TilePrefabs[RIVER];
+                        break;
+
+                        default:
+                        tileToMake = TilePrefabs[PATH];
+                        break;
                 }
                     GameObject tileInstance = Instantiate(tileToMake, new Vector3(x, y, 0), Quaternion.identity);
                     GameGrid[x, y] = tileInstance.GetComponent<Tile>();
@@ -76,7 +114,7 @@ public class GameController : MonoBehaviour
         _activePlayer = 0;
         for (var i = 0; i < _playerControllers.Length; i++)
         {
-            GameObject playerInstance = Instantiate(PlayerPrefab, new Vector3(i, i, 0), Quaternion.identity);
+            GameObject playerInstance = Instantiate(PlayerPrefab, new Vector3(i+1, i+1, 0), Quaternion.identity);
             _playerControllers[i] = playerInstance.GetComponent<PlayerController>();
         }
     }

@@ -36,6 +36,7 @@ public class PlayerController : MonoBehaviour
         if (newTile.CanLandOn())
         {
             _gameController.GetGameTile((int) oldPos.x, (int) oldPos.y).CurrentPlayer = null;
+        transform.position = _pos;
             newTile.CurrentPlayer = this;
             Debug.Log("Moving to:" + _pos.x + " " + _pos.y);
         }
@@ -43,10 +44,10 @@ public class PlayerController : MonoBehaviour
         {
             _gameController.GetGameTile((int) oldPos.x, (int) oldPos.y).CurrentPlayer = this;
             _pos = oldPos;
+        transform.position = _pos;
             Debug.Log("Staying at:" + _pos.x + " " + _pos.y);
         }
 
-        transform.position = _pos;
 
     }
 
