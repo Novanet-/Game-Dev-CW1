@@ -52,9 +52,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: db7fdd75b7e63584caa1223cdc16530e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _gameBoard: {fileID: 0}
+  _gameBoard: {fileID: 1254848051203396, guid: 0a9f3559aa9632f45a5599b8ed2f6e3f, type: 2}
   _money: 0
-  _controller: {fileID: 0}
 --- !u!212 &212162028934291146
 SpriteRenderer:
   m_ObjectHideFlags: 1

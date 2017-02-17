@@ -1,11 +1,13 @@
-﻿using System.Security.Cryptography.X509Certificates;
+﻿using System;
+using System.Security.Cryptography.X509Certificates;
+using JetBrains.Annotations;
 using UnityEngine;
 
 public class GameController : MonoBehaviour
 {
     #region Public Fields
 
-    public Transform GameBoard;
+//    public Transform GameBoard;
     public Tile[,] GameGrid;
     public GameObject TilePrefab, PlayerPrefab;
 
@@ -17,7 +19,6 @@ public class GameController : MonoBehaviour
     [SerializeField] private int _width;
     [SerializeField] private PlayerController[] _playerControllers;
     [SerializeField] private int _activePlayer;
-
 
     #endregion Private Fields
 
@@ -49,7 +50,7 @@ public class GameController : MonoBehaviour
     #region Private Methods
 
     // Use this for initialization
-    private void Start()
+    void Start()
     {
         GameGrid = new Tile[Width, Height];
         for (var x = 0; x <= GameGrid.GetUpperBound(0); x++)
@@ -70,7 +71,7 @@ public class GameController : MonoBehaviour
     }
 
     // Update is called once per frame
-    private void Update()
+    void Update()
     {
         CheckInput();
     }

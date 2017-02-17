@@ -91,53 +91,6 @@ NavMeshSettings:
     cellSize: 0.16666667
     accuratePlacement: 0
   m_NavMeshData: {fileID: 0}
---- !u!1001 &635776291
-Prefab:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 4977501021390990, guid: 99c21b357ae2b894488c006bcde5322f, type: 2}
-      propertyPath: m_LocalPosition.x
-      value: 7
-      objectReference: {fileID: 0}
-    - target: {fileID: 4977501021390990, guid: 99c21b357ae2b894488c006bcde5322f, type: 2}
-      propertyPath: m_LocalPosition.y
-      value: 7
-      objectReference: {fileID: 0}
-    - target: {fileID: 4977501021390990, guid: 99c21b357ae2b894488c006bcde5322f, type: 2}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4977501021390990, guid: 99c21b357ae2b894488c006bcde5322f, type: 2}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4977501021390990, guid: 99c21b357ae2b894488c006bcde5322f, type: 2}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4977501021390990, guid: 99c21b357ae2b894488c006bcde5322f, type: 2}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4977501021390990, guid: 99c21b357ae2b894488c006bcde5322f, type: 2}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 4977501021390990, guid: 99c21b357ae2b894488c006bcde5322f, type: 2}
-      propertyPath: m_RootOrder
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 114619412738288408, guid: 99c21b357ae2b894488c006bcde5322f,
-        type: 2}
-      propertyPath: _gameBoard
-      value: 
-      objectReference: {fileID: 1003379303}
-    m_RemovedComponents: []
-  m_ParentPrefab: {fileID: 100100000, guid: 99c21b357ae2b894488c006bcde5322f, type: 2}
-  m_IsPrefabParent: 0
 --- !u!1 &1003379303
 GameObject:
   m_ObjectHideFlags: 0
@@ -201,7 +154,7 @@ Transform:
   m_LocalScale: {x: 64, y: 64, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 2
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1003379306
 MonoBehaviour:
@@ -214,7 +167,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 32b0aef9210882a4789fffec41976e5f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GameBoard: {fileID: 1003379305}
   TilePrefab: {fileID: 1442128544956010, guid: b777f3c1225d6574d943ea1e995eb4be, type: 2}
   PlayerPrefab: {fileID: 1942373800801728, guid: 99c21b357ae2b894488c006bcde5322f,
     type: 2}
