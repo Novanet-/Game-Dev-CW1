@@ -1,12 +1,12 @@
-﻿using JetBrains.Annotations;
+﻿using System;
+using System.Runtime.CompilerServices;
+using JetBrains.Annotations;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 
 {
     #region Private Fields
-
-    [SerializeField] private GameObject _gameBoard;
 
     private GameController _gameController;
 
@@ -20,11 +20,6 @@ public class PlayerController : MonoBehaviour
 
     #region Public Properties
 
-    [NotNull] public GameObject GameBoard
-    {
-        get { return _gameBoard; }
-        private set { _gameBoard = value; }
-    }
     public int Money
     {
         get { return _money; }
@@ -37,12 +32,24 @@ public class PlayerController : MonoBehaviour
 
     public void Move(Vector2 direction)
     {
-        Debug.Log("" + _pos + " /" + direction + " /" + _gameController);
+        Vector2 oldPos = _pos;
         _pos = _pos + direction;
         _pos.x = Mathf.Clamp(_pos.x, 0, _gameController.Width - 1);
         _pos.y = Mathf.Clamp(_pos.y, 0, _gameController.Height - 1);
+        Tile newTile = _gameController.GetGameTile((int)_pos.x, (int)_pos.y);
+        if (newTile.CanLandOn())
+        {
+            _moving = true;
+            _gameController.GetGameTile((int) oldPos.x, (int) oldPos.y).player = null;
+            newTile.player = this;
+            Debug.Log("Moving to:" + _pos.x + " " + _pos.y);
+        }
+        else
+        {
+            _pos = oldPos;
+            Debug.Log("Staying at:" + _pos.x + " " + _pos.y);
+        }
 
-        _moving = true;
     }
 
     #endregion Public Methods
@@ -57,8 +64,17 @@ public class PlayerController : MonoBehaviour
         _pos = transform.position;
 //        _gameController = _gameBoard.GetComponent<GameController>();
 //        _gameController = GameBoard.GetComponent<GameController>();
-        GameBoard = GameObject.Find("GameBoard");
+        GameObject GameBoard = GameObject.Find("GameBoard");
         _gameController = GameBoard.GetComponent<GameController>();
+        Tile tile = _gameController.GetGameTile((int) _pos.x, (int) _pos.y);
+        if (tile.CanLandOn())
+        {
+            tile.player = this;
+        }
+        else
+        {
+            throw new Exception("Player's Starting Position is Invalid!");
+        }
     }
 
 
