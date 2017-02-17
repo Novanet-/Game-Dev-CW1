@@ -152,7 +152,8 @@ public class GameController : MonoBehaviour
             {
                 pos = new Vector3(Random.Range(0, this.Width), Random.Range(0, this.Height));
                 tile = GetGameTile((int)pos.x, (int)pos.y);
-            } while (tile.Player != null && !tile.CanLandOn());
+            } while (tile.CurrentPlayer != null && !tile.CanLandOn());
+
             Instantiate(CoinPrefab, pos, Quaternion.identity);
         }
 
