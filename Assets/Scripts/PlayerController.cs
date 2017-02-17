@@ -6,6 +6,8 @@ public class PlayerController : MonoBehaviour
 {
     #region Private Fields
 
+    private int id = Random.Range(0, 1000000);
+
     private GameController _gameController;
 
     [SerializeField] private int _money;
@@ -36,7 +38,7 @@ public class PlayerController : MonoBehaviour
         if (newTile.CanLandOn())
         {
             _gameController.GetGameTile((int) oldPos.x, (int) oldPos.y).CurrentPlayer = null;
-        transform.position = _pos;
+            transform.position = _pos;
             newTile.CurrentPlayer = this;
             Debug.Log("Moving to:" + _pos.x + " " + _pos.y);
         }

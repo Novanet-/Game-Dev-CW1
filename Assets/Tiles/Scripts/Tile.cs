@@ -44,14 +44,16 @@ public class Tile : MonoBehaviour
 
     private void SetPlayer([CanBeNull] PlayerController newPlayer)
     {
-        if (this.CurrentPlayer == null && newPlayer != null)
+        PlayerController oldPlayer = CurrentPlayer;
+        _currentPlayer = newPlayer;
+        if (oldPlayer == null && newPlayer != null)
         {
             foreach (PlayerMovementListener listener in _playerMovementListeners)
             {
                 listener.PlayerLandsOn(newPlayer);
             }
         }
-        else if (this.CurrentPlayer == newPlayer && CurrentPlayer != null)
+        else if (oldPlayer == newPlayer && CurrentPlayer != null)
         {
 
             foreach (PlayerMovementListener listener in _playerMovementListeners)
@@ -59,7 +61,7 @@ public class Tile : MonoBehaviour
                 listener.PlayerRemainsOn(newPlayer);
             }
         }
-        else if (this.CurrentPlayer != null && newPlayer == null)
+        else if (oldPlayer != null && newPlayer == null)
         {
 
             foreach (PlayerMovementListener listener in _playerMovementListeners)
@@ -68,7 +70,6 @@ public class Tile : MonoBehaviour
             }
         }
 
-        _currentPlayer = newPlayer;
     }
 
 
