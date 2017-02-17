@@ -148,15 +148,13 @@ public class GameController : MonoBehaviour
         _activePlayerIndex = (_activePlayerIndex + 1) % _playerControllers.Length;
         if (_activePlayerIndex == 0)
         {
-            var pos = new Vector3(UnityEngine.Random.Range(0, Width), UnityEngine.Random.Range(0, Height));
-            Tile tile = GetGameTile((int) pos.x, (int) pos.y);
-
-
-            while (!(tile.CurrentPlayer == null || tile.CanLandOn()))
+            Vector3 pos;
+            Tile tile;
+            do
             {
-                pos = new Vector3(UnityEngine.Random.Range(0, Width), UnityEngine.Random.Range(0, Height));
+                pos = new Vector3(UnityEngine.Random.Range(0, Width-1), UnityEngine.Random.Range(0, Height-1));
                 tile = GetGameTile((int) pos.x, (int) pos.y);
-            }
+            } while (!(tile.CurrentPlayer == null && tile.CanLandOn()));
 
             Instantiate(CoinPrefab, pos, Quaternion.identity);
         }
