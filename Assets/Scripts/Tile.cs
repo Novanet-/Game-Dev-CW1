@@ -26,4 +26,11 @@ public class Tile : MonoBehaviour
     }
 
     #endregion Private Methods
+
+    public bool CanLandOn()
+    {
+        return this.player == null;
+    }
+
+    public PlayerController player { get; set; }
 }
