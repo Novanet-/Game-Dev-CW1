@@ -134,7 +134,7 @@ Prefab:
         type: 2}
       propertyPath: _gameBoard
       value: 
-      objectReference: {fileID: 1003379306}
+      objectReference: {fileID: 1003379303}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 99c21b357ae2b894488c006bcde5322f, type: 2}
   m_IsPrefabParent: 0
@@ -220,8 +220,8 @@ MonoBehaviour:
     type: 2}
   _height: 16
   _width: 16
-  playerControllers: []
-  activePlayer: 0
+  _playerControllers: []
+  _activePlayer: 0
 --- !u!1 &2130414728
 GameObject:
   m_ObjectHideFlags: 0

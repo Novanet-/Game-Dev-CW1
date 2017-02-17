@@ -15,8 +15,8 @@ public class GameController : MonoBehaviour
 
     [SerializeField] private int _height;
     [SerializeField] private int _width;
-    [SerializeField] private PlayerController[] playerControllers;
-    [SerializeField] private int activePlayer;
+    [SerializeField] private PlayerController[] _playerControllers;
+    [SerializeField] private int _activePlayer;
 
 
     #endregion Private Fields
@@ -60,12 +60,12 @@ public class GameController : MonoBehaviour
             //TODO: Assign data to each tile when created, to have different tile types
         }
 
-        playerControllers = new PlayerController[4];
-        activePlayer = 0;
-        for (var i = 0; i < playerControllers.Length; i++)
+        _playerControllers = new PlayerController[4];
+        _activePlayer = 0;
+        for (var i = 0; i < _playerControllers.Length; i++)
         {
              GameObject playerInstance = Instantiate(PlayerPrefab, new Vector3(i, i, 0), Quaternion.identity);
-            playerControllers[i] = playerInstance.GetComponent<PlayerController>();
+            _playerControllers[i] = playerInstance.GetComponent<PlayerController>();
         }
     }
 
@@ -113,8 +113,8 @@ public class GameController : MonoBehaviour
 
     private PlayerController GetActivePlayer()
     {
-        PlayerController player = playerControllers[activePlayer];
-        activePlayer = (activePlayer + 1) % playerControllers.Length;
+        PlayerController player = _playerControllers[_activePlayer];
+        _activePlayer = (_activePlayer + 1) % _playerControllers.Length;
         return player;
 
     }
