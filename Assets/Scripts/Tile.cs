@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using JetBrains.Annotations;
 using UnityEngine;
 
 public class Tile : MonoBehaviour
@@ -31,48 +32,48 @@ public class Tile : MonoBehaviour
 
     public bool CanLandOn()
     {
-        return Player == null;
+        return CurrentPlayer == null;
     }
 
-    public PlayerController Player
+    [NotNull] public PlayerController CurrentPlayer
     {
-        get { return _player; }
-        set { setPlayer(value); }
+        get { return _currentPlayer; }
+        set { SetPlayer(value); }
     }
 
 
-    private void setPlayer(PlayerController player)
+    private void SetPlayer([CanBeNull] PlayerController newPlayer)
     {
-        if (this.Player == null && player != null)
+        if (this.CurrentPlayer == null && newPlayer != null)
         {
             foreach (PlayerMovementListener listener in _playerMovementListeners)
             {
-                listener.PlayerLandsOn(player);
+                listener.PlayerLandsOn(newPlayer);
             }
         }
-        else if (this.Player == player)
-        {
-
-            foreach (PlayerMovementListener listener in _playerMovementListeners)
-            {
-                listener.PlayerRemainsOn(player);
-            }
-        }
-        else if (this.Player != null && player == null)
+        else if (this.CurrentPlayer == newPlayer)
         {
 
             foreach (PlayerMovementListener listener in _playerMovementListeners)
             {
-                listener.PlayerLeaves(this.Player);
+                listener.PlayerRemainsOn(newPlayer);
+            }
+        }
+        else if (this.CurrentPlayer != null && newPlayer == null)
+        {
+
+            foreach (PlayerMovementListener listener in _playerMovementListeners)
+            {
+                listener.PlayerLeaves(this.CurrentPlayer);
             }
         }
 
-        _player = player;
+        _currentPlayer = newPlayer;
     }
 
 
     private List<PlayerMovementListener> _playerMovementListeners;
-    private PlayerController _player;
+    private PlayerController _currentPlayer;
 
     public void AddPlayerMovementListener(PlayerMovementListener listener)
     {

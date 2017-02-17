@@ -37,13 +37,13 @@ public class PlayerController : MonoBehaviour
         Tile newTile = _gameController.GetGameTile((int)_pos.x, (int)_pos.y);
         if (newTile.CanLandOn())
         {
-            _gameController.GetGameTile((int) oldPos.x, (int) oldPos.y).Player = null;
-            newTile.Player = this;
+            _gameController.GetGameTile((int) oldPos.x, (int) oldPos.y).CurrentPlayer = null;
+            newTile.CurrentPlayer = this;
             Debug.Log("Moving to:" + _pos.x + " " + _pos.y);
         }
         else
         {
-            _gameController.GetGameTile((int) oldPos.x, (int) oldPos.y).Player = this;
+            _gameController.GetGameTile((int) oldPos.x, (int) oldPos.y).CurrentPlayer = this;
             _pos = oldPos;
             Debug.Log("Staying at:" + _pos.x + " " + _pos.y);
         }
@@ -69,11 +69,11 @@ public class PlayerController : MonoBehaviour
         Tile tile = _gameController.GetGameTile((int) _pos.x, (int) _pos.y);
         if (tile.CanLandOn())
         {
-            tile.Player = this;
+            tile.CurrentPlayer = this;
         }
         else
         {
-            throw new Exception("Player's Starting Position is Invalid!");
+            throw new Exception("CurrentPlayer's Starting Position is Invalid!");
         }
     }
 
