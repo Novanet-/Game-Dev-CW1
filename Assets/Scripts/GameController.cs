@@ -40,20 +40,25 @@ public class GameController : MonoBehaviour
     private readonly int PATH = 0;
     private readonly int WALL = 1;
     private readonly int RIVER = 2;
-    [SerializeField] private int _activePlayerIndex;
-    [SerializeField] private int _height;
+    [SerializeField]
+    private int _activePlayerIndex;
+    [SerializeField]
+    private int _height;
 
     private PlayerController[] _playerControllers;
 
     private int _playerMovesLeft;
 
-    [SerializeField] private int _width;
+    [SerializeField]
+    private int _width;
 
     private PlayerController CurrentPlayer;
 
-    [SerializeField] private int dieNumber = 6;
+    [SerializeField]
+    private int dieNumber = 6;
 
-    [SerializeField] private GameObject[] TilePrefabs;
+    [SerializeField]
+    private GameObject[] TilePrefabs;
 
     #endregion Private Fields
 
@@ -94,11 +99,6 @@ public class GameController : MonoBehaviour
             }
             else
             {
-                if (_playerMovesLeft <= 0)
-                {
-                    _playerMovesLeft = RollDice(dieNumber);
-                    NextTurn();
-                }
 
 
                 if (Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.RightArrow))
@@ -118,6 +118,13 @@ public class GameController : MonoBehaviour
 
             if (moved)
                 CurrentPlayer.Move(direction);
+
+            if (CurrentPlayer.PlayerMoves <= 0)
+            {
+                NextTurn();
+                CurrentPlayer = GetActivePlayer();
+                CurrentPlayer.PlayerMoves = RollDice(dieNumber);
+            }
         }
     }
 
@@ -139,8 +146,7 @@ public class GameController : MonoBehaviour
 
     private PlayerController GetActivePlayer()
     {
-        PlayerController player = _playerControllers[_activePlayerIndex];
-        return player;
+        return _playerControllers[_activePlayerIndex];
     }
 
     private void NextTurn()
@@ -152,8 +158,8 @@ public class GameController : MonoBehaviour
             Tile tile;
             do
             {
-                pos = new Vector3(UnityEngine.Random.Range(0, Width-1), UnityEngine.Random.Range(0, Height-1));
-                tile = GetGameTile((int) pos.x, (int) pos.y);
+                pos = new Vector3(UnityEngine.Random.Range(0, Width - 1), UnityEngine.Random.Range(0, Height - 1));
+                tile = GetGameTile((int)pos.x, (int)pos.y);
             } while (!(tile.CurrentPlayer == null && tile.CanLandOn()));
 
             Instantiate(CoinPrefab, pos, Quaternion.identity);
@@ -163,8 +169,8 @@ public class GameController : MonoBehaviour
     private Vector2 SetupMove(Vector2 direction, ref bool moved)
     {
         moved = true;
-        --_playerMovesLeft;
-        Debug.Log(string.Format("{0} moves left", _playerMovesLeft));
+        CurrentPlayer.PlayerMoves--;
+        Debug.Log(string.Format("{0} moves left", CurrentPlayer.PlayerMoves));
 
         return direction;
     }
@@ -174,31 +180,31 @@ public class GameController : MonoBehaviour
     {
         GameGrid = new Tile[Width, Height];
         for (var x = 0; x <= GameGrid.GetUpperBound(0); x++)
-        for (var y = 0; y <= GameGrid.GetUpperBound(1); y++)
-        {
-            GameObject tileToMake = TilePrefabs[0];
-            switch (_map[15 - y, x])
+            for (var y = 0; y <= GameGrid.GetUpperBound(1); y++)
             {
-                case 'W':
-                    tileToMake = TilePrefabs[WALL];
-                    break;
+                GameObject tileToMake = TilePrefabs[0];
+                switch (_map[15 - y, x])
+                {
+                    case 'W':
+                        tileToMake = TilePrefabs[WALL];
+                        break;
 
-                case 'R':
-                case 'S':
-                case 'T':
-                case 'U':
-                    tileToMake = TilePrefabs[RIVER];
-                    break;
+                    case 'R':
+                    case 'S':
+                    case 'T':
+                    case 'U':
+                        tileToMake = TilePrefabs[RIVER];
+                        break;
 
-                default:
-                    tileToMake = TilePrefabs[PATH];
-                    break;
+                    default:
+                        tileToMake = TilePrefabs[PATH];
+                        break;
+                }
+                GameObject tileInstance = Instantiate(tileToMake, new Vector3(x, y, 0), Quaternion.identity);
+                GameGrid[x, y] = tileInstance.GetComponent<Tile>();
+
+                //TODO: Assign data to each tile when created, to have different tile types
             }
-            GameObject tileInstance = Instantiate(tileToMake, new Vector3(x, y, 0), Quaternion.identity);
-            GameGrid[x, y] = tileInstance.GetComponent<Tile>();
-
-            //TODO: Assign data to each tile when created, to have different tile types
-        }
 
         _playerControllers = new PlayerController[4];
         _activePlayerIndex = 0;
@@ -209,7 +215,7 @@ public class GameController : MonoBehaviour
         }
 
         CurrentPlayer = GetActivePlayer();
-        _playerMovesLeft = RollDice(dieNumber);
+        CurrentPlayer.PlayerMoves = RollDice(dieNumber);
     }
 
 

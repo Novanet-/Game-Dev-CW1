@@ -7,6 +7,7 @@ public class PlayerController : MonoBehaviour
     #region Private Fields
 
     private int id;
+    
 
     private GameController _gameController;
 
@@ -23,6 +24,9 @@ public class PlayerController : MonoBehaviour
         get { return _money; }
         set { _money = value; }
     }
+
+    public bool CanBePushed{ get; set; }
+    public int PlayerMoves { get; set; }
 
     #endregion Public Properties
 
@@ -61,6 +65,7 @@ public class PlayerController : MonoBehaviour
     {
         id = UnityEngine.Random.Range(0, 1000000);
         _pos = transform.position;
+        CanBePushed = true;
         GameObject GameBoard = GameObject.Find("GameBoard");
         _gameController = GameBoard.GetComponent<GameController>();
         Tile tile = _gameController.GetGameTile((int) _pos.x, (int) _pos.y);

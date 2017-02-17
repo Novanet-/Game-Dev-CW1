@@ -3,11 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class River : Tile, PlayerMovementListener{
+    private readonly int MOVESTOPUSH = 1;
 
-    
 
-
-	// Use this for initialization
+    // Use this for initialization
 	void Start ()
 	{
 	    base.Start();
@@ -33,7 +32,11 @@ public class River : Tile, PlayerMovementListener{
 
     private void MovePlayer(PlayerController player)
     {
-        player.Move(Direction);
+        if (player.PlayerMoves > -MOVESTOPUSH && player.PlayerMoves <= 0)
+        {
+            player.PlayerMoves--;
+            player.Move(Direction);
+        }
     }
 
     public Vector2 Direction
