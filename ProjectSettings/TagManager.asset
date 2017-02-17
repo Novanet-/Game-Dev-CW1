@@ -47,6 +47,9 @@ TagManager:
   - name: Tile
     uniqueID: 3436345987
     locked: 0
+  - name: Coins
+    uniqueID: 2187706863
+    locked: 0
   - name: Token
     uniqueID: 1900433001
     locked: 0

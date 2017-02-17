@@ -12,8 +12,6 @@ public class PlayerController : MonoBehaviour
 
     [SerializeField] private int _money;
 
-    private bool _moving;
-
     private Vector2 _pos;
 
     #endregion Private Fields
@@ -39,16 +37,18 @@ public class PlayerController : MonoBehaviour
         Tile newTile = _gameController.GetGameTile((int)_pos.x, (int)_pos.y);
         if (newTile.CanLandOn())
         {
-            _moving = true;
-            _gameController.GetGameTile((int) oldPos.x, (int) oldPos.y).player = null;
-            newTile.player = this;
+            _gameController.GetGameTile((int) oldPos.x, (int) oldPos.y).Player = null;
+            newTile.Player = this;
             Debug.Log("Moving to:" + _pos.x + " " + _pos.y);
         }
         else
         {
+            _gameController.GetGameTile((int) oldPos.x, (int) oldPos.y).Player = this;
             _pos = oldPos;
             Debug.Log("Staying at:" + _pos.x + " " + _pos.y);
         }
+
+        transform.position = _pos;
 
     }
 
@@ -69,7 +69,7 @@ public class PlayerController : MonoBehaviour
         Tile tile = _gameController.GetGameTile((int) _pos.x, (int) _pos.y);
         if (tile.CanLandOn())
         {
-            tile.player = this;
+            tile.Player = this;
         }
         else
         {
@@ -81,16 +81,6 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     private void Update()
     {
-        if (!_moving) return;
-
-        // pos is changed when there's input from the player
-        transform.position = _pos;
-        _moving = false;
-
-        //TODO: We also need to update the gamestate at this point, which contains a 2d array of tiles, for looking up tile info etc.
-        Tile newTile = _gameController.GetGameTile((int) _pos.x, (int) _pos.y);
-
-        newTile.LandedOn(this);
     }
 
     #endregion Private Methods

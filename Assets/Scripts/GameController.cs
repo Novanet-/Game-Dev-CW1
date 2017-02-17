@@ -1,7 +1,4 @@
-﻿using System;
-using System.Security.Cryptography.X509Certificates;
-using JetBrains.Annotations;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class GameController : MonoBehaviour
 {
@@ -9,7 +6,7 @@ public class GameController : MonoBehaviour
 
 //    public Transform GameBoard;
     public Tile[,] GameGrid;
-    public GameObject TilePrefab, PlayerPrefab;
+    public GameObject TilePrefab, PlayerPrefab, CoinPrefab;
 
     #endregion Public Fields
 
@@ -115,9 +112,26 @@ public class GameController : MonoBehaviour
     private PlayerController GetActivePlayer()
     {
         PlayerController player = _playerControllers[_activePlayer];
-        _activePlayer = (_activePlayer + 1) % _playerControllers.Length;
+        NextTurn();
         return player;
 
+    }
+
+    private void NextTurn()
+    {
+        _activePlayer = (_activePlayer + 1) % _playerControllers.Length;
+        if (_activePlayer == 0)
+        {
+            Vector3 pos;
+            Tile tile;
+            do
+            {
+                pos = new Vector3(Random.Range(0, this.Width), Random.Range(0, this.Height));
+                tile = GetGameTile((int) pos.x, (int) pos.y);
+            } while (tile.Player != null && !tile.CanLandOn());
+            Instantiate(CoinPrefab, pos, Quaternion.identity);
+        }
+        
     }
 
     #endregion Private Methods

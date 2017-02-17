@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 public class Tile : MonoBehaviour
 {
@@ -23,14 +24,63 @@ public class Tile : MonoBehaviour
     {
         var spriteRenderer = GetComponent<SpriteRenderer>();
         spriteRenderer.sprite = _sprites[Random.Range(0, _sprites.Length - 1)];
+        _playerMovementListeners = new List<PlayerMovementListener>();
     }
 
     #endregion Private Methods
 
     public bool CanLandOn()
     {
-        return this.player == null;
+        return Player == null;
     }
 
-    public PlayerController player { get; set; }
+    public PlayerController Player
+    {
+        get { return _player; }
+        set { setPlayer(value); }
+    }
+
+
+    private void setPlayer(PlayerController player)
+    {
+        if (this.Player == null && player != null)
+        {
+            foreach (PlayerMovementListener listener in _playerMovementListeners)
+            {
+                listener.PlayerLandsOn(player);
+            }
+        }
+        else if (this.Player == player)
+        {
+
+            foreach (PlayerMovementListener listener in _playerMovementListeners)
+            {
+                listener.PlayerRemainsOn(player);
+            }
+        }
+        else if (this.Player != null && player == null)
+        {
+
+            foreach (PlayerMovementListener listener in _playerMovementListeners)
+            {
+                listener.PlayerLeaves(this.Player);
+            }
+        }
+
+        _player = player;
+    }
+
+
+    private List<PlayerMovementListener> _playerMovementListeners;
+    private PlayerController _player;
+
+    public void AddPlayerMovementListener(PlayerMovementListener listener)
+    {
+        _playerMovementListeners.Add(listener);
+    }
+
+    public void RemovePlayerMovementListener(PlayerMovementListener listener)
+    {
+        _playerMovementListeners.Remove(listener);
+    }
 }
