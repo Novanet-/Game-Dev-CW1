@@ -50,6 +50,7 @@ public class GameController : MonoBehaviour
 
     [SerializeField] private Text _txtCurrentPlayer;
     [SerializeField] private Text _txtMovesLeft;
+    [SerializeField] private Text _txtTurnNumber;
 
     [SerializeField] private int _height;
     [SerializeField] private int _width;
@@ -63,6 +64,7 @@ public class GameController : MonoBehaviour
 
     public PlayerController[] PlayerControllers { get; private set; }
     public int PlayerMovesLeft { get; private set; }
+    public int TurnNumber { get; private set; }
 
     public int Height
     {
@@ -152,6 +154,7 @@ public class GameController : MonoBehaviour
         ActivePlayerIndex = (ActivePlayerIndex + 1) % PlayerControllers.Length;
         if (ActivePlayerIndex == 0)
         {
+            ++TurnNumber;
             Vector3 pos;
             Tile tile;
             do
@@ -216,6 +219,8 @@ public class GameController : MonoBehaviour
 
         CurrentPlayer = GetActivePlayer();
         CurrentPlayer.PlayerMoves = RollDice(_dieNumber);
+
+        TurnNumber = 1;
     }
 
     // Update is called once per frame
@@ -229,6 +234,7 @@ public class GameController : MonoBehaviour
     {
         _txtCurrentPlayer.text = CurrentPlayer.Id.ToString();
         _txtMovesLeft.text = PlayerMovesLeft.ToString();
+        _txtTurnNumber.text = TurnNumber.ToString();
     }
 
     #endregion Private Methods
