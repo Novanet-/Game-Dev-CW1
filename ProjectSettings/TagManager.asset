@@ -3,7 +3,8 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - UI
   layers:
   - Default
   - TransparentFX
@@ -52,4 +53,7 @@ TagManager:
     locked: 0
   - name: Token
     uniqueID: 1900433001
+    locked: 0
+  - name: UI
+    uniqueID: 1824523377
     locked: 0
