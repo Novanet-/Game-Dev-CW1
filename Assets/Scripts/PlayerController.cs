@@ -6,8 +6,8 @@ public class PlayerController : MonoBehaviour
 {
     #region Private Fields
 
-    private int id;
-    
+    public int Id { get;  set; }
+
 
     private GameController _gameController;
 
@@ -63,12 +63,12 @@ public class PlayerController : MonoBehaviour
 
     private void Start()
     {
-        id = UnityEngine.Random.Range(0, 1000000);
         _pos = transform.position;
         CanBePushed = true;
         GameObject GameBoard = GameObject.Find("GameBoard");
         _gameController = GameBoard.GetComponent<GameController>();
         Tile tile = _gameController.GetGameTile((int) _pos.x, (int) _pos.y);
+
         if (tile.CanLandOn())
         {
             tile.CurrentPlayer = this;
@@ -77,6 +77,9 @@ public class PlayerController : MonoBehaviour
         {
             throw new Exception("CurrentPlayer's Starting Position is Invalid!");
         }
+
+//        Id = UnityEngine.Random.Range(0, 1000000);
+
     }
 
 
