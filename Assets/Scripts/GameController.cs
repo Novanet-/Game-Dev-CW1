@@ -4,7 +4,6 @@ using Random = System.Random;
 
 public class GameController : MonoBehaviour
 {
-
     #region Public Fields
 
     //    public Transform GameBoard;
@@ -15,6 +14,12 @@ public class GameController : MonoBehaviour
     #endregion Public Fields
 
     #region Private Fields
+
+    private const int Path = 0;
+
+    private const int River = 2;
+
+    private const int Wall = 1;
 
     // P is a Path
     // W is Wall
@@ -39,47 +44,40 @@ public class GameController : MonoBehaviour
         {'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W'}
     };
 
-    private readonly int PATH = 0;
-    private readonly int RIVER = 2;
-    private readonly int WALL = 1;
-    [SerializeField] private int _activePlayerIndex;
-    [SerializeField] private int _height;
+    [SerializeField] private int _dieNumber = 6;
 
-    public PlayerController[] PlayerControllers { get; private set; }
-    private int _playerMovesLeft;
+    [SerializeField] private GameObject[] _tilePrefabs;
+
+    [SerializeField] private Text _txtCurrentPlayer;
+    [SerializeField] private Text _txtMovesLeft;
+
+    [SerializeField] private int _height;
     [SerializeField] private int _width;
-    private PlayerController CurrentPlayer;
-    [SerializeField] private int dieNumber = 6;
-    [SerializeField] private GameObject[] TilePrefabs;
 
     #endregion Private Fields
 
     #region Public Properties
+
+    public int ActivePlayerIndex { get; private set; }
+    public PlayerController CurrentPlayer { get; private set; }
+
+    public PlayerController[] PlayerControllers { get; private set; }
+    public int PlayerMovesLeft { get; private set; }
 
     public int Height
     {
         get { return _height; }
         private set { _height = value; }
     }
-
     public int Width
     {
         get { return _width; }
         private set { _width = value; }
     }
 
-
-    [SerializeField] private Text _txtCurrentPlayer;
-
-
     #endregion Public Properties
 
     #region Public Methods
-
-    private void UpdateUI()
-    {
-        _txtCurrentPlayer.text = CurrentPlayer.Id.ToString();
-    }
 
     public void CheckInput()
     {
@@ -91,6 +89,7 @@ public class GameController : MonoBehaviour
 
         CurrentPlayer = GetActivePlayer();
 
+        PlayerMovesLeft = CurrentPlayer.PlayerMoves;
 
         if (Input.anyKey)
         {
@@ -122,7 +121,7 @@ public class GameController : MonoBehaviour
             {
                 NextTurn();
                 CurrentPlayer = GetActivePlayer();
-                CurrentPlayer.PlayerMoves = RollDice(dieNumber);
+                CurrentPlayer.PlayerMoves = RollDice(_dieNumber);
             }
         }
     }
@@ -145,13 +144,13 @@ public class GameController : MonoBehaviour
 
     private PlayerController GetActivePlayer()
     {
-        return PlayerControllers[_activePlayerIndex];
+        return PlayerControllers[ActivePlayerIndex];
     }
 
     private void NextTurn()
     {
-        _activePlayerIndex = (_activePlayerIndex + 1) % PlayerControllers.Length;
-        if (_activePlayerIndex == 0)
+        ActivePlayerIndex = (ActivePlayerIndex + 1) % PlayerControllers.Length;
+        if (ActivePlayerIndex == 0)
         {
             Vector3 pos;
             Tile tile;
@@ -181,22 +180,22 @@ public class GameController : MonoBehaviour
         for (var x = 0; x <= GameGrid.GetUpperBound(0); x++)
         for (var y = 0; y <= GameGrid.GetUpperBound(1); y++)
         {
-            GameObject tileToMake = TilePrefabs[0];
+            GameObject tileToMake = _tilePrefabs[0];
             switch (_map[15 - y, x])
             {
                 case 'W':
-                    tileToMake = TilePrefabs[WALL];
+                    tileToMake = _tilePrefabs[Wall];
                     break;
 
                 case 'R':
                 case 'S':
                 case 'T':
                 case 'U':
-                    tileToMake = TilePrefabs[RIVER];
+                    tileToMake = _tilePrefabs[River];
                     break;
 
                 default:
-                    tileToMake = TilePrefabs[PATH];
+                    tileToMake = _tilePrefabs[Path];
                     break;
             }
             GameObject tileInstance = Instantiate(tileToMake, new Vector3(x, y, 0), Quaternion.identity);
@@ -206,7 +205,7 @@ public class GameController : MonoBehaviour
         }
 
         PlayerControllers = new PlayerController[4];
-        _activePlayerIndex = 0;
+        ActivePlayerIndex = 0;
         for (var i = 0; i < PlayerControllers.Length; i++)
         {
             GameObject playerInstance = Instantiate(PlayerPrefab, new Vector3(i + 1, i + 1, 0), Quaternion.identity);
@@ -216,9 +215,8 @@ public class GameController : MonoBehaviour
         }
 
         CurrentPlayer = GetActivePlayer();
-        CurrentPlayer.PlayerMoves = RollDice(dieNumber);
+        CurrentPlayer.PlayerMoves = RollDice(_dieNumber);
     }
-
 
     // Update is called once per frame
     private void Update()
@@ -227,6 +225,11 @@ public class GameController : MonoBehaviour
         CheckInput();
     }
 
-    #endregion Private Methods
+    private void UpdateUI()
+    {
+        _txtCurrentPlayer.text = CurrentPlayer.Id.ToString();
+        _txtMovesLeft.text = PlayerMovesLeft.ToString();
+    }
 
+    #endregion Private Methods
 }
