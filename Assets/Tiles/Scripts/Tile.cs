@@ -12,7 +12,7 @@ public class Tile : MonoBehaviour
 
     #region Public Methods
 
-    public void LandedOn(PlayerController player)
+    public virtual void LandedOn(PlayerController player)
     {
         Debug.Log("Landed on Tile at: " + transform.position.x + ", " + transform.position.y);
     }
@@ -21,7 +21,7 @@ public class Tile : MonoBehaviour
 
     #region Private Methods
 
-    private void Start()
+    protected void Start()
     {
         var spriteRenderer = GetComponent<SpriteRenderer>();
         spriteRenderer.sprite = _sprites[Random.Range(0, _sprites.Length - 1)];
@@ -30,12 +30,12 @@ public class Tile : MonoBehaviour
 
     #endregion Private Methods
 
-    public bool CanLandOn()
+    public virtual bool CanLandOn()
     {
         return CurrentPlayer == null;
     }
 
-    [NotNull] public PlayerController CurrentPlayer
+    [CanBeNull] public PlayerController CurrentPlayer
     {
         get { return _currentPlayer; }
         set { SetPlayer(value); }
@@ -44,14 +44,16 @@ public class Tile : MonoBehaviour
 
     private void SetPlayer([CanBeNull] PlayerController newPlayer)
     {
-        if (this.CurrentPlayer == null && newPlayer != null)
+        PlayerController oldPlayer = CurrentPlayer;
+        _currentPlayer = newPlayer;
+        if (oldPlayer == null && newPlayer != null)
         {
             foreach (PlayerMovementListener listener in _playerMovementListeners)
             {
                 listener.PlayerLandsOn(newPlayer);
             }
         }
-        else if (this.CurrentPlayer == newPlayer)
+        else if (oldPlayer == newPlayer && CurrentPlayer != null)
         {
 
             foreach (PlayerMovementListener listener in _playerMovementListeners)
@@ -59,7 +61,7 @@ public class Tile : MonoBehaviour
                 listener.PlayerRemainsOn(newPlayer);
             }
         }
-        else if (this.CurrentPlayer != null && newPlayer == null)
+        else if (oldPlayer != null && newPlayer == null)
         {
 
             foreach (PlayerMovementListener listener in _playerMovementListeners)
@@ -68,7 +70,6 @@ public class Tile : MonoBehaviour
             }
         }
 
-        _currentPlayer = newPlayer;
     }
 
 
