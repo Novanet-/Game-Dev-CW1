@@ -81,14 +81,11 @@ public class GameController : MonoBehaviour
 
     #region Public Methods
 
-    public void CheckInput()
+    private void CheckInput()
     {
         // WASD control
         // We add the direction to our position,
         // this moves the character 1 unit (32 pixels)
-        Vector2 direction = Vector2.zero;
-        var moved = false;
-
         CurrentPlayer = GetActivePlayer();
 
         PlayerMovesLeft = CurrentPlayer.PlayerMoves;
@@ -96,28 +93,16 @@ public class GameController : MonoBehaviour
         if (Input.anyKey)
         {
             if (Input.GetKeyDown(KeyCode.Space))
-            {
-                moved = true;
-            }
-            else
-            {
-                if (Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.RightArrow))
-                    direction = SetupMove(Vector2.right, ref moved);
+                CurrentPlayer.Move(Vector2.zero);
+            else if (Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.RightArrow))
+                CurrentPlayer.Move(Vector2.right);
+            else if (Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.LeftArrow))
+                CurrentPlayer.Move(Vector2.left);
+            else if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow))
+                CurrentPlayer.Move(Vector2.up);
+            else if (Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.DownArrow))
+                CurrentPlayer.Move(Vector2.down);
 
-                // For left, we have to subtract the direction
-                else if (Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.LeftArrow))
-                    direction = SetupMove(Vector2.left, ref moved);
-                else if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow))
-                    direction = SetupMove(Vector2.up, ref moved);
-
-                // Same as for the left, subtraction for down
-                else if (Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.DownArrow))
-                    direction = SetupMove(Vector2.down, ref moved);
-            }
-
-
-            if (moved)
-                CurrentPlayer.Move(direction);
 
             if (CurrentPlayer.PlayerMoves <= 0)
             {
@@ -154,58 +139,50 @@ public class GameController : MonoBehaviour
         ActivePlayerIndex = (ActivePlayerIndex + 1) % PlayerControllers.Length;
         if (ActivePlayerIndex == 0)
         {
-            ++TurnNumber;
+            TurnNumber++;
             Vector3 pos;
             Tile tile;
             do
             {
                 pos = new Vector3(UnityEngine.Random.Range(0, Width - 1), UnityEngine.Random.Range(0, Height - 1));
-                tile = GetGameTile((int) pos.x, (int) pos.y);
+                tile = GetGameTile((int)pos.x, (int)pos.y);
             } while (!(tile.CurrentPlayer == null && tile.CanLandOn()));
 
             Instantiate(CoinPrefab, pos, Quaternion.identity);
         }
     }
 
-    private Vector2 SetupMove(Vector2 direction, ref bool moved)
-    {
-        moved = true;
-        CurrentPlayer.PlayerMoves--;
-        Debug.Log(string.Format("{0} moves left", CurrentPlayer.PlayerMoves));
-
-        return direction;
-    }
 
     // Use this for initialization
     private void Start()
     {
         GameGrid = new Tile[Width, Height];
         for (var x = 0; x <= GameGrid.GetUpperBound(0); x++)
-        for (var y = 0; y <= GameGrid.GetUpperBound(1); y++)
-        {
-            GameObject tileToMake = _tilePrefabs[0];
-            switch (_map[15 - y, x])
+            for (var y = 0; y <= GameGrid.GetUpperBound(1); y++)
             {
-                case 'W':
-                    tileToMake = _tilePrefabs[Wall];
-                    break;
+                GameObject tileToMake = _tilePrefabs[0];
+                switch (_map[15 - y, x])
+                {
+                    case 'W':
+                        tileToMake = _tilePrefabs[Wall];
+                        break;
 
-                case 'R':
-                case 'S':
-                case 'T':
-                case 'U':
-                    tileToMake = _tilePrefabs[River];
-                    break;
+                    case 'R':
+                    case 'S':
+                    case 'T':
+                    case 'U':
+                        tileToMake = _tilePrefabs[River];
+                        break;
 
-                default:
-                    tileToMake = _tilePrefabs[Path];
-                    break;
+                    default:
+                        tileToMake = _tilePrefabs[Path];
+                        break;
+                }
+                GameObject tileInstance = Instantiate(tileToMake, new Vector3(x, y, 0), Quaternion.identity);
+                GameGrid[x, y] = tileInstance.GetComponent<Tile>();
+
+                //TODO: Assign data to each tile when created, to have different tile types
             }
-            GameObject tileInstance = Instantiate(tileToMake, new Vector3(x, y, 0), Quaternion.identity);
-            GameGrid[x, y] = tileInstance.GetComponent<Tile>();
-
-            //TODO: Assign data to each tile when created, to have different tile types
-        }
 
         PlayerControllers = new PlayerController[4];
         ActivePlayerIndex = 0;
