@@ -171,23 +171,23 @@ public class GameController : MonoBehaviour
                 switch (_map[15 - y, x])
                 {
                     case 'W':
-                        tileToMake = _tilePrefabs[WALL];
+                        tileToMake = _tilePrefabs[Wall];
                         break;
 
                     case 'R':
-                        tileToMake = _tilePrefabs[RIVER];
+                        tileToMake = _tilePrefabs[River];
                     facing = Vector2.up;
                         break;
                     case 'S':
-                        tileToMake = _tilePrefabs[RIVER];
+                        tileToMake = _tilePrefabs[River];
                     facing = Vector2.down;
                         break;
                     case 'T':
-                        tileToMake = _tilePrefabs[RIVER];
+                        tileToMake = _tilePrefabs[River];
                     facing = Vector2.left;
                         break;
                     case 'U':
-                        tileToMake = _tilePrefabs[RIVER];
+                        tileToMake = _tilePrefabs[River];
                     facing = Vector2.right;
                         break;
 
