@@ -15,6 +15,8 @@ public class GameController : MonoBehaviour
 
     #region Private Fields
 
+    [SerializeField] GameObject _pnlScoreboard;
+
     private const int Path = 0;
 
     private const int River = 2;
@@ -60,6 +62,8 @@ public class GameController : MonoBehaviour
 
     [SerializeField] private int _height;
     [SerializeField] private int _width;
+
+    private ScoreboardController scoreboard;
 
     #endregion Private Fields
 
@@ -203,6 +207,8 @@ public class GameController : MonoBehaviour
                 Tile tile = tileInstance.GetComponent<Tile>();
                 tile.Direction = facing;
                 GameGrid[x, y] = tile;
+
+                scoreboard = _pnlScoreboard.GetComponent<ScoreboardController>();
 
                 //TODO: Assign data to each tile when created, to have different tile types
             }
