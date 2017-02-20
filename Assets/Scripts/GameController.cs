@@ -242,6 +242,7 @@ public class GameController : MonoBehaviour
         _txtMovesLeft.text = PlayerMovesLeft.ToString();
         _txtTurnNumber.text = TurnNumber.ToString();
         _scoreboard.UpdateScoreboard(PlayerControllers);
+        _scoreboard.UpdateCurrentTurn(CurrentPlayer);
     }
 
     #endregion Private Methods
