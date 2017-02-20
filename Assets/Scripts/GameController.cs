@@ -7,7 +7,7 @@ public class GameController : MonoBehaviour
     #region Public Fields
 
     //    public Transform GameBoard;
-    public Tile[,] GameGrid;
+    private Tile[,] GameGrid;
 
     public GameObject PlayerPrefab, CoinPrefab;
 
@@ -27,12 +27,12 @@ public class GameController : MonoBehaviour
     private readonly char[,] _map =
     {
         {'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W'},
-        {'W', 'P', 'P', 'P', 'P', 'P', 'W', 'W', 'W', 'P', 'P', 'P', 'P', 'P', 'P', 'W'},
+        {'W', 'P', 'P', 'P', 'P', 'G', 'W', 'W', 'W', 'P', 'P', 'P', 'P', 'P', 'G', 'W'},
         {'W', 'P', 'W', 'W', 'P', 'W', 'W', 'P', 'P', 'P', 'W', 'P', 'W', 'P', 'W', 'W'},
         {'W', 'P', 'W', 'W', 'P', 'W', 'W', 'P', 'W', 'W', 'W', 'P', 'P', 'P', 'W', 'W'},
         {'U', 'U', 'U', 'U', 'U', 'U', 'U', 'U', 'S', 'P', 'P', 'P', 'W', 'W', 'W', 'W'},
         {'U', 'U', 'U', 'U', 'U', 'U', 'S', 'U', 'S', 'W', 'W', 'W', 'W', 'W', 'W', 'W'},
-        {'W', 'P', 'P', 'P', 'P', 'P', 'S', 'W', 'S', 'W', 'W', 'W', 'W', 'W', 'P', 'W'},
+        {'W', 'P', 'P', 'P', 'P', 'P', 'S', 'W', 'S', 'W', 'W', 'W', 'W', 'W', 'G', 'W'},
         {'W', 'P', 'P', 'P', 'P', 'P', 'P', 'W', 'S', 'P', 'P', 'P', 'P', 'W', 'P', 'W'},
         {'W', 'P', 'P', 'P', 'P', 'P', 'P', 'W', 'S', 'W', 'W', 'P', 'W', 'W', 'P', 'W'},
         {'W', 'P', 'P', 'P', 'P', 'P', 'P', 'W', 'U', 'P', 'P', 'P', 'P', 'W', 'P', 'W'},
@@ -45,6 +45,15 @@ public class GameController : MonoBehaviour
     };
 
     [SerializeField] private int _dieNumber = 6;
+    private readonly int PATH = 0;
+    private readonly int WALL = 1;
+    private readonly int RIVER = 2;
+    private readonly int GOLD = 3;
+    [SerializeField]
+    private int _activePlayerIndex;
+    [SerializeField]
+
+    private PlayerController[] _playerControllers;
 
     [SerializeField] private GameObject[] _tilePrefabs;
 
@@ -161,6 +170,7 @@ public class GameController : MonoBehaviour
             for (var y = 0; y <= GameGrid.GetUpperBound(1); y++)
             {
                 GameObject tileToMake = _tilePrefabs[0];
+                Vector2 facing = Vector2.zero;
                 switch (_map[15 - y, x])
                 {
                     case 'W':
@@ -168,10 +178,20 @@ public class GameController : MonoBehaviour
                         break;
 
                     case 'R':
+                        tileToMake = _tilePrefabs[RIVER];
+                    facing = Vector2.up;
+                        break;
                     case 'S':
+                        tileToMake = _tilePrefabs[RIVER];
+                    facing = Vector2.down;
+                        break;
                     case 'T':
+                        tileToMake =_tilePrefabs[RIVER];
+                    facing = Vector2.left;
+                        break;
                     case 'U':
-                        tileToMake = _tilePrefabs[River];
+                        tileToMake =_tilePrefabs[RIVER];
+                    facing = Vector2.right;
                         break;
 
                     default:
@@ -179,7 +199,9 @@ public class GameController : MonoBehaviour
                         break;
                 }
                 GameObject tileInstance = Instantiate(tileToMake, new Vector3(x, y, 0), Quaternion.identity);
-                GameGrid[x, y] = tileInstance.GetComponent<Tile>();
+                Tile tile = tileInstance.GetComponent<Tile>();
+                tile.Direction = facing;
+                GameGrid[x, y] = tile;
 
                 //TODO: Assign data to each tile when created, to have different tile types
             }
