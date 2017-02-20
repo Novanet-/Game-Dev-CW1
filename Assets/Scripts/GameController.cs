@@ -1,8 +1,10 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using Random = System.Random;
 
 public class GameController : MonoBehaviour
 {
+
     #region Public Fields
 
     //    public Transform GameBoard;
@@ -38,27 +40,17 @@ public class GameController : MonoBehaviour
     };
 
     private readonly int PATH = 0;
-    private readonly int WALL = 1;
     private readonly int RIVER = 2;
-    [SerializeField]
-    private int _activePlayerIndex;
-    [SerializeField]
-    private int _height;
+    private readonly int WALL = 1;
+    [SerializeField] private int _activePlayerIndex;
+    [SerializeField] private int _height;
 
-    private PlayerController[] _playerControllers;
-
+    public PlayerController[] PlayerControllers { get; private set; }
     private int _playerMovesLeft;
-
-    [SerializeField]
-    private int _width;
-
+    [SerializeField] private int _width;
     private PlayerController CurrentPlayer;
-
-    [SerializeField]
-    private int dieNumber = 6;
-
-    [SerializeField]
-    private GameObject[] TilePrefabs;
+    [SerializeField] private int dieNumber = 6;
+    [SerializeField] private GameObject[] TilePrefabs;
 
     #endregion Private Fields
 
@@ -76,9 +68,18 @@ public class GameController : MonoBehaviour
         private set { _width = value; }
     }
 
+
+    [SerializeField] private Text _txtCurrentPlayer;
+
+
     #endregion Public Properties
 
     #region Public Methods
+
+    private void UpdateUI()
+    {
+        _txtCurrentPlayer.text = CurrentPlayer.Id.ToString();
+    }
 
     public void CheckInput()
     {
@@ -99,8 +100,6 @@ public class GameController : MonoBehaviour
             }
             else
             {
-
-
                 if (Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.RightArrow))
                     direction = SetupMove(Vector2.right, ref moved);
 
@@ -146,12 +145,12 @@ public class GameController : MonoBehaviour
 
     private PlayerController GetActivePlayer()
     {
-        return _playerControllers[_activePlayerIndex];
+        return PlayerControllers[_activePlayerIndex];
     }
 
     private void NextTurn()
     {
-        _activePlayerIndex = (_activePlayerIndex + 1) % _playerControllers.Length;
+        _activePlayerIndex = (_activePlayerIndex + 1) % PlayerControllers.Length;
         if (_activePlayerIndex == 0)
         {
             Vector3 pos;
@@ -159,7 +158,7 @@ public class GameController : MonoBehaviour
             do
             {
                 pos = new Vector3(UnityEngine.Random.Range(0, Width - 1), UnityEngine.Random.Range(0, Height - 1));
-                tile = GetGameTile((int)pos.x, (int)pos.y);
+                tile = GetGameTile((int) pos.x, (int) pos.y);
             } while (!(tile.CurrentPlayer == null && tile.CanLandOn()));
 
             Instantiate(CoinPrefab, pos, Quaternion.identity);
@@ -180,38 +179,40 @@ public class GameController : MonoBehaviour
     {
         GameGrid = new Tile[Width, Height];
         for (var x = 0; x <= GameGrid.GetUpperBound(0); x++)
-            for (var y = 0; y <= GameGrid.GetUpperBound(1); y++)
+        for (var y = 0; y <= GameGrid.GetUpperBound(1); y++)
+        {
+            GameObject tileToMake = TilePrefabs[0];
+            switch (_map[15 - y, x])
             {
-                GameObject tileToMake = TilePrefabs[0];
-                switch (_map[15 - y, x])
-                {
-                    case 'W':
-                        tileToMake = TilePrefabs[WALL];
-                        break;
+                case 'W':
+                    tileToMake = TilePrefabs[WALL];
+                    break;
 
-                    case 'R':
-                    case 'S':
-                    case 'T':
-                    case 'U':
-                        tileToMake = TilePrefabs[RIVER];
-                        break;
+                case 'R':
+                case 'S':
+                case 'T':
+                case 'U':
+                    tileToMake = TilePrefabs[RIVER];
+                    break;
 
-                    default:
-                        tileToMake = TilePrefabs[PATH];
-                        break;
-                }
-                GameObject tileInstance = Instantiate(tileToMake, new Vector3(x, y, 0), Quaternion.identity);
-                GameGrid[x, y] = tileInstance.GetComponent<Tile>();
-
-                //TODO: Assign data to each tile when created, to have different tile types
+                default:
+                    tileToMake = TilePrefabs[PATH];
+                    break;
             }
+            GameObject tileInstance = Instantiate(tileToMake, new Vector3(x, y, 0), Quaternion.identity);
+            GameGrid[x, y] = tileInstance.GetComponent<Tile>();
 
-        _playerControllers = new PlayerController[4];
+            //TODO: Assign data to each tile when created, to have different tile types
+        }
+
+        PlayerControllers = new PlayerController[4];
         _activePlayerIndex = 0;
-        for (var i = 0; i < _playerControllers.Length; i++)
+        for (var i = 0; i < PlayerControllers.Length; i++)
         {
             GameObject playerInstance = Instantiate(PlayerPrefab, new Vector3(i + 1, i + 1, 0), Quaternion.identity);
-            _playerControllers[i] = playerInstance.GetComponent<PlayerController>();
+            var playerController = playerInstance.GetComponent<PlayerController>();
+            PlayerControllers[i] = playerController;
+            playerController.Id = i + 1;
         }
 
         CurrentPlayer = GetActivePlayer();
@@ -222,8 +223,10 @@ public class GameController : MonoBehaviour
     // Update is called once per frame
     private void Update()
     {
+        UpdateUI();
         CheckInput();
     }
 
     #endregion Private Methods
+
 }
