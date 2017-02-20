@@ -7,8 +7,9 @@ public class CoinSpawnerController : Tile
 
     [SerializeField] private GameObject TilePrefab;
 	// Use this for initialization
-	void Start ()
+	protected override void Start ()
 	{
+        base.Start();
 	    GameObject tile = Instantiate(TilePrefab, transform);
         tile.transform.position = transform.position;
 
