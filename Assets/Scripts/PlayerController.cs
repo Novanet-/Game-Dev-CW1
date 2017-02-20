@@ -14,7 +14,6 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private int _money;
 
     private Vector2 _pos;
-
     #endregion Private Fields
 
     #region Public Properties
@@ -35,22 +34,26 @@ public class PlayerController : MonoBehaviour
     public void Move(Vector2 direction)
     {
         Vector2 oldPos = _pos;
+        Tile oldTile = _gameController.GetGameTile((int) _pos.x, (int) _pos.y);
         _pos = _pos + direction;
         _pos.x = Mathf.Clamp(_pos.x, 0, _gameController.Width - 1);
         _pos.y = Mathf.Clamp(_pos.y, 0, _gameController.Height - 1);
         var newTile = _gameController.GetGameTile((int)_pos.x, (int)_pos.y);
         if (newTile.CanLandOn())
         {
-            _gameController.GetGameTile((int) oldPos.x, (int) oldPos.y).CurrentPlayer = null;
+            PlayerMoves--;
+            oldTile.CurrentPlayer = null;
             transform.position = _pos;
             newTile.CurrentPlayer = this;
             Debug.Log("Moving to:" + _pos.x + " " + _pos.y);
         }
         else
         {
-            _gameController.GetGameTile((int) oldPos.x, (int) oldPos.y).CurrentPlayer = this;
+            if (direction == Vector2.zero)
+                PlayerMoves--;
+            oldTile.CurrentPlayer = this;
             _pos = oldPos;
-        transform.position = _pos;
+           transform.position = _pos;
             Debug.Log("Staying at:" + _pos.x + " " + _pos.y);
         }
 
