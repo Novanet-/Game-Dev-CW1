@@ -10,7 +10,6 @@ public class River : Tile, PlayerMovementListener{
 	void Start ()
 	{
 	    base.Start();
-        Direction = Vector2.right;
         this.AddPlayerMovementListener(this);
 		
 	}
@@ -38,9 +37,6 @@ public class River : Tile, PlayerMovementListener{
             player.Move(Direction);
         }
     }
-
-    public Vector2 Direction
-    { get; set; }
 
     public void PlayerLeaves(PlayerController player)
     {

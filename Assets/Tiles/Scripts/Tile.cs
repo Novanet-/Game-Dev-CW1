@@ -41,6 +41,8 @@ public class Tile : MonoBehaviour
         set { SetPlayer(value); }
     }
 
+    public Vector2 Direction { get; set; }
+
 
     private void SetPlayer([CanBeNull] PlayerController newPlayer)
     {
