@@ -170,6 +170,10 @@ public class GameController : MonoBehaviour
                 Vector2 facing = Vector2.zero;
                 switch (_map[15 - y, x])
                 {
+                    case 'G':
+                        tileToMake = _tilePrefabs[Gold];
+                        break;
+                        
                     case 'W':
                         tileToMake = _tilePrefabs[Wall];
                         break;
