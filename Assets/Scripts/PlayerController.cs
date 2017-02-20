@@ -51,9 +51,9 @@ public class PlayerController : MonoBehaviour
         {
             if (direction == Vector2.zero)
                 PlayerMoves--;
-            oldTile.CurrentPlayer = this;
             _pos = oldPos;
-           transform.position = _pos;
+            transform.position = _pos;
+            oldTile.CurrentPlayer = this;
             Debug.Log("Staying at:" + _pos.x + " " + _pos.y);
         }
 

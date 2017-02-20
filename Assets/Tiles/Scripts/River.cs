@@ -33,7 +33,6 @@ public class River : Tile, PlayerMovementListener{
     {
         if (player.PlayerMoves > -MOVESTOPUSH && player.PlayerMoves <= 0)
         {
-            player.PlayerMoves--;
             player.Move(Direction);
         }
     }

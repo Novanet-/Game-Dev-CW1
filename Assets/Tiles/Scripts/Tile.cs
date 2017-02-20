@@ -55,7 +55,7 @@ public class Tile : MonoBehaviour
                 listener.PlayerLandsOn(newPlayer);
             }
         }
-        else if (oldPlayer == newPlayer && CurrentPlayer != null)
+        else if (oldPlayer == newPlayer && oldPlayer != null)
         {
 
             foreach (PlayerMovementListener listener in _playerMovementListeners)
