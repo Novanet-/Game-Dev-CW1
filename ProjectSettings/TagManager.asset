@@ -16,8 +16,8 @@ TagManager:
   - 
   - Background
   - Tile
+  - CoinSpawner
   - Token
-  - 
   - 
   - 
   - 
@@ -47,6 +47,9 @@ TagManager:
     locked: 0
   - name: Tile
     uniqueID: 3436345987
+    locked: 0
+  - name: CoinSpawners
+    uniqueID: 1917652649
     locked: 0
   - name: Coins
     uniqueID: 2187706863

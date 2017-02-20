@@ -10,6 +10,7 @@ public class CoinSpawnerController : Tile
 	void Start ()
 	{
 	    GameObject tile = Instantiate(TilePrefab, transform);
+        tile.transform.position = transform.position;
 
 	}
 	
