@@ -5,7 +5,24 @@ using UnityEngine;
 
 public class GoldController : MonoBehaviour, PlayerMovementListener
 {
-	public void PlayerLandsOn(PlayerController player)
+    private int _gold;
+    [SerializeField] private Sprite[] _sprites;
+    private int _spriteNum;
+    private Tile _tile;
+
+    public Tile Tile
+    {
+        get { return _tile; }
+        set
+        {
+            if (_tile != null)
+            _tile.RemovePlayerMovementListener(this);
+            _tile = value;
+            _tile.AddPlayerMovementListener(this);
+        }
+    }
+
+    public void PlayerLandsOn(PlayerController player)
 	{
 		GivePlayerGold(player);
 	}
@@ -20,24 +37,39 @@ public class GoldController : MonoBehaviour, PlayerMovementListener
 		GivePlayerGold(player);
 	}
 
-	private void GivePlayerGold(PlayerController player)
-	{
-		player.Money = player.Money + 10;
-		Debug.Log("Given CurrentPlayer Gold! Gold is now " + player.Money);
-	}
+    private void GivePlayerGold(PlayerController player)
+    {
+        if (_gold > 0)
+        {
+            player.Money = player.Money + 10;
+            _gold = _gold - 10;
+        }
 
+        var spriteRenderer = GetComponent<SpriteRenderer>();
+        _spriteNum = Mathf.Clamp(_spriteNum--, 0, _sprites.Length - 1);
+        spriteRenderer.sprite = _sprites[_spriteNum];
+    }
 
-	// Use this for initialization
+    // Use this for initialization
 	void Start()
 	{
-		GameObject GameBoard = GameObject.Find("GameBoard");
-		GameController _gameController = GameBoard.GetComponent<GameController>();
-		Tile tile = _gameController.GetGameTile((int) transform.position.x, (int) transform.position.y);
-		tile.AddPlayerMovementListener(this);
+	    _gold = 10;
+        var spriteRenderer = GetComponent<SpriteRenderer>();
+	    _spriteNum = 1;
+        spriteRenderer.sprite = _sprites[_spriteNum];
 	}
 
 	// Update is called once per frame
 	void Update()
 	{
 	}
+
+
+    public void getGold()
+    {
+        _gold = _gold + 10;
+        var spriteRenderer = GetComponent<SpriteRenderer>();
+        _spriteNum = Mathf.Clamp(_spriteNum++, 0, _sprites.Length - 1);
+        spriteRenderer.sprite = _sprites[_spriteNum];
+    }
 }
