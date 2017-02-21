@@ -46,7 +46,7 @@ public class GoldController : MonoBehaviour, PlayerMovementListener
         }
 
         var spriteRenderer = GetComponent<SpriteRenderer>();
-        _spriteNum = Mathf.Clamp(--_spriteNum, 0, _sprites.Length - 1);
+        _spriteNum = Mathf.Clamp(_spriteNum -1, 0, _sprites.Length - 1);
         spriteRenderer.sprite = _sprites[_spriteNum];
     }
 
@@ -69,7 +69,7 @@ public class GoldController : MonoBehaviour, PlayerMovementListener
     {
         _gold = _gold + 10;
         var spriteRenderer = GetComponent<SpriteRenderer>();
-        _spriteNum = Mathf.Clamp(_spriteNum++, 0, _sprites.Length - 1);
+        _spriteNum = Mathf.Clamp(_spriteNum + 1, 0, _sprites.Length - 1);
         spriteRenderer.sprite = _sprites[_spriteNum];
     }
 }
