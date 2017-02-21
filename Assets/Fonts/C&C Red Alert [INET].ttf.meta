@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: c9af76bb5d09b1840b13112a39cfedda
+guid: bebd4b45e80b699459ab9f2ab5039819
 timeCreated: 1487609751
 licenseType: Free
 TrueTypeFontImporter:
@@ -12,8 +12,7 @@ TrueTypeFontImporter:
   fontName: C&C Red Alert [INET]
   fontNames:
   - C&C Red Alert [INET]
-  fallbackFontReferences:
-  - {fileID: 12800000, guid: bebd4b45e80b699459ab9f2ab5039819, type: 3}
+  fallbackFontReferences: []
   customCharacters: 
   fontRenderingMode: 0
   ascentCalculationMode: 1

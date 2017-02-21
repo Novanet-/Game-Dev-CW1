@@ -15,6 +15,8 @@ public class GameController : MonoBehaviour
 
     #region Private Fields
 
+    [SerializeField] private GameObject _pnlScoreboard;
+
     private const int Path = 0;
 
     private const int River = 2;
@@ -60,6 +62,8 @@ public class GameController : MonoBehaviour
 
     [SerializeField] private int _height;
     [SerializeField] private int _width;
+
+    private ScoreboardController _scoreboard;
 
     #endregion Private Fields
 
@@ -173,7 +177,7 @@ public class GameController : MonoBehaviour
                     case 'G':
                         tileToMake = _tilePrefabs[Gold];
                         break;
-                        
+
                     case 'W':
                         tileToMake = _tilePrefabs[Wall];
                         break;
@@ -203,6 +207,8 @@ public class GameController : MonoBehaviour
                 Tile tile = tileInstance.GetComponent<Tile>();
                 tile.Direction = facing;
                 GameGrid[x, y] = tile;
+
+                _scoreboard = _pnlScoreboard.GetComponent<ScoreboardController>();
 
                 //TODO: Assign data to each tile when created, to have different tile types
             }
@@ -235,6 +241,8 @@ public class GameController : MonoBehaviour
         _txtCurrentPlayer.text = CurrentPlayer.Id.ToString();
         _txtMovesLeft.text = PlayerMovesLeft.ToString();
         _txtTurnNumber.text = TurnNumber.ToString();
+        _scoreboard.UpdateScoreboard(PlayerControllers);
+        _scoreboard.UpdateCurrentTurn(CurrentPlayer);
     }
 
     #endregion Private Methods
