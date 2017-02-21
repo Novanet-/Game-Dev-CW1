@@ -31,8 +31,10 @@ public class River : Tile, PlayerMovementListener{
 
     private void MovePlayer(PlayerController player)
     {
-        if (player.PlayerMoves > -MOVESTOPUSH && player.PlayerMoves <= 0)
+        //hack to avoid PLayerMoves never decrementing when being pushed by a river that can't push a player
+        if (player.PlayerMoves > -(2 * MOVESTOPUSH) && player.PlayerMoves <= 0)
         {
+            player.PlayerMoves--;
             player.Move(Direction);
         }
     }
