@@ -7,7 +7,7 @@ public class River : Tile, PlayerMovementListener{
 
 
     // Use this for initialization
-	void Start ()
+	public override void  Start ()
 	{
 	    base.Start();
         this.AddPlayerMovementListener(this);

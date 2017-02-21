@@ -21,7 +21,7 @@ public class Tile : MonoBehaviour
 
     #region Private Methods
 
-    protected virtual void Start()
+    public virtual void Start()
     {
         var spriteRenderer = GetComponent<SpriteRenderer>();
         spriteRenderer.sprite = _sprites[Random.Range(0, _sprites.Length - 1)];
@@ -75,9 +75,9 @@ public class Tile : MonoBehaviour
     }
 
 
-    private List<PlayerMovementListener> _playerMovementListeners;
     private PlayerController _currentPlayer;
 
+    private List<PlayerMovementListener> _playerMovementListeners;
     public void AddPlayerMovementListener(PlayerMovementListener listener)
     {
         _playerMovementListeners.Add(listener);

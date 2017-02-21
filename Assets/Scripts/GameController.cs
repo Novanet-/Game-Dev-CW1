@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 using UnityEngine.UI;
 using Random = System.Random;
 
@@ -27,23 +28,24 @@ public class GameController : MonoBehaviour
     // P is a Path
     // W is Wall
     // R, S, T, U are River Tiles (Up, Down, Left, Right, respectively)
+    // C is a Player Spawn Point
     private readonly char[,] _map =
     {
         {'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W'},
-        {'W', 'P', 'P', 'P', 'P', 'G', 'W', 'W', 'W', 'P', 'P', 'P', 'P', 'P', 'G', 'W'},
-        {'W', 'P', 'W', 'W', 'P', 'W', 'W', 'P', 'P', 'P', 'W', 'P', 'W', 'P', 'W', 'W'},
+        {'W', 'P', 'P', 'P', 'P', 'G', 'W', 'G', 'W', 'P', 'P', 'P', 'P', 'P', 'G', 'W'},
+        {'W', 'P', 'W', 'W', 'P', 'W', 'W', 'P', 'P', 'P', 'W', 'C', 'W', 'P', 'W', 'W'},
         {'W', 'P', 'W', 'W', 'P', 'W', 'W', 'P', 'W', 'W', 'W', 'P', 'P', 'P', 'W', 'W'},
         {'U', 'U', 'U', 'U', 'U', 'U', 'U', 'U', 'S', 'P', 'P', 'P', 'W', 'W', 'W', 'W'},
-        {'U', 'U', 'U', 'U', 'U', 'U', 'S', 'U', 'S', 'W', 'W', 'W', 'W', 'W', 'W', 'W'},
-        {'W', 'P', 'P', 'P', 'P', 'P', 'S', 'W', 'S', 'W', 'W', 'W', 'W', 'W', 'G', 'W'},
-        {'W', 'P', 'P', 'P', 'P', 'P', 'P', 'W', 'S', 'P', 'P', 'P', 'P', 'W', 'P', 'W'},
-        {'W', 'P', 'P', 'P', 'P', 'P', 'P', 'W', 'S', 'W', 'W', 'P', 'W', 'W', 'P', 'W'},
-        {'W', 'P', 'P', 'P', 'P', 'P', 'P', 'W', 'U', 'P', 'P', 'P', 'P', 'W', 'P', 'W'},
-        {'W', 'P', 'P', 'P', 'P', 'P', 'P', 'W', 'P', 'W', 'P', 'W', 'P', 'P', 'P', 'W'},
-        {'W', 'P', 'P', 'P', 'P', 'P', 'P', 'P', 'P', 'W', 'P', 'W', 'W', 'P', 'W', 'W'},
-        {'W', 'P', 'P', 'P', 'P', 'P', 'P', 'P', 'P', 'W', 'P', 'P', 'P', 'P', 'W', 'W'},
-        {'W', 'P', 'P', 'P', 'P', 'P', 'P', 'P', 'P', 'W', 'W', 'P', 'W', 'W', 'W', 'W'},
-        {'W', 'P', 'P', 'P', 'P', 'P', 'P', 'P', 'P', 'P', 'P', 'P', 'P', 'P', 'P', 'W'},
+        {'U', 'U', 'U', 'U', 'U', 'U', 'S', 'U', 'S', 'W', 'G', 'W', 'W', 'W', 'W', 'W'},
+        {'W', 'W', 'G', 'R', 'W', 'W', 'S', 'W', 'S', 'W', 'W', 'W', 'W', 'W', 'G', 'W'},
+        {'W', 'G', 'W', 'R', 'W', 'G', 'S', 'W', 'S', 'P', 'P', 'P', 'G', 'W', 'P', 'W'},
+        {'W', 'P', 'W', 'R', 'W', 'W', 'S', 'W', 'S', 'W', 'W', 'P', 'W', 'W', 'P', 'W'},
+        {'W', 'P', 'W', 'R', 'S', 'T', 'T', 'W', 'U', 'P', 'P', 'C', 'P', 'W', 'P', 'W'},
+        {'W', 'P', 'W', 'P', 'W', 'P', 'W', 'W', 'P', 'W', 'P', 'W', 'P', 'P', 'P', 'W'},
+        {'W', 'P', 'P', 'P', 'W', 'P', 'P', 'P', 'P', 'W', 'P', 'W', 'W', 'P', 'W', 'W'},
+        {'W', 'C', 'P', 'W', 'P', 'P', 'W', 'W', 'P', 'W', 'P', 'P', 'P', 'P', 'W', 'W'},
+        {'W', 'W', 'P', 'P', 'P', 'W', 'W', 'G', 'P', 'W', 'W', 'P', 'W', 'W', 'W', 'W'},
+        {'W', 'G', 'P', 'W', 'P', 'P', 'G', 'W', 'C', 'P', 'P', 'P', 'P', 'P', 'G', 'W'},
         {'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W'}
     };
 
@@ -128,6 +130,18 @@ public class GameController : MonoBehaviour
         return GameGrid[x, y];
     }
 
+
+    private List<RoundEndListener> _roundEndListeners;
+    public void AddRoundEndListener(RoundEndListener listener)
+    {
+        _roundEndListeners.Add(listener);
+    }
+
+    public void RemoveRoundEndListener(RoundEndListener listener)
+    {
+        _roundEndListeners.Remove(listener);
+    }
+
     #endregion Public Methods
 
     #region Private Methods
@@ -150,15 +164,10 @@ public class GameController : MonoBehaviour
         if (ActivePlayerIndex == 0)
         {
             TurnNumber++;
-            Vector3 pos;
-            Tile tile;
-            do
+            foreach (RoundEndListener roundEndListener in _roundEndListeners)
             {
-                pos = new Vector3(UnityEngine.Random.Range(0, Width - 1), UnityEngine.Random.Range(0, Height - 1));
-                tile = GetGameTile((int)pos.x, (int)pos.y);
-            } while (!(tile.CurrentPlayer == null && tile.CanLandOn()));
-
-            Instantiate(CoinPrefab, pos, Quaternion.identity);
+                roundEndListener.OnRoundEnd(TurnNumber);
+            }
         }
     }
 
@@ -166,7 +175,11 @@ public class GameController : MonoBehaviour
     // Use this for initialization
     private void Start()
     {
+        _roundEndListeners = new List<RoundEndListener>();
         GameGrid = new Tile[Width, Height];
+        List<KeyValuePair<int, int>> PlayerSpawnLocations = new List<KeyValuePair<int, int>>();
+
+
         for (var x = 0; x <= GameGrid.GetUpperBound(0); x++)
             for (var y = 0; y <= GameGrid.GetUpperBound(1); y++)
             {
@@ -174,6 +187,9 @@ public class GameController : MonoBehaviour
                 Vector2 facing = Vector2.zero;
                 switch (_map[15 - y, x])
                 {
+                    case 'C':
+                        PlayerSpawnLocations.Add(new KeyValuePair<int, int>(x,y));
+                        break;
                     case 'G':
                         tileToMake = _tilePrefabs[Gold];
                         break;
@@ -184,19 +200,19 @@ public class GameController : MonoBehaviour
 
                     case 'R':
                         tileToMake = _tilePrefabs[River];
-                    facing = Vector2.up;
+                        facing = Vector2.up;
                         break;
                     case 'S':
                         tileToMake = _tilePrefabs[River];
-                    facing = Vector2.down;
+                        facing = Vector2.down;
                         break;
                     case 'T':
                         tileToMake = _tilePrefabs[River];
-                    facing = Vector2.left;
+                        facing = Vector2.left;
                         break;
                     case 'U':
                         tileToMake = _tilePrefabs[River];
-                    facing = Vector2.right;
+                        facing = Vector2.right;
                         break;
 
                     default:
@@ -217,7 +233,9 @@ public class GameController : MonoBehaviour
         ActivePlayerIndex = 0;
         for (var i = 0; i < PlayerControllers.Length; i++)
         {
-            GameObject playerInstance = Instantiate(PlayerPrefab, new Vector3(i + 1, i + 1, 0), Quaternion.identity);
+            int x = PlayerSpawnLocations[i].Key;
+            int y = PlayerSpawnLocations[i].Value;
+            GameObject playerInstance = Instantiate(PlayerPrefab, new Vector3(x, y, 0), Quaternion.identity);
             var playerController = playerInstance.GetComponent<PlayerController>();
             PlayerControllers[i] = playerController;
             playerController.Id = i + 1;

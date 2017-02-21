@@ -2,16 +2,22 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CoinSpawnerController : Tile
+public class CoinSpawnerController : Tile, RoundEndListener
 {
 
-    [SerializeField] private GameObject TilePrefab;
+    [SerializeField] private GameObject TilePrefab, GoldPrefab;
+    private GoldController gold;
 	// Use this for initialization
-	protected override void Start ()
+	public override void Start ()
 	{
         base.Start();
 	    GameObject tile = Instantiate(TilePrefab, transform);
         tile.transform.position = transform.position;
+
+        GameObject goldObject = Instantiate(GoldPrefab, transform);
+	    goldObject.transform.position = transform.position;
+	    gold = goldObject.GetComponent<GoldController>();
+	    gold.Tile  = this;
 
 	}
 	
@@ -19,4 +25,9 @@ public class CoinSpawnerController : Tile
 	void Update () {
 		
 	}
+
+    public void OnRoundEnd(int roundNumber)
+    {
+        gold.getGold();
+    }
 }
