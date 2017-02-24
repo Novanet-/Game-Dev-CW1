@@ -25,6 +25,10 @@ public class CoinSpawnerController : Tile, RoundEndListener
 	void Update () {
 		
 	}
+    public override void SetSprite(SpriteRenderer renderer)
+    {
+        renderer.sprite = _sprites[Random.Range(0, _sprites.Length - 1)];
+    }
 
     public void OnRoundEnd(int roundNumber)
     {

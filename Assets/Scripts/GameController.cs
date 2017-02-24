@@ -16,6 +16,13 @@ public class GameController : MonoBehaviour
 
     #region Private Fields
 
+    private static GameController _gameController;
+
+    public static GameController GetGameController()
+    {
+        return _gameController;
+    }
+
     [SerializeField] private GameObject _pnlScoreboard;
 
     private const int Path = 0;
@@ -33,7 +40,7 @@ public class GameController : MonoBehaviour
     {
         {'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W'},
         {'W', 'P', 'P', 'P', 'P', 'G', 'W', 'G', 'W', 'P', 'P', 'P', 'P', 'P', 'G', 'W'},
-        {'W', 'P', 'W', 'W', 'P', 'W', 'W', 'P', 'P', 'P', 'W', 'C', 'W', 'P', 'W', 'W'},
+        {'G', 'P', 'W', 'W', 'P', 'W', 'W', 'P', 'P', 'P', 'W', 'C', 'W', 'P', 'W', 'W'},
         {'W', 'P', 'W', 'W', 'P', 'W', 'W', 'P', 'W', 'W', 'W', 'P', 'P', 'P', 'W', 'W'},
         {'U', 'U', 'U', 'U', 'U', 'U', 'U', 'U', 'S', 'P', 'P', 'P', 'W', 'W', 'W', 'W'},
         {'U', 'U', 'U', 'U', 'U', 'U', 'S', 'U', 'S', 'W', 'G', 'W', 'W', 'W', 'W', 'W'},
@@ -43,7 +50,7 @@ public class GameController : MonoBehaviour
         {'W', 'P', 'W', 'R', 'S', 'T', 'T', 'W', 'U', 'P', 'P', 'C', 'P', 'W', 'P', 'W'},
         {'W', 'P', 'W', 'P', 'W', 'P', 'W', 'W', 'P', 'W', 'P', 'W', 'P', 'P', 'P', 'W'},
         {'W', 'P', 'P', 'P', 'W', 'P', 'P', 'P', 'P', 'W', 'P', 'W', 'W', 'P', 'W', 'W'},
-        {'W', 'C', 'P', 'W', 'P', 'P', 'W', 'W', 'P', 'W', 'P', 'P', 'P', 'P', 'W', 'W'},
+        {'W', 'W', 'C', 'W', 'P', 'P', 'W', 'W', 'P', 'W', 'P', 'P', 'P', 'P', 'W', 'W'},
         {'W', 'W', 'P', 'P', 'P', 'W', 'W', 'G', 'P', 'W', 'W', 'P', 'W', 'W', 'W', 'W'},
         {'W', 'G', 'P', 'W', 'P', 'P', 'G', 'W', 'C', 'P', 'P', 'P', 'P', 'P', 'G', 'W'},
         {'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W'}
@@ -52,9 +59,7 @@ public class GameController : MonoBehaviour
     [SerializeField] private int _dieNumber = 6;
     [SerializeField]
     private int _activePlayerIndex;
-    [SerializeField]
 
-    private PlayerController[] _playerControllers;
 
     [SerializeField] private GameObject[] _tilePrefabs;
 
@@ -71,8 +76,27 @@ public class GameController : MonoBehaviour
 
     #region Public Properties
 
-    public int ActivePlayerIndex { get; private set; }
-    public PlayerController CurrentPlayer { get; private set; }
+    public int ActivePlayerIndex
+    {
+        get { return _activePlayerIndex; }
+        private set { _activePlayerIndex = value % PlayerControllers.Length; }
+    }
+
+    public PlayerController CurrentPlayer
+    {
+        get { return PlayerControllers[ActivePlayerIndex]; }
+        private set
+        {
+            for (int i = 0; i < PlayerControllers.Length; i++)
+            {
+                if (value == PlayerControllers[i])
+                {
+                    _activePlayerIndex = i;
+                    return;
+                }
+            }
+        }
+    }
 
     public PlayerController[] PlayerControllers { get; private set; }
     public int PlayerMovesLeft { get; private set; }
@@ -98,8 +122,6 @@ public class GameController : MonoBehaviour
         // WASD control
         // We add the direction to our position,
         // this moves the character 1 unit (32 pixels)
-        CurrentPlayer = GetActivePlayer();
-
         PlayerMovesLeft = CurrentPlayer.PlayerMoves;
 
         if (Input.anyKey)
@@ -119,8 +141,6 @@ public class GameController : MonoBehaviour
             if (CurrentPlayer.PlayerMoves <= 0)
             {
                 NextTurn();
-                CurrentPlayer = GetActivePlayer();
-                CurrentPlayer.PlayerMoves = RollDice(_dieNumber);
             }
         }
     }
@@ -153,14 +173,11 @@ public class GameController : MonoBehaviour
         return rollDice;
     }
 
-    private PlayerController GetActivePlayer()
-    {
-        return PlayerControllers[ActivePlayerIndex];
-    }
 
     private void NextTurn()
     {
-        ActivePlayerIndex = (ActivePlayerIndex + 1) % PlayerControllers.Length;
+        CurrentPlayer.OnTurnEnd(this);
+        ActivePlayerIndex++; 
         if (ActivePlayerIndex == 0)
         {
             TurnNumber++;
@@ -169,12 +186,16 @@ public class GameController : MonoBehaviour
                 roundEndListener.OnRoundEnd(TurnNumber);
             }
         }
+        CurrentPlayer.PlayerMoves = RollDice(_dieNumber);
+        CurrentPlayer.OnTurnStart(this);
+
     }
 
 
     // Use this for initialization
     private void Start()
     {
+        GameController._gameController = this;
         _roundEndListeners = new List<RoundEndListener>();
         GameGrid = new Tile[Width, Height];
         List<KeyValuePair<int, int>> PlayerSpawnLocations = new List<KeyValuePair<int, int>>();
@@ -241,8 +262,8 @@ public class GameController : MonoBehaviour
             playerController.Id = i + 1;
         }
 
-        CurrentPlayer = GetActivePlayer();
         CurrentPlayer.PlayerMoves = RollDice(_dieNumber);
+        CurrentPlayer.OnTurnStart(this);
 
         TurnNumber = 1;
     }
@@ -264,4 +285,12 @@ public class GameController : MonoBehaviour
     }
 
     #endregion Private Methods
+
+    public bool IsInBounds(Vector3 pos)
+    {
+        return pos.x >= 0 &&
+               pos.y >= 0 &&
+               pos.x < Width &&
+               pos.y < Height;
+    }
 }
