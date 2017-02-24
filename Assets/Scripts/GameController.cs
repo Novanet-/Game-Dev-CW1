@@ -6,11 +6,19 @@ using Random = System.Random;
 
 public class GameController : MonoBehaviour
 {
+
     #region Public Fields
 
     public GameObject PlayerPrefab, CoinPrefab;
 
     #endregion Public Fields
+
+    #region Internal Fields
+
+    [SerializeField]
+    internal int DieNumber = 6;
+
+    #endregion Internal Fields
 
     #region Private Fields
 
@@ -53,25 +61,21 @@ public class GameController : MonoBehaviour
         {'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W'}
     };
 
+    [SerializeField]
+    private int _activePlayerIndex;
+    [SerializeField]
+    private int _height;
+    [SerializeField]
+    private PlayerController[] _playerControllers;
+    private List<RoundEndListener> _roundEndListeners;
+    [SerializeField]
+    private GameObject[] _tilePrefabs;
+    [SerializeField]
+    private Canvas _ui;
     [SerializeField] private int _dieNumber = 6;
     [SerializeField]
     private int _activePlayerIndex;
     private UIController _uiController;
-
-    [SerializeField] private Canvas _ui;
-
-    [SerializeField] private int _activePlayerIndex;
-
-    [SerializeField] internal int _dieNumber = 6;
-
-    [SerializeField] private int _height;
-
-    [SerializeField] private PlayerController[] _playerControllers;
-
-    private List<RoundEndListener> _roundEndListeners;
-
-    [SerializeField] private GameObject[] _tilePrefabs;
-
     [SerializeField] private int _width;
 
     //    public Transform GameBoard;
@@ -124,10 +128,6 @@ public class GameController : MonoBehaviour
 
     #endregion Public Properties
 
-    #region Public Constructors
-
-    #endregion Public Constructors
-
     #region Public Methods
 
     public void AddRoundEndListener(RoundEndListener listener)
@@ -177,11 +177,14 @@ public class GameController : MonoBehaviour
                 CurrentPlayer.Move(Vector2.down);
 
 
-            if (CurrentPlayer.PlayerMoves <= 0)
+            if (CurrentPlayer.PlayerMoves == 0)
             {
                 NextTurn();
                 CurrentPlayer = GetActivePlayer();
-                _uiController.OnClickRollDice();
+                _uiController.ToggleRollDice(true);
+                _uiController.ToggleSelectDie(false);
+                CurrentPlayer.PlayerMoves = -1;
+//                _uiController.OnClickRollDice();
             }
         }
     }
@@ -215,7 +218,7 @@ public class GameController : MonoBehaviour
         GameController._gameController = this;
         _roundEndListeners = new List<RoundEndListener>();
         GameGrid = new Tile[Width, Height];
-        List<KeyValuePair<int, int>> PlayerSpawnLocations = new List<KeyValuePair<int, int>>();
+        List<KeyValuePair<int, int>> playerSpawnLocations = new List<KeyValuePair<int, int>>();
 
 
         for (var x = 0; x <= GameGrid.GetUpperBound(0); x++)
@@ -226,7 +229,7 @@ public class GameController : MonoBehaviour
             switch (_map[15 - y, x])
             {
                 case 'C':
-                    PlayerSpawnLocations.Add(new KeyValuePair<int, int>(x, y));
+                    playerSpawnLocations.Add(new KeyValuePair<int, int>(x, y));
                     break;
                 case 'G':
                     tileToMake = _tilePrefabs[Gold];
@@ -257,13 +260,14 @@ public class GameController : MonoBehaviour
                     tileToMake = _tilePrefabs[Path];
                     break;
             }
+
             GameObject tileInstance = Instantiate(tileToMake, new Vector3(x, y, 0), Quaternion.identity);
             Tile tile = tileInstance.GetComponent<Tile>();
             tile.Direction = facing;
             GameGrid[x, y] = tile;
 
             _uiController = _ui.GetComponent<UIController>();
-            _uiController._gameController = this;
+            _uiController.GameController = this;
 
 
             //TODO: Assign data to each tile when created, to have different tile types
@@ -273,8 +277,8 @@ public class GameController : MonoBehaviour
         ActivePlayerIndex = 0;
         for (var i = 0; i < PlayerControllers.Length; i++)
         {
-            int x = PlayerSpawnLocations[i].Key;
-            int y = PlayerSpawnLocations[i].Value;
+            int x = playerSpawnLocations[i].Key;
+            int y = playerSpawnLocations[i].Value;
             GameObject playerInstance = Instantiate(PlayerPrefab, new Vector3(x, y, 0), Quaternion.identity);
             var playerController = playerInstance.GetComponent<PlayerController>();
             PlayerControllers[i] = playerController;
@@ -296,11 +300,4 @@ public class GameController : MonoBehaviour
 
     #endregion Private Methods
 
-    public bool IsInBounds(Vector3 pos)
-    {
-        return pos.x >= 0 &&
-               pos.y >= 0 &&
-               pos.x < Width &&
-               pos.y < Height;
-    }
 }

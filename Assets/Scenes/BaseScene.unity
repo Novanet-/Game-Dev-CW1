@@ -196,13 +196,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4c10aedcea624cd4899ec13c65280434, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _pnlScoreboard: {fileID: 1231776502}
   _txtCurrentPlayer: {fileID: 1635350310}
-  _txtMovesLeft: {fileID: 839623754}
-  _txtTurnNumber: {fileID: 1801164903}
   _txtDie1: {fileID: 779958291}
   _txtDie2: {fileID: 1531383348}
-  _pnlScoreboard: {fileID: 1231776502}
-  _gameController: {fileID: 0}
+  _btnRollDice: {fileID: 1978003252}
+  _btnDie1: {fileID: 1623461212}
+  _btnDie2: {fileID: 1933967169}
+  _txtMovesLeft: {fileID: 839623754}
+  _txtTurnNumber: {fileID: 1801164903}
 --- !u!222 &417302018
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1160,9 +1162,8 @@ MonoBehaviour:
   PlayerPrefab: {fileID: 1942373800801728, guid: 99c21b357ae2b894488c006bcde5322f,
     type: 2}
   CoinPrefab: {fileID: 1091708721671586, guid: 89de11eecc767aa41bca766e8daad9b3, type: 2}
-  _ui: {fileID: 417302021}
+  DieNumber: 6
   _activePlayerIndex: 0
-  _dieNumber: 6
   _height: 16
   _playerControllers: []
   _tilePrefabs:
@@ -1170,6 +1171,7 @@ MonoBehaviour:
   - {fileID: 1735148349812292, guid: 610839de9d5b4254cbe815a5156640c4, type: 2}
   - {fileID: 1428098173528816, guid: 8e6c88f666a29204cb8cb3b5d0c4a61b, type: 2}
   - {fileID: 1893418614078452, guid: 5c2474fdc5e5dd74cb264c8cf4605848, type: 2}
+  _ui: {fileID: 417302021}
   _width: 16
 --- !u!1 &1011403910
 GameObject:
@@ -1751,7 +1753,7 @@ MonoBehaviour:
     m_SelectOnRight: {fileID: 0}
   m_Transition: 1
   m_Colors:
-    m_NormalColor: {r: 0.6117647, g: 0.42745098, b: 0.2901961, a: 1}
+    m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
     m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
@@ -1796,7 +1798,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0.5882353, g: 0.41176474, b: 0.2784314, a: 1}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -2415,7 +2417,7 @@ MonoBehaviour:
     m_SelectOnRight: {fileID: 0}
   m_Transition: 1
   m_Colors:
-    m_NormalColor: {r: 0.6117647, g: 0.42745098, b: 0.2901961, a: 1}
+    m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
     m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
@@ -2435,7 +2437,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1003379306}
+      - m_Target: {fileID: 417302017}
         m_MethodName: OnClickChooseDice
         m_Mode: 3
         m_Arguments:
@@ -2460,7 +2462,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0.5882353, g: 0.41176474, b: 0.2784314, a: 1}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -2607,7 +2609,7 @@ MonoBehaviour:
     m_SelectOnRight: {fileID: 0}
   m_Transition: 1
   m_Colors:
-    m_NormalColor: {r: 0.6117647, g: 0.42745098, b: 0.2901961, a: 1}
+    m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
     m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
@@ -2652,7 +2654,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0.6117647, g: 0.427451, b: 0.2901961, a: 1}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
