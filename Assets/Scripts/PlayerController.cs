@@ -7,17 +7,19 @@ public class PlayerController : MonoBehaviour
 {
     #region Private Fields
 
-    public int Id { get;  set; }
-
-
     private GameController _gameController;
+    private HashSet<Tile> _glowignTiles;
 
     [SerializeField] private int _money;
 
     private Vector2 _pos;
+
     #endregion Private Fields
 
     #region Public Properties
+
+    public bool CanBePushed { get; set; }
+    public int Id { get; set; }
 
     public int Money
     {
@@ -25,7 +27,6 @@ public class PlayerController : MonoBehaviour
         set { _money = value; }
     }
 
-    public bool CanBePushed{ get; set; }
     public int PlayerMoves { get; set; }
 
     #endregion Public Properties
@@ -39,7 +40,7 @@ public class PlayerController : MonoBehaviour
         _pos = _pos + direction;
         _pos.x = Mathf.Clamp(_pos.x, 0, _gameController.Width - 1);
         _pos.y = Mathf.Clamp(_pos.y, 0, _gameController.Height - 1);
-        var newTile = _gameController.GetGameTile((int)_pos.x, (int)_pos.y);
+        Tile newTile = _gameController.GetGameTile((int) _pos.x, (int) _pos.y);
         if (newTile.CanLandOn())
         {
             PlayerMoves--;
@@ -57,66 +58,29 @@ public class PlayerController : MonoBehaviour
             oldTile.CurrentPlayer = this;
             Debug.Log("Staying at:" + _pos.x + " " + _pos.y);
         }
+    }
 
+    public void OnTurnEnd(GameController gameController)
+    {
+        foreach (Tile tile in _glowignTiles)
+            tile.StopGlowing();
+    }
 
+    public void OnTurnStart(GameController gameController)
+    {
+        _glowignTiles = GetPath(gameController.GetGameTile((int) transform.position.x, (int) transform.position.y), Vector3.zero, PlayerMoves);
+        foreach (Tile tile in _glowignTiles)
+            tile.Glow();
     }
 
     #endregion Public Methods
 
     #region Private Methods
 
-    private void Start()
-    {
-        _pos = transform.position;
-        CanBePushed = true;
-        _gameController = GameController.GetGameController();
-        Tile tile = _gameController.GetGameTile((int) _pos.x, (int) _pos.y);
-
-        if (tile.CanLandOn())
-        {
-            tile.CurrentPlayer = this;
-        }
-        else
-        {
-            throw new Exception("CurrentPlayer's Starting Position is Invalid!");
-        }
-
-//        Id = UnityEngine.Random.Range(0, 1000000);
-
-    }
-
-
-    // Update is called once per frame
-    private void Update()
-    {
-    }
-
-    #endregion Private Methods
-
-    private HashSet<Tile> _glowignTiles;
-    public void OnTurnStart(GameController gameController)
-    {
-
-        _glowignTiles = GetPath(gameController.GetGameTile((int) transform.position.x, (int)transform.position.y), Vector3.zero, PlayerMoves);
-        foreach (Tile tile in _glowignTiles)
-        {
-            tile.Glow();
-        }
-    }
-
-    public void OnTurnEnd(GameController gameController)
-    {
-        foreach (Tile tile in _glowignTiles)
-        {
-            tile.StopGlowing();
-        }
-    }
-
     private HashSet<Tile> GetPath(Tile tile, Vector3 lastDirection, int remainingMoves)
     {
-        HashSet<Tile> tiles = new HashSet<Tile>();
+        var tiles = new HashSet<Tile>();
         if (remainingMoves == 0)
-        {
             if (tile.CanLandOn())
             {
                 tiles.Add(tile);
@@ -126,15 +90,32 @@ public class PlayerController : MonoBehaviour
             {
                 return tiles;
             }
-        }
 
         foreach (KeyValuePair<Tile, Vector3> neighbour in tile.GetNeighbours())
-        {
             if (!neighbour.Value.Equals(-lastDirection))
-            {
                 tiles.UnionWith(GetPath(neighbour.Key, neighbour.Value, remainingMoves - 1));
-            }
-        }
         return tiles;
     }
+
+    private void Start()
+    {
+        _pos = transform.position;
+        CanBePushed = true;
+        _gameController = GameController.GetGameController();
+        Tile tile = _gameController.GetGameTile((int) _pos.x, (int) _pos.y);
+
+        if (tile.CanLandOn())
+            tile.CurrentPlayer = this;
+        else
+            throw new Exception("CurrentPlayer's Starting Position is Invalid!");
+
+        //        Id = UnityEngine.Random.Range(0, 1000000);
+    }
+
+    // Update is called once per frame
+    private void Update()
+    {
+    }
+
+    #endregion Private Methods
 }

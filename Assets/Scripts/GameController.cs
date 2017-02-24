@@ -3,7 +3,6 @@ using UnityEngine;
 
 public class GameController : MonoBehaviour
 {
-
     #region Public Fields
 
     public GameObject PlayerPrefab, CoinPrefab;
@@ -12,27 +11,17 @@ public class GameController : MonoBehaviour
 
     #region Internal Fields
 
-    [SerializeField]
-    internal int DieNumber = 6;
+    [SerializeField] internal int DieNumber = 6;
 
     #endregion Internal Fields
 
     #region Private Fields
 
     private const int Gold = 3;
-    private static GameController _gameController;
-
-    public static GameController GetGameController()
-    {
-        return _gameController;
-    }
-
-
     private const int Path = 0;
-
     private const int River = 2;
-
     private const int Wall = 1;
+    private static GameController _gameController;
 
     // P is a Path
     // W is Wall
@@ -58,29 +47,14 @@ public class GameController : MonoBehaviour
         {'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W'}
     };
 
-    [SerializeField]
-    private int _activePlayerIndex;
-
-    [SerializeField]
-    private int _height;
-
-    [SerializeField]
-    private PlayerController[] _playerControllers;
-
-    private List<RoundEndListener> _roundEndListeners;
-
-    [SerializeField]
-    private GameObject[] _tilePrefabs;
-
-    [SerializeField]
-    private Canvas _ui;
+    [SerializeField] private int _activePlayerIndex;
     [SerializeField] private int _dieNumber = 6;
-    [SerializeField]
-    private int _activePlayerIndex;
+    [SerializeField] private int _height;
+    private List<RoundEndListener> _roundEndListeners;
+    [SerializeField] private GameObject[] _tilePrefabs;
+    [SerializeField] private Canvas _ui;
     private UIController _uiController;
-
-    [SerializeField]
-    private int _width;
+    [SerializeField] private int _width;
 
     //    public Transform GameBoard;
     private Tile[,] GameGrid;
@@ -100,20 +74,14 @@ public class GameController : MonoBehaviour
         get { return PlayerControllers[ActivePlayerIndex]; }
         private set
         {
-            for (int i = 0; i < PlayerControllers.Length; i++)
-            {
+            for (var i = 0; i < PlayerControllers.Length; i++)
                 if (value == PlayerControllers[i])
                 {
                     _activePlayerIndex = i;
                     return;
                 }
-            }
         }
     }
-
-    public PlayerController[] PlayerControllers { get; private set; }
-    public int PlayerMovesLeft { get; private set; }
-    public int TurnNumber { get; private set; }
 
     public int Height
     {
@@ -121,19 +89,25 @@ public class GameController : MonoBehaviour
         private set { _height = value; }
     }
 
-    public PlayerController[] PlayerControllers { get; private set; }
-    public int PlayerMovesLeft { get; private set; }
-    public int TurnNumber { get; private set; }
-
     public int Width
     {
         get { return _width; }
         private set { _width = value; }
     }
 
+
+    public PlayerController[] PlayerControllers { get; private set; }
+    public int PlayerMovesLeft { get; private set; }
+    public int TurnNumber { get; private set; }
+
     #endregion Public Properties
 
     #region Public Methods
+
+    public static GameController GetGameController()
+    {
+        return _gameController;
+    }
 
     public void AddRoundEndListener(RoundEndListener listener)
     {
@@ -145,6 +119,14 @@ public class GameController : MonoBehaviour
         return GameGrid[x, y];
     }
 
+    public bool IsInBounds(Vector3 pos)
+    {
+        return pos.x >= 0 &&
+               pos.y >= 0 &&
+               pos.x < Width &&
+               pos.y < Height;
+    }
+
     public void RemoveRoundEndListener(RoundEndListener listener)
     {
         _roundEndListeners.Remove(listener);
@@ -152,7 +134,7 @@ public class GameController : MonoBehaviour
 
     public int RollDice(int d)
     {
-        int rollDice = UnityEngine.Random.Range(1, d + 1);
+        int rollDice = Random.Range(1, d + 1);
         Debug.Log(string.Format("Rolled a {0}", rollDice));
         return rollDice;
     }
@@ -201,82 +183,79 @@ public class GameController : MonoBehaviour
     private void NextTurn()
     {
         CurrentPlayer.OnTurnEnd(this);
-        ActivePlayerIndex++; 
+        ActivePlayerIndex++;
         if (ActivePlayerIndex == 0)
         {
             TurnNumber++;
             foreach (RoundEndListener roundEndListener in _roundEndListeners)
-            {
                 roundEndListener.OnRoundEnd(TurnNumber);
-            }
         }
         CurrentPlayer.PlayerMoves = RollDice(_dieNumber);
         CurrentPlayer.OnTurnStart(this);
-
     }
 
     // Use this for initialization
     private void Start()
     {
-        GameController._gameController = this;
+        _gameController = this;
         _roundEndListeners = new List<RoundEndListener>();
         GameGrid = new Tile[Width, Height];
-        List<KeyValuePair<int, int>> playerSpawnLocations = new List<KeyValuePair<int, int>>();
+        var playerSpawnLocations = new List<KeyValuePair<int, int>>();
 
         for (var x = 0; x <= GameGrid.GetUpperBound(0); x++)
-            for (var y = 0; y <= GameGrid.GetUpperBound(1); y++)
+        for (var y = 0; y <= GameGrid.GetUpperBound(1); y++)
+        {
+            GameObject tileToMake = _tilePrefabs[0];
+            Vector2 facing = Vector2.zero;
+            switch (_map[15 - y, x])
             {
-                GameObject tileToMake = _tilePrefabs[0];
-                Vector2 facing = Vector2.zero;
-                switch (_map[15 - y, x])
-                {
-                    case 'C':
-                        playerSpawnLocations.Add(new KeyValuePair<int, int>(x, y));
-                        break;
+                case 'C':
+                    playerSpawnLocations.Add(new KeyValuePair<int, int>(x, y));
+                    break;
 
-                    case 'G':
-                        tileToMake = _tilePrefabs[Gold];
-                        break;
+                case 'G':
+                    tileToMake = _tilePrefabs[Gold];
+                    break;
 
-                    case 'W':
-                        tileToMake = _tilePrefabs[Wall];
-                        break;
+                case 'W':
+                    tileToMake = _tilePrefabs[Wall];
+                    break;
 
-                    case 'R':
-                        tileToMake = _tilePrefabs[River];
-                        facing = Vector2.up;
-                        break;
+                case 'R':
+                    tileToMake = _tilePrefabs[River];
+                    facing = Vector2.up;
+                    break;
 
-                    case 'S':
-                        tileToMake = _tilePrefabs[River];
-                        facing = Vector2.down;
-                        break;
+                case 'S':
+                    tileToMake = _tilePrefabs[River];
+                    facing = Vector2.down;
+                    break;
 
-                    case 'T':
-                        tileToMake = _tilePrefabs[River];
-                        facing = Vector2.left;
-                        break;
+                case 'T':
+                    tileToMake = _tilePrefabs[River];
+                    facing = Vector2.left;
+                    break;
 
-                    case 'U':
-                        tileToMake = _tilePrefabs[River];
-                        facing = Vector2.right;
-                        break;
+                case 'U':
+                    tileToMake = _tilePrefabs[River];
+                    facing = Vector2.right;
+                    break;
 
-                    default:
-                        tileToMake = _tilePrefabs[Path];
-                        break;
-                }
-
-                GameObject tileInstance = Instantiate(tileToMake, new Vector3(x, y, 0), Quaternion.identity);
-                Tile tile = tileInstance.GetComponent<Tile>();
-                tile.Direction = facing;
-                GameGrid[x, y] = tile;
-
-                _uiController = _ui.GetComponent<UIController>();
-                _uiController.GameController = this;
-
-                //TODO: Assign data to each tile when created, to have different tile types
+                default:
+                    tileToMake = _tilePrefabs[Path];
+                    break;
             }
+
+            GameObject tileInstance = Instantiate(tileToMake, new Vector3(x, y, 0), Quaternion.identity);
+            var tile = tileInstance.GetComponent<Tile>();
+            tile.Direction = facing;
+            GameGrid[x, y] = tile;
+
+            _uiController = _ui.GetComponent<UIController>();
+            _uiController.GameController = this;
+
+            //TODO: Assign data to each tile when created, to have different tile types
+        }
 
         PlayerControllers = new PlayerController[4];
         ActivePlayerIndex = 0;
@@ -304,5 +283,4 @@ public class GameController : MonoBehaviour
     }
 
     #endregion Private Methods
-
 }

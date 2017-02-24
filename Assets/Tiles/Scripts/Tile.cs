@@ -4,40 +4,40 @@ using UnityEngine;
 
 public class Tile : MonoBehaviour
 {
-    #region Private Fields
+    #region Protected Fields
 
     [SerializeField] protected Sprite[] _sprites;
 
+    #endregion Protected Fields
+
+    #region Private Fields
+
+    private readonly HashSet<Vector3> _directions = new HashSet<Vector3>(new[] {Vector3.left, Vector3.right, Vector3.up, Vector3.down});
+
+    private PlayerController _currentPlayer;
+
+    private List<PlayerMovementListener> _playerMovementListeners;
+
     #endregion Private Fields
+
+    #region Public Properties
+
+    [CanBeNull] public PlayerController CurrentPlayer
+    {
+        get { return _currentPlayer; }
+        set { SetPlayer(value); }
+    }
+
+    public Vector2 Direction { get; set; }
+
+    #endregion Public Properties
 
     #region Public Methods
 
-    public virtual void LandedOn(PlayerController player)
+    public void AddPlayerMovementListener(PlayerMovementListener listener)
     {
-        Debug.Log("Landed on Tile at: " + transform.position.x + ", " + transform.position.y);
+        _playerMovementListeners.Add(listener);
     }
-
-    #endregion Public Methods
-
-    #region Private Methods
-
-    public virtual void Start()
-    {
-        SetSprite(GetComponent<SpriteRenderer>());
-        _playerMovementListeners = new List<PlayerMovementListener>();
-    }
-
-    public virtual void SetSprite(SpriteRenderer renderer)
-    {
-        int pos = 0;
-        if (transform.position.x % 2 < 0.6)
-            pos += 1;
-        if (transform.position.y % 2 < 0.6)
-            pos += 2;
-        renderer.sprite = _sprites[pos];
-    }
-
-    #endregion Private Methods
 
     public virtual bool CanLandOn()
     {
@@ -49,73 +49,32 @@ public class Tile : MonoBehaviour
         return true;
     }
 
-    [CanBeNull] public PlayerController CurrentPlayer
-    {
-        get { return _currentPlayer; }
-        set { SetPlayer(value); }
-    }
-
-    public Vector2 Direction { get; set; }
-
-
-    private void SetPlayer([CanBeNull] PlayerController newPlayer)
-    {
-        PlayerController oldPlayer = CurrentPlayer;
-        _currentPlayer = newPlayer;
-        if (oldPlayer == null && newPlayer != null)
-        {
-            foreach (PlayerMovementListener listener in _playerMovementListeners)
-            {
-                listener.PlayerLandsOn(newPlayer);
-            }
-        }
-        else if (oldPlayer == newPlayer && oldPlayer != null)
-        {
-
-            foreach (PlayerMovementListener listener in _playerMovementListeners)
-            {
-                listener.PlayerRemainsOn(newPlayer);
-            }
-        }
-        else if (oldPlayer != null && newPlayer == null)
-        {
-
-            foreach (PlayerMovementListener listener in _playerMovementListeners)
-            {
-                listener.PlayerLeaves(this.CurrentPlayer);
-            }
-        }
-
-    }
-
-    private readonly HashSet<Vector3> _directions = new HashSet<Vector3>(new Vector3[] {Vector3.left, Vector3.right, Vector3.up, Vector3.down});
     public List<KeyValuePair<Tile, Vector3>> GetNeighbours()
     {
-        List<KeyValuePair<Tile, Vector3>> nieghbours = new List<KeyValuePair<Tile, Vector3>>();
+        var nieghbours = new List<KeyValuePair<Tile, Vector3>>();
         GameController gameController = GameController.GetGameController();
         foreach (Vector3 direction in _directions)
         {
             Vector3 pos = transform.position + direction;
             if (gameController.IsInBounds(pos))
             {
-                Tile tile = gameController.GetGameTile((int)pos.x, (int)pos.y);
+                Tile tile = gameController.GetGameTile((int) pos.x, (int) pos.y);
                 if (tile.CanPassThrough())
-                {
                     nieghbours.Add(new KeyValuePair<Tile, Vector3>(tile, direction));
-                }
             }
         }
         return nieghbours;
-
     }
 
-
-    private PlayerController _currentPlayer;
-
-    private List<PlayerMovementListener> _playerMovementListeners;
-    public void AddPlayerMovementListener(PlayerMovementListener listener)
+    public void Glow()
     {
-        _playerMovementListeners.Add(listener);
+        var spriteRenderer = GetComponent<SpriteRenderer>();
+        spriteRenderer.color = Color.yellow;
+    }
+
+    public virtual void LandedOn(PlayerController player)
+    {
+        Debug.Log("Landed on Tile at: " + transform.position.x + ", " + transform.position.y);
     }
 
     public void RemovePlayerMovementListener(PlayerMovementListener listener)
@@ -123,15 +82,46 @@ public class Tile : MonoBehaviour
         _playerMovementListeners.Remove(listener);
     }
 
-    public void Glow()
+    public virtual void SetSprite(SpriteRenderer renderer)
     {
-        SpriteRenderer spriteRenderer = GetComponent<SpriteRenderer>();
-        spriteRenderer.color = Color.yellow;
+        var pos = 0;
+        if (transform.position.x % 2 < 0.6)
+            pos += 1;
+        if (transform.position.y % 2 < 0.6)
+            pos += 2;
+        renderer.sprite = _sprites[pos];
+    }
+
+    public virtual void Start()
+    {
+        SetSprite(GetComponent<SpriteRenderer>());
+        _playerMovementListeners = new List<PlayerMovementListener>();
     }
 
     public void StopGlowing()
     {
-        SpriteRenderer spriteRenderer = GetComponent<SpriteRenderer>();
+        var spriteRenderer = GetComponent<SpriteRenderer>();
         spriteRenderer.color = Color.white;
     }
+
+    #endregion Public Methods
+
+    #region Private Methods
+
+    private void SetPlayer([CanBeNull] PlayerController newPlayer)
+    {
+        PlayerController oldPlayer = CurrentPlayer;
+        _currentPlayer = newPlayer;
+        if (oldPlayer == null && newPlayer != null)
+            foreach (PlayerMovementListener listener in _playerMovementListeners)
+                listener.PlayerLandsOn(newPlayer);
+        else if (oldPlayer == newPlayer && oldPlayer != null)
+            foreach (PlayerMovementListener listener in _playerMovementListeners)
+                listener.PlayerRemainsOn(newPlayer);
+        else if (oldPlayer != null && newPlayer == null)
+            foreach (PlayerMovementListener listener in _playerMovementListeners)
+                listener.PlayerLeaves(CurrentPlayer);
+    }
+
+    #endregion Private Methods
 }
