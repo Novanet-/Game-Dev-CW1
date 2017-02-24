@@ -19,6 +19,11 @@ public class River : Tile, PlayerMovementListener{
 		
 	}
 
+    public override void SetSprite(SpriteRenderer renderer)
+    {
+        renderer.sprite = _sprites[Random.Range(0, _sprites.Length)];
+    }
+
     public void PlayerLandsOn(PlayerController player)
     {
         MovePlayer(player);

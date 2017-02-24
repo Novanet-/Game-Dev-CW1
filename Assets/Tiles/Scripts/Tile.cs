@@ -6,7 +6,7 @@ public class Tile : MonoBehaviour
 {
     #region Private Fields
 
-    [SerializeField] private Sprite[] _sprites;
+    [SerializeField] protected Sprite[] _sprites;
 
     #endregion Private Fields
 
@@ -23,9 +23,18 @@ public class Tile : MonoBehaviour
 
     public virtual void Start()
     {
-        var spriteRenderer = GetComponent<SpriteRenderer>();
-        spriteRenderer.sprite = _sprites[Random.Range(0, _sprites.Length - 1)];
+        SetSprite(GetComponent<SpriteRenderer>());
         _playerMovementListeners = new List<PlayerMovementListener>();
+    }
+
+    public virtual void SetSprite(SpriteRenderer renderer)
+    {
+        int pos = 0;
+        if (transform.position.x % 2 < 0.6)
+            pos += 1;
+        if (transform.position.y % 2 < 0.6)
+            pos += 2;
+        renderer.sprite = _sprites[pos];
     }
 
     #endregion Private Methods
@@ -33,6 +42,11 @@ public class Tile : MonoBehaviour
     public virtual bool CanLandOn()
     {
         return CurrentPlayer == null;
+    }
+
+    public virtual bool CanPassThrough()
+    {
+        return true;
     }
 
     [CanBeNull] public PlayerController CurrentPlayer
@@ -74,6 +88,27 @@ public class Tile : MonoBehaviour
 
     }
 
+    private readonly HashSet<Vector3> _directions = new HashSet<Vector3>(new Vector3[] {Vector3.left, Vector3.right, Vector3.up, Vector3.down});
+    public List<KeyValuePair<Tile, Vector3>> GetNeighbours()
+    {
+        List<KeyValuePair<Tile, Vector3>> nieghbours = new List<KeyValuePair<Tile, Vector3>>();
+        GameController gameController = GameController.GetGameController();
+        foreach (Vector3 direction in _directions)
+        {
+            Vector3 pos = transform.position + direction;
+            if (gameController.IsInBounds(pos))
+            {
+                Tile tile = gameController.GetGameTile((int)pos.x, (int)pos.y);
+                if (tile.CanPassThrough())
+                {
+                    nieghbours.Add(new KeyValuePair<Tile, Vector3>(tile, direction));
+                }
+            }
+        }
+        return nieghbours;
+
+    }
+
 
     private PlayerController _currentPlayer;
 
@@ -86,5 +121,17 @@ public class Tile : MonoBehaviour
     public void RemovePlayerMovementListener(PlayerMovementListener listener)
     {
         _playerMovementListeners.Remove(listener);
+    }
+
+    public void Glow()
+    {
+        SpriteRenderer spriteRenderer = GetComponent<SpriteRenderer>();
+        spriteRenderer.color = Color.yellow;
+    }
+
+    public void StopGlowing()
+    {
+        SpriteRenderer spriteRenderer = GetComponent<SpriteRenderer>();
+        spriteRenderer.color = Color.white;
     }
 }

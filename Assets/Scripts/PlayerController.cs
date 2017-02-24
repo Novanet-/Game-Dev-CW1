@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
@@ -68,8 +69,7 @@ public class PlayerController : MonoBehaviour
     {
         _pos = transform.position;
         CanBePushed = true;
-        GameObject GameBoard = GameObject.Find("GameBoard");
-        _gameController = GameBoard.GetComponent<GameController>();
+        _gameController = GameController.GetGameController();
         Tile tile = _gameController.GetGameTile((int) _pos.x, (int) _pos.y);
 
         if (tile.CanLandOn())
@@ -92,4 +92,49 @@ public class PlayerController : MonoBehaviour
     }
 
     #endregion Private Methods
+
+    private HashSet<Tile> _glowignTiles;
+    public void OnTurnStart(GameController gameController)
+    {
+
+        _glowignTiles = GetPath(gameController.GetGameTile((int) transform.position.x, (int)transform.position.y), Vector3.zero, PlayerMoves);
+        foreach (Tile tile in _glowignTiles)
+        {
+            tile.Glow();
+        }
+    }
+
+    public void OnTurnEnd(GameController gameController)
+    {
+        foreach (Tile tile in _glowignTiles)
+        {
+            tile.StopGlowing();
+        }
+    }
+
+    private HashSet<Tile> GetPath(Tile tile, Vector3 lastDirection, int remainingMoves)
+    {
+        HashSet<Tile> tiles = new HashSet<Tile>();
+        if (remainingMoves == 0)
+        {
+            if (tile.CanLandOn())
+            {
+                tiles.Add(tile);
+                return tiles;
+            }
+            else
+            {
+                return tiles;
+            }
+        }
+
+        foreach (KeyValuePair<Tile, Vector3> neighbour in tile.GetNeighbours())
+        {
+            if (!neighbour.Value.Equals(-lastDirection))
+            {
+                tiles.UnionWith(GetPath(neighbour.Key, neighbour.Value, remainingMoves - 1));
+            }
+        }
+        return tiles;
+    }
 }
