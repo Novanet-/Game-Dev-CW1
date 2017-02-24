@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using Random = System.Random;
@@ -7,15 +8,13 @@ public class GameController : MonoBehaviour
 {
     #region Public Fields
 
-    //    public Transform GameBoard;
-    private Tile[,] GameGrid;
-
     public GameObject PlayerPrefab, CoinPrefab;
 
     #endregion Public Fields
 
     #region Private Fields
 
+    private const int Gold = 3;
     private static GameController _gameController;
 
     public static GameController GetGameController()
@@ -23,14 +22,12 @@ public class GameController : MonoBehaviour
         return _gameController;
     }
 
-    [SerializeField] private GameObject _pnlScoreboard;
 
     private const int Path = 0;
 
     private const int River = 2;
 
     private const int Wall = 1;
-    private const int Gold = 3;
 
     // P is a Path
     // W is Wall
@@ -59,18 +56,26 @@ public class GameController : MonoBehaviour
     [SerializeField] private int _dieNumber = 6;
     [SerializeField]
     private int _activePlayerIndex;
+    private UIController _uiController;
 
+    [SerializeField] private Canvas _ui;
+
+    [SerializeField] private int _activePlayerIndex;
+
+    [SerializeField] internal int _dieNumber = 6;
+
+    [SerializeField] private int _height;
+
+    [SerializeField] private PlayerController[] _playerControllers;
+
+    private List<RoundEndListener> _roundEndListeners;
 
     [SerializeField] private GameObject[] _tilePrefabs;
 
-    [SerializeField] private Text _txtCurrentPlayer;
-    [SerializeField] private Text _txtMovesLeft;
-    [SerializeField] private Text _txtTurnNumber;
-
-    [SerializeField] private int _height;
     [SerializeField] private int _width;
 
-    private ScoreboardController _scoreboard;
+    //    public Transform GameBoard;
+    private Tile[,] GameGrid;
 
     #endregion Private Fields
 
@@ -107,6 +112,10 @@ public class GameController : MonoBehaviour
         get { return _height; }
         private set { _height = value; }
     }
+
+    public PlayerController[] PlayerControllers { get; private set; }
+    public int PlayerMovesLeft { get; private set; }
+    public int TurnNumber { get; private set; }
     public int Width
     {
         get { return _width; }
@@ -115,7 +124,37 @@ public class GameController : MonoBehaviour
 
     #endregion Public Properties
 
+    #region Public Constructors
+
+    #endregion Public Constructors
+
     #region Public Methods
+
+    public void AddRoundEndListener(RoundEndListener listener)
+    {
+        _roundEndListeners.Add(listener);
+    }
+
+    public Tile GetGameTile(int x, int y)
+    {
+        return GameGrid[x, y];
+    }
+
+    public void RemoveRoundEndListener(RoundEndListener listener)
+    {
+        _roundEndListeners.Remove(listener);
+    }
+
+    public int RollDice(int d)
+    {
+        int rollDice = UnityEngine.Random.Range(1, d + 1);
+        Debug.Log(string.Format("Rolled a {0}", rollDice));
+        return rollDice;
+    }
+
+    #endregion Public Methods
+
+    #region Private Methods
 
     private void CheckInput()
     {
@@ -141,38 +180,16 @@ public class GameController : MonoBehaviour
             if (CurrentPlayer.PlayerMoves <= 0)
             {
                 NextTurn();
+                CurrentPlayer = GetActivePlayer();
+                _uiController.OnClickRollDice();
             }
         }
     }
 
-    public Tile GetGameTile(int x, int y)
+    private PlayerController GetActivePlayer()
     {
-        return GameGrid[x, y];
+        return PlayerControllers[ActivePlayerIndex];
     }
-
-
-    private List<RoundEndListener> _roundEndListeners;
-    public void AddRoundEndListener(RoundEndListener listener)
-    {
-        _roundEndListeners.Add(listener);
-    }
-
-    public void RemoveRoundEndListener(RoundEndListener listener)
-    {
-        _roundEndListeners.Remove(listener);
-    }
-
-    #endregion Public Methods
-
-    #region Private Methods
-
-    private static int RollDice(int d)
-    {
-        int rollDice = new Random().Next(1, d);
-        Debug.Log(string.Format("Rolled a {0}", rollDice));
-        return rollDice;
-    }
-
 
     private void NextTurn()
     {
@@ -202,53 +219,55 @@ public class GameController : MonoBehaviour
 
 
         for (var x = 0; x <= GameGrid.GetUpperBound(0); x++)
-            for (var y = 0; y <= GameGrid.GetUpperBound(1); y++)
+        for (var y = 0; y <= GameGrid.GetUpperBound(1); y++)
+        {
+            GameObject tileToMake = _tilePrefabs[0];
+            Vector2 facing = Vector2.zero;
+            switch (_map[15 - y, x])
             {
-                GameObject tileToMake = _tilePrefabs[0];
-                Vector2 facing = Vector2.zero;
-                switch (_map[15 - y, x])
-                {
-                    case 'C':
-                        PlayerSpawnLocations.Add(new KeyValuePair<int, int>(x,y));
-                        break;
-                    case 'G':
-                        tileToMake = _tilePrefabs[Gold];
-                        break;
+                case 'C':
+                    PlayerSpawnLocations.Add(new KeyValuePair<int, int>(x, y));
+                    break;
+                case 'G':
+                    tileToMake = _tilePrefabs[Gold];
+                    break;
 
-                    case 'W':
-                        tileToMake = _tilePrefabs[Wall];
-                        break;
+                case 'W':
+                    tileToMake = _tilePrefabs[Wall];
+                    break;
 
-                    case 'R':
-                        tileToMake = _tilePrefabs[River];
-                        facing = Vector2.up;
-                        break;
-                    case 'S':
-                        tileToMake = _tilePrefabs[River];
-                        facing = Vector2.down;
-                        break;
-                    case 'T':
-                        tileToMake = _tilePrefabs[River];
-                        facing = Vector2.left;
-                        break;
-                    case 'U':
-                        tileToMake = _tilePrefabs[River];
-                        facing = Vector2.right;
-                        break;
+                case 'R':
+                    tileToMake = _tilePrefabs[River];
+                    facing = Vector2.up;
+                    break;
+                case 'S':
+                    tileToMake = _tilePrefabs[River];
+                    facing = Vector2.down;
+                    break;
+                case 'T':
+                    tileToMake = _tilePrefabs[River];
+                    facing = Vector2.left;
+                    break;
+                case 'U':
+                    tileToMake = _tilePrefabs[River];
+                    facing = Vector2.right;
+                    break;
 
-                    default:
-                        tileToMake = _tilePrefabs[Path];
-                        break;
-                }
-                GameObject tileInstance = Instantiate(tileToMake, new Vector3(x, y, 0), Quaternion.identity);
-                Tile tile = tileInstance.GetComponent<Tile>();
-                tile.Direction = facing;
-                GameGrid[x, y] = tile;
-
-                _scoreboard = _pnlScoreboard.GetComponent<ScoreboardController>();
-
-                //TODO: Assign data to each tile when created, to have different tile types
+                default:
+                    tileToMake = _tilePrefabs[Path];
+                    break;
             }
+            GameObject tileInstance = Instantiate(tileToMake, new Vector3(x, y, 0), Quaternion.identity);
+            Tile tile = tileInstance.GetComponent<Tile>();
+            tile.Direction = facing;
+            GameGrid[x, y] = tile;
+
+            _uiController = _ui.GetComponent<UIController>();
+            _uiController._gameController = this;
+
+
+            //TODO: Assign data to each tile when created, to have different tile types
+        }
 
         PlayerControllers = new PlayerController[4];
         ActivePlayerIndex = 0;
@@ -271,17 +290,8 @@ public class GameController : MonoBehaviour
     // Update is called once per frame
     private void Update()
     {
-        UpdateUI();
+        _uiController.UpdateUI(this);
         CheckInput();
-    }
-
-    private void UpdateUI()
-    {
-        _txtCurrentPlayer.text = CurrentPlayer.Id.ToString();
-        _txtMovesLeft.text = PlayerMovesLeft.ToString();
-        _txtTurnNumber.text = TurnNumber.ToString();
-        _scoreboard.UpdateScoreboard(PlayerControllers);
-        _scoreboard.UpdateCurrentTurn(CurrentPlayer);
     }
 
     #endregion Private Methods
