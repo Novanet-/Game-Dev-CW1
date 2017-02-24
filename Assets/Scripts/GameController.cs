@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
-using Random = System.Random;
 
 public class GameController : MonoBehaviour
 {
@@ -63,20 +60,27 @@ public class GameController : MonoBehaviour
 
     [SerializeField]
     private int _activePlayerIndex;
+
     [SerializeField]
     private int _height;
+
     [SerializeField]
     private PlayerController[] _playerControllers;
+
     private List<RoundEndListener> _roundEndListeners;
+
     [SerializeField]
     private GameObject[] _tilePrefabs;
+
     [SerializeField]
     private Canvas _ui;
     [SerializeField] private int _dieNumber = 6;
     [SerializeField]
     private int _activePlayerIndex;
     private UIController _uiController;
-    [SerializeField] private int _width;
+
+    [SerializeField]
+    private int _width;
 
     //    public Transform GameBoard;
     private Tile[,] GameGrid;
@@ -120,6 +124,7 @@ public class GameController : MonoBehaviour
     public PlayerController[] PlayerControllers { get; private set; }
     public int PlayerMovesLeft { get; private set; }
     public int TurnNumber { get; private set; }
+
     public int Width
     {
         get { return _width; }
@@ -176,7 +181,6 @@ public class GameController : MonoBehaviour
             else if (Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.DownArrow))
                 CurrentPlayer.Move(Vector2.down);
 
-
             if (CurrentPlayer.PlayerMoves == 0)
             {
                 NextTurn();
@@ -184,7 +188,7 @@ public class GameController : MonoBehaviour
                 _uiController.ToggleRollDice(true);
                 _uiController.ToggleSelectDie(false);
                 CurrentPlayer.PlayerMoves = -1;
-//                _uiController.OnClickRollDice();
+                //                _uiController.OnClickRollDice();
             }
         }
     }
@@ -211,7 +215,6 @@ public class GameController : MonoBehaviour
 
     }
 
-
     // Use this for initialization
     private void Start()
     {
@@ -220,58 +223,60 @@ public class GameController : MonoBehaviour
         GameGrid = new Tile[Width, Height];
         List<KeyValuePair<int, int>> playerSpawnLocations = new List<KeyValuePair<int, int>>();
 
-
         for (var x = 0; x <= GameGrid.GetUpperBound(0); x++)
-        for (var y = 0; y <= GameGrid.GetUpperBound(1); y++)
-        {
-            GameObject tileToMake = _tilePrefabs[0];
-            Vector2 facing = Vector2.zero;
-            switch (_map[15 - y, x])
+            for (var y = 0; y <= GameGrid.GetUpperBound(1); y++)
             {
-                case 'C':
-                    playerSpawnLocations.Add(new KeyValuePair<int, int>(x, y));
-                    break;
-                case 'G':
-                    tileToMake = _tilePrefabs[Gold];
-                    break;
+                GameObject tileToMake = _tilePrefabs[0];
+                Vector2 facing = Vector2.zero;
+                switch (_map[15 - y, x])
+                {
+                    case 'C':
+                        playerSpawnLocations.Add(new KeyValuePair<int, int>(x, y));
+                        break;
 
-                case 'W':
-                    tileToMake = _tilePrefabs[Wall];
-                    break;
+                    case 'G':
+                        tileToMake = _tilePrefabs[Gold];
+                        break;
 
-                case 'R':
-                    tileToMake = _tilePrefabs[River];
-                    facing = Vector2.up;
-                    break;
-                case 'S':
-                    tileToMake = _tilePrefabs[River];
-                    facing = Vector2.down;
-                    break;
-                case 'T':
-                    tileToMake = _tilePrefabs[River];
-                    facing = Vector2.left;
-                    break;
-                case 'U':
-                    tileToMake = _tilePrefabs[River];
-                    facing = Vector2.right;
-                    break;
+                    case 'W':
+                        tileToMake = _tilePrefabs[Wall];
+                        break;
 
-                default:
-                    tileToMake = _tilePrefabs[Path];
-                    break;
+                    case 'R':
+                        tileToMake = _tilePrefabs[River];
+                        facing = Vector2.up;
+                        break;
+
+                    case 'S':
+                        tileToMake = _tilePrefabs[River];
+                        facing = Vector2.down;
+                        break;
+
+                    case 'T':
+                        tileToMake = _tilePrefabs[River];
+                        facing = Vector2.left;
+                        break;
+
+                    case 'U':
+                        tileToMake = _tilePrefabs[River];
+                        facing = Vector2.right;
+                        break;
+
+                    default:
+                        tileToMake = _tilePrefabs[Path];
+                        break;
+                }
+
+                GameObject tileInstance = Instantiate(tileToMake, new Vector3(x, y, 0), Quaternion.identity);
+                Tile tile = tileInstance.GetComponent<Tile>();
+                tile.Direction = facing;
+                GameGrid[x, y] = tile;
+
+                _uiController = _ui.GetComponent<UIController>();
+                _uiController.GameController = this;
+
+                //TODO: Assign data to each tile when created, to have different tile types
             }
-
-            GameObject tileInstance = Instantiate(tileToMake, new Vector3(x, y, 0), Quaternion.identity);
-            Tile tile = tileInstance.GetComponent<Tile>();
-            tile.Direction = facing;
-            GameGrid[x, y] = tile;
-
-            _uiController = _ui.GetComponent<UIController>();
-            _uiController.GameController = this;
-
-
-            //TODO: Assign data to each tile when created, to have different tile types
-        }
 
         PlayerControllers = new PlayerController[4];
         ActivePlayerIndex = 0;
