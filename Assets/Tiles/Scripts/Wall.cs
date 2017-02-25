@@ -8,4 +8,9 @@ public class Wall : Tile
         Debug.Log(("Calling Wall CanLandOn"));
         return false;
     }
+
+    public override bool CanPassThrough()
+    {
+        return false;
+    }
 }

@@ -1,131 +1,117 @@
-﻿using UnityEngine;
-using UnityEngine.UI;
-using Random = System.Random;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 public class GameController : MonoBehaviour
 {
     #region Public Fields
 
-    //    public Transform GameBoard;
-    public Tile[,] GameGrid;
-
     public GameObject PlayerPrefab, CoinPrefab;
 
     #endregion Public Fields
 
+    #region Internal Fields
+
+    [SerializeField] internal int DieNumber = 6;
+
+    #endregion Internal Fields
+
     #region Private Fields
 
+    private const int Gold = 3;
     private const int Path = 0;
-
     private const int River = 2;
-
     private const int Wall = 1;
+    private static GameController _gameController;
 
     // P is a Path
     // W is Wall
     // R, S, T, U are River Tiles (Up, Down, Left, Right, respectively)
+    // C is a Player Spawn Point
     private readonly char[,] _map =
     {
         {'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W'},
-        {'W', 'P', 'P', 'P', 'P', 'P', 'W', 'W', 'W', 'P', 'P', 'P', 'P', 'P', 'P', 'W'},
-        {'W', 'P', 'W', 'W', 'P', 'W', 'W', 'P', 'P', 'P', 'W', 'P', 'W', 'P', 'W', 'W'},
+        {'W', 'P', 'P', 'P', 'P', 'G', 'W', 'G', 'W', 'P', 'P', 'P', 'P', 'P', 'G', 'W'},
+        {'G', 'P', 'W', 'W', 'P', 'W', 'W', 'P', 'P', 'P', 'W', 'C', 'W', 'P', 'W', 'W'},
         {'W', 'P', 'W', 'W', 'P', 'W', 'W', 'P', 'W', 'W', 'W', 'P', 'P', 'P', 'W', 'W'},
         {'U', 'U', 'U', 'U', 'U', 'U', 'U', 'U', 'S', 'P', 'P', 'P', 'W', 'W', 'W', 'W'},
-        {'U', 'U', 'U', 'U', 'U', 'U', 'S', 'U', 'S', 'W', 'W', 'W', 'W', 'W', 'W', 'W'},
-        {'W', 'P', 'P', 'P', 'P', 'P', 'S', 'W', 'S', 'W', 'W', 'W', 'W', 'W', 'P', 'W'},
-        {'W', 'P', 'P', 'P', 'P', 'P', 'P', 'W', 'S', 'P', 'P', 'P', 'P', 'W', 'P', 'W'},
-        {'W', 'P', 'P', 'P', 'P', 'P', 'P', 'W', 'S', 'W', 'W', 'P', 'W', 'W', 'P', 'W'},
-        {'W', 'P', 'P', 'P', 'P', 'P', 'P', 'W', 'U', 'P', 'P', 'P', 'P', 'W', 'P', 'W'},
-        {'W', 'P', 'P', 'P', 'P', 'P', 'P', 'W', 'P', 'W', 'P', 'W', 'P', 'P', 'P', 'W'},
-        {'W', 'P', 'P', 'P', 'P', 'P', 'P', 'P', 'P', 'W', 'P', 'W', 'W', 'P', 'W', 'W'},
-        {'W', 'P', 'P', 'P', 'P', 'P', 'P', 'P', 'P', 'W', 'P', 'P', 'P', 'P', 'W', 'W'},
-        {'W', 'P', 'P', 'P', 'P', 'P', 'P', 'P', 'P', 'W', 'W', 'P', 'W', 'W', 'W', 'W'},
-        {'W', 'P', 'P', 'P', 'P', 'P', 'P', 'P', 'P', 'P', 'P', 'P', 'P', 'P', 'P', 'W'},
+        {'U', 'U', 'U', 'U', 'U', 'U', 'S', 'U', 'S', 'W', 'G', 'W', 'W', 'W', 'W', 'W'},
+        {'W', 'W', 'G', 'R', 'W', 'W', 'S', 'W', 'S', 'W', 'W', 'W', 'W', 'W', 'G', 'W'},
+        {'W', 'G', 'W', 'R', 'W', 'G', 'S', 'W', 'S', 'P', 'P', 'P', 'G', 'W', 'P', 'W'},
+        {'W', 'P', 'W', 'R', 'W', 'W', 'S', 'W', 'S', 'W', 'W', 'P', 'W', 'W', 'P', 'W'},
+        {'W', 'P', 'W', 'R', 'S', 'T', 'T', 'W', 'U', 'P', 'P', 'C', 'P', 'W', 'P', 'W'},
+        {'W', 'P', 'W', 'P', 'W', 'P', 'W', 'W', 'P', 'W', 'P', 'W', 'P', 'P', 'P', 'W'},
+        {'W', 'P', 'P', 'P', 'W', 'P', 'P', 'P', 'P', 'W', 'P', 'W', 'W', 'P', 'W', 'W'},
+        {'W', 'W', 'C', 'W', 'P', 'P', 'W', 'W', 'P', 'W', 'P', 'P', 'P', 'P', 'W', 'W'},
+        {'W', 'W', 'P', 'P', 'P', 'W', 'W', 'G', 'P', 'W', 'W', 'P', 'W', 'W', 'W', 'W'},
+        {'W', 'G', 'P', 'W', 'P', 'P', 'G', 'W', 'C', 'P', 'P', 'P', 'P', 'P', 'G', 'W'},
         {'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W'}
     };
 
+    [SerializeField] private int _activePlayerIndex;
     [SerializeField] private int _dieNumber = 6;
-
-    [SerializeField] private GameObject[] _tilePrefabs;
-
-    [SerializeField] private Text _txtCurrentPlayer;
-    [SerializeField] private Text _txtMovesLeft;
-    [SerializeField] private Text _txtTurnNumber;
-
     [SerializeField] private int _height;
+    private List<RoundEndListener> _roundEndListeners;
+    [SerializeField] private GameObject[] _tilePrefabs;
+    [SerializeField] private Canvas _ui;
+    private UIController _uiController;
     [SerializeField] private int _width;
+
+    //    public Transform GameBoard;
+    private Tile[,] GameGrid;
 
     #endregion Private Fields
 
     #region Public Properties
 
-    public int ActivePlayerIndex { get; private set; }
-    public PlayerController CurrentPlayer { get; private set; }
+    public int ActivePlayerIndex
+    {
+        get { return _activePlayerIndex; }
+        private set { _activePlayerIndex = value % PlayerControllers.Length; }
+    }
 
-    public PlayerController[] PlayerControllers { get; private set; }
-    public int PlayerMovesLeft { get; private set; }
-    public int TurnNumber { get; private set; }
+    public PlayerController CurrentPlayer
+    {
+        get { return PlayerControllers[ActivePlayerIndex]; }
+        private set
+        {
+            for (var i = 0; i < PlayerControllers.Length; i++)
+                if (value == PlayerControllers[i])
+                {
+                    _activePlayerIndex = i;
+                    return;
+                }
+        }
+    }
 
     public int Height
     {
         get { return _height; }
         private set { _height = value; }
     }
+
     public int Width
     {
         get { return _width; }
         private set { _width = value; }
     }
 
+
+    public PlayerController[] PlayerControllers { get; private set; }
+    public int PlayerMovesLeft { get; private set; }
+    public int TurnNumber { get; private set; }
+
     #endregion Public Properties
 
     #region Public Methods
 
-    public void CheckInput()
+    public static GameController GetGameController()
     {
-        // WASD control
-        // We add the direction to our position,
-        // this moves the character 1 unit (32 pixels)
-        Vector2 direction = Vector2.zero;
-        var moved = false;
+        return _gameController;
+    }
 
-        CurrentPlayer = GetActivePlayer();
-
-        PlayerMovesLeft = CurrentPlayer.PlayerMoves;
-
-        if (Input.anyKey)
-        {
-            if (Input.GetKeyDown(KeyCode.Space))
-            {
-                moved = true;
-            }
-            else
-            {
-                if (Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.RightArrow))
-                    direction = SetupMove(Vector2.right, ref moved);
-
-                // For left, we have to subtract the direction
-                else if (Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.LeftArrow))
-                    direction = SetupMove(Vector2.left, ref moved);
-                else if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow))
-                    direction = SetupMove(Vector2.up, ref moved);
-
-                // Same as for the left, subtraction for down
-                else if (Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.DownArrow))
-                    direction = SetupMove(Vector2.down, ref moved);
-            }
-
-
-            if (moved)
-                CurrentPlayer.Move(direction);
-
-            if (CurrentPlayer.PlayerMoves <= 0)
-            {
-                NextTurn();
-                CurrentPlayer = GetActivePlayer();
-                CurrentPlayer.PlayerMoves = RollDice(_dieNumber);
-            }
-        }
+    public void AddRoundEndListener(RoundEndListener listener)
+    {
+        _roundEndListeners.Add(listener);
     }
 
     public Tile GetGameTile(int x, int y)
@@ -133,15 +119,52 @@ public class GameController : MonoBehaviour
         return GameGrid[x, y];
     }
 
+    public bool IsInBounds(Vector3 pos)
+    {
+        return pos.x >= 0 &&
+               pos.y >= 0 &&
+               pos.x < Width &&
+               pos.y < Height;
+    }
+
+    public void RemoveRoundEndListener(RoundEndListener listener)
+    {
+        _roundEndListeners.Remove(listener);
+    }
+
+    public int RollDice(int d)
+    {
+        int rollDice = Random.Range(1, d + 1);
+        Debug.Log(string.Format("Rolled a {0}", rollDice));
+        return rollDice;
+    }
+
     #endregion Public Methods
 
     #region Private Methods
 
-    private static int RollDice(int d)
+    private void CheckInput()
     {
-        int rollDice = new Random().Next(1, d);
-        Debug.Log(string.Format("Rolled a {0}", rollDice));
-        return rollDice;
+        // WASD control
+        // We add the direction to our position,
+        // this moves the character 1 unit (32 pixels)
+        if (Input.GetMouseButtonDown(0))
+        {
+            Vector3 mouseClick = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            if (IsInBounds(mouseClick))
+            {
+                Tile tile = GetGameTile(Mathf.RoundToInt(mouseClick.x), Mathf.RoundToInt(mouseClick.y));
+                if (tile.IsValidMove)
+                {
+                    CurrentPlayer.Move(tile);
+                    NextTurn();
+                    _uiController.ToggleRollDice(true);
+                    _uiController.ToggleSelectDie(false);
+                }
+            }
+        }
+
+    //                _uiController.OnClickRollDice();
     }
 
     private PlayerController GetActivePlayer()
@@ -151,58 +174,76 @@ public class GameController : MonoBehaviour
 
     private void NextTurn()
     {
-        ActivePlayerIndex = (ActivePlayerIndex + 1) % PlayerControllers.Length;
+        CurrentPlayer.OnTurnEnd(this);
+        ActivePlayerIndex++;
         if (ActivePlayerIndex == 0)
         {
-            ++TurnNumber;
-            Vector3 pos;
-            Tile tile;
-            do
-            {
-                pos = new Vector3(UnityEngine.Random.Range(0, Width - 1), UnityEngine.Random.Range(0, Height - 1));
-                tile = GetGameTile((int) pos.x, (int) pos.y);
-            } while (!(tile.CurrentPlayer == null && tile.CanLandOn()));
-
-            Instantiate(CoinPrefab, pos, Quaternion.identity);
+            TurnNumber++;
+            foreach (RoundEndListener roundEndListener in _roundEndListeners)
+                roundEndListener.OnRoundEnd(TurnNumber);
         }
-    }
-
-    private Vector2 SetupMove(Vector2 direction, ref bool moved)
-    {
-        moved = true;
-        CurrentPlayer.PlayerMoves--;
-        Debug.Log(string.Format("{0} moves left", CurrentPlayer.PlayerMoves));
-
-        return direction;
+        CurrentPlayer.OnTurnStart(this);
     }
 
     // Use this for initialization
     private void Start()
     {
+        _gameController = this;
+        _roundEndListeners = new List<RoundEndListener>();
         GameGrid = new Tile[Width, Height];
+        var playerSpawnLocations = new List<KeyValuePair<int, int>>();
+
         for (var x = 0; x <= GameGrid.GetUpperBound(0); x++)
         for (var y = 0; y <= GameGrid.GetUpperBound(1); y++)
         {
             GameObject tileToMake = _tilePrefabs[0];
+            Vector2 facing = Vector2.zero;
             switch (_map[15 - y, x])
             {
+                case 'C':
+                    playerSpawnLocations.Add(new KeyValuePair<int, int>(x, y));
+                    break;
+
+                case 'G':
+                    tileToMake = _tilePrefabs[Gold];
+                    break;
+
                 case 'W':
                     tileToMake = _tilePrefabs[Wall];
                     break;
 
                 case 'R':
+                    tileToMake = _tilePrefabs[River];
+                    facing = Vector2.up;
+                    break;
+
                 case 'S':
+                    tileToMake = _tilePrefabs[River];
+                    facing = Vector2.down;
+                    break;
+
                 case 'T':
+                    tileToMake = _tilePrefabs[River];
+                    facing = Vector2.left;
+                    break;
+
                 case 'U':
                     tileToMake = _tilePrefabs[River];
+                    facing = Vector2.right;
                     break;
 
                 default:
                     tileToMake = _tilePrefabs[Path];
                     break;
             }
+
             GameObject tileInstance = Instantiate(tileToMake, new Vector3(x, y, 0), Quaternion.identity);
-            GameGrid[x, y] = tileInstance.GetComponent<Tile>();
+            var tile = tileInstance.GetComponent<Tile>();
+            tile.Direction = facing;
+            GameGrid[x, y] = tile;
+
+            _uiController = _ui.GetComponent<UIController>();
+            _uiController.GameController = this;
 
             //TODO: Assign data to each tile when created, to have different tile types
         }
@@ -211,14 +252,16 @@ public class GameController : MonoBehaviour
         ActivePlayerIndex = 0;
         for (var i = 0; i < PlayerControllers.Length; i++)
         {
-            GameObject playerInstance = Instantiate(PlayerPrefab, new Vector3(i + 1, i + 1, 0), Quaternion.identity);
+            int x = playerSpawnLocations[i].Key;
+            int y = playerSpawnLocations[i].Value;
+            GameObject playerInstance = Instantiate(PlayerPrefab, new Vector3(x, y, 0), Quaternion.identity);
             var playerController = playerInstance.GetComponent<PlayerController>();
             PlayerControllers[i] = playerController;
             playerController.Id = i + 1;
         }
 
-        CurrentPlayer = GetActivePlayer();
         CurrentPlayer.PlayerMoves = RollDice(_dieNumber);
+        CurrentPlayer.OnTurnStart(this);
 
         TurnNumber = 1;
     }
@@ -226,15 +269,8 @@ public class GameController : MonoBehaviour
     // Update is called once per frame
     private void Update()
     {
-        UpdateUI();
+        _uiController.UpdateUI(this);
         CheckInput();
-    }
-
-    private void UpdateUI()
-    {
-        _txtCurrentPlayer.text = CurrentPlayer.Id.ToString();
-        _txtMovesLeft.text = PlayerMovesLeft.ToString();
-        _txtTurnNumber.text = TurnNumber.ToString();
     }
 
     #endregion Private Methods

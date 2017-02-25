@@ -7,10 +7,9 @@ public class River : Tile, PlayerMovementListener{
 
 
     // Use this for initialization
-	void Start ()
+	public override void  Start ()
 	{
 	    base.Start();
-        Direction = Vector2.right;
         this.AddPlayerMovementListener(this);
 		
 	}
@@ -19,6 +18,11 @@ public class River : Tile, PlayerMovementListener{
 	void Update () {
 		
 	}
+
+    public override void SetSprite(SpriteRenderer renderer)
+    {
+        renderer.sprite = _sprites[Random.Range(0, _sprites.Length)];
+    }
 
     public void PlayerLandsOn(PlayerController player)
     {
@@ -32,15 +36,13 @@ public class River : Tile, PlayerMovementListener{
 
     private void MovePlayer(PlayerController player)
     {
-        if (player.PlayerMoves > -MOVESTOPUSH && player.PlayerMoves <= 0)
+        //hack to avoid PLayerMoves never decrementing when being pushed by a river that can't push a player
+        if (player.PlayerMoves > -(2 * MOVESTOPUSH) && player.PlayerMoves <= 0)
         {
             player.PlayerMoves--;
             player.Move(Direction);
         }
     }
-
-    public Vector2 Direction
-    { get; set; }
 
     public void PlayerLeaves(PlayerController player)
     {
