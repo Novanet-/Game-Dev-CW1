@@ -33,6 +33,12 @@ public class PlayerController : MonoBehaviour
 
     #region Public Methods
 
+    public void Move(Tile tile)
+    {
+        Vector2 direction = tile.transform.position - transform.position;
+        Move(direction);
+    }
+
     public void Move(Vector2 direction)
     {
         Vector2 oldPos = _pos;
@@ -68,7 +74,12 @@ public class PlayerController : MonoBehaviour
 
     public void OnTurnStart(GameController gameController)
     {
-        _glowignTiles = GetPath(gameController.GetGameTile((int) transform.position.x, (int) transform.position.y), Vector3.zero, PlayerMoves);
+    }
+
+    public void GetAvailibleMoves(int dice1, int dice2, GameController gameController)
+    {
+    _glowignTiles = GetPath(gameController.GetGameTile((int) transform.position.x, (int) transform.position.y), Vector3.zero, dice1);
+    GetPath(gameController.GetGameTile((int) transform.position.x, (int) transform.position.y), Vector3.zero, dice1).UnionWith(_glowignTiles);
         foreach (Tile tile in _glowignTiles)
             tile.Glow();
     }

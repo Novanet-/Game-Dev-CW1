@@ -48,10 +48,13 @@ public class UIController : MonoBehaviour
     {
         //        CurrentPlayer.PlayerMoves = RollDice(_dieNumber)
         int dieNumber = GameController.DieNumber;
-        _txtDie1.text = GameController.RollDice(dieNumber).ToString();
-        _txtDie2.text = GameController.RollDice(dieNumber).ToString();
+        int die1 = GameController.RollDice(dieNumber);
+        int die2 = GameController.RollDice(dieNumber);
+        _txtDie1.text = die1.ToString();
+        _txtDie2.text = die2.ToString();
         ToggleRollDice(false);
         ToggleSelectDie(true);
+        GameController.CurrentPlayer.GetAvailibleMoves(die1, die2, GameController);
     }
 
     public void UpdateUI(GameController gameController)
