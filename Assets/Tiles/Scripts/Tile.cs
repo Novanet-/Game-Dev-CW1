@@ -70,7 +70,10 @@ public class Tile : MonoBehaviour
     {
         var spriteRenderer = GetComponent<SpriteRenderer>();
         spriteRenderer.color = Color.yellow;
+        IsValidMove = true;
     }
+
+    public bool IsValidMove { get; set; }
 
     public virtual void LandedOn(PlayerController player)
     {
@@ -96,12 +99,14 @@ public class Tile : MonoBehaviour
     {
         SetSprite(GetComponent<SpriteRenderer>());
         _playerMovementListeners = new List<PlayerMovementListener>();
+        IsValidMove = false;
     }
 
     public void StopGlowing()
     {
         var spriteRenderer = GetComponent<SpriteRenderer>();
         spriteRenderer.color = Color.white;
+        IsValidMove = false;
     }
 
     #endregion Public Methods

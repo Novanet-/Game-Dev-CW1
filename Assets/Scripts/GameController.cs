@@ -148,31 +148,23 @@ public class GameController : MonoBehaviour
         // WASD control
         // We add the direction to our position,
         // this moves the character 1 unit (32 pixels)
-        PlayerMovesLeft = CurrentPlayer.PlayerMoves;
-
-        if (Input.anyKey)
+        if (Input.GetMouseButtonDown(0))
         {
-            if (Input.GetKeyDown(KeyCode.Space))
-                CurrentPlayer.Move(Vector2.zero);
-            else if (Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.RightArrow))
-                CurrentPlayer.Move(Vector2.right);
-            else if (Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.LeftArrow))
-                CurrentPlayer.Move(Vector2.left);
-            else if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow))
-                CurrentPlayer.Move(Vector2.up);
-            else if (Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.DownArrow))
-                CurrentPlayer.Move(Vector2.down);
-
-            if (CurrentPlayer.PlayerMoves == 0)
+            Vector3 mouseClick = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            if (IsInBounds(mouseClick))
             {
-                NextTurn();
-                CurrentPlayer = GetActivePlayer();
-                _uiController.ToggleRollDice(true);
-                _uiController.ToggleSelectDie(false);
-                CurrentPlayer.PlayerMoves = -1;
-                //                _uiController.OnClickRollDice();
+                Tile tile = GetGameTile(Mathf.RoundToInt(mouseClick.x), Mathf.RoundToInt(mouseClick.y));
+                if (tile.IsValidMove)
+                {
+                    CurrentPlayer.Move(tile);
+                    NextTurn();
+                    _uiController.ToggleRollDice(true);
+                    _uiController.ToggleSelectDie(false);
+                }
             }
         }
+
+    //                _uiController.OnClickRollDice();
     }
 
     private PlayerController GetActivePlayer()
@@ -190,7 +182,6 @@ public class GameController : MonoBehaviour
             foreach (RoundEndListener roundEndListener in _roundEndListeners)
                 roundEndListener.OnRoundEnd(TurnNumber);
         }
-        CurrentPlayer.PlayerMoves = RollDice(_dieNumber);
         CurrentPlayer.OnTurnStart(this);
     }
 
