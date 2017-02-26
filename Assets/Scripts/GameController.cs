@@ -1,10 +1,13 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class GameController : MonoBehaviour
 {
+
     #region Public Fields
 
+    public const int WinningMoneyDiffThreshold = 20;
     public GameObject PlayerPrefab, CoinPrefab;
 
     #endregion Public Fields
@@ -89,16 +92,17 @@ public class GameController : MonoBehaviour
         private set { _height = value; }
     }
 
+    public PlayerController[] PlayerControllers { get; private set; }
+
+    public int PlayerMovesLeft { get; private set; }
+
+    public int TurnNumber { get; private set; }
+
     public int Width
     {
         get { return _width; }
         private set { _width = value; }
     }
-
-
-    public PlayerController[] PlayerControllers { get; private set; }
-    public int PlayerMovesLeft { get; private set; }
-    public int TurnNumber { get; private set; }
 
     #endregion Public Properties
 
@@ -143,6 +147,21 @@ public class GameController : MonoBehaviour
 
     #region Private Methods
 
+    private void CheckIfWin()
+    {
+        IOrderedEnumerable<PlayerController> sortedPlayers = PlayerControllers.OrderByDescending(x => x.Money);
+        PlayerController firstPlace = sortedPlayers.FirstOrDefault();
+        PlayerController lastPlace = sortedPlayers.LastOrDefault();
+
+        if (firstPlace == null || lastPlace == null) return;
+
+        int moneyDiff = firstPlace.Money - lastPlace.Money;
+        if (moneyDiff > WinningMoneyDiffThreshold)
+        {
+            //TODO: What happens on win
+        }
+    }
+
     private void CheckInput()
     {
         // WASD control
@@ -160,13 +179,13 @@ public class GameController : MonoBehaviour
                     NextTurn();
                     _uiController.ToggleRollDice(true);
                     _uiController.ToggleSelectDie(false);
+                    CheckIfWin();
                 }
             }
         }
 
-    //                _uiController.OnClickRollDice();
+        //                _uiController.OnClickRollDice();
     }
-
     private PlayerController GetActivePlayer()
     {
         return PlayerControllers[ActivePlayerIndex];
@@ -274,4 +293,5 @@ public class GameController : MonoBehaviour
     }
 
     #endregion Private Methods
+
 }
