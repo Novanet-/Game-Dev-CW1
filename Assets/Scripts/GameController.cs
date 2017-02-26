@@ -60,7 +60,7 @@ public class GameController : MonoBehaviour
     private List<RoundEndListener> _roundEndListeners;
     [SerializeField] private GameObject[] _tilePrefabs;
 
-    [SerializeField] private Canvas _ui;
+    [SerializeField] private Canvas _cnvUi;
     private UIController _uiController;
 
     #endregion Private Fields
@@ -155,9 +155,11 @@ public class GameController : MonoBehaviour
         if (firstPlace == null || lastPlace == null) return;
 
         int moneyDiff = firstPlace.Money - lastPlace.Money;
-        if (moneyDiff > WinningMoneyDiffThreshold)
+        if (moneyDiff >= WinningMoneyDiffThreshold)
         {
             //TODO: What happens on win
+            _uiController.ShowWinSplash(firstPlace);
+            _uiController.ToggleInteraction(false);
         }
     }
 
@@ -177,7 +179,6 @@ public class GameController : MonoBehaviour
                     CurrentPlayer.Move(tile);
                     NextTurn();
                     _uiController.ToggleRollDice(true);
-                    _uiController.ToggleSelectDie(false);
                     CheckIfWin();
                 }
             }
@@ -257,7 +258,7 @@ public class GameController : MonoBehaviour
             tile.Direction = facing;
             _gameGrid[x, y] = tile;
 
-            _uiController = _ui.GetComponent<UIController>();
+            _uiController = _cnvUi.GetComponent<UIController>();
             _uiController.GameController = this;
 
             //TODO: Assign data to each tile when created, to have different tile types
@@ -279,6 +280,8 @@ public class GameController : MonoBehaviour
         CurrentPlayer.OnTurnStart(this);
 
         TurnNumber = 1;
+
+        _uiController.HideWinSplash();
     }
 
     // Update is called once per frame
