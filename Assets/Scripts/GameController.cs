@@ -1,10 +1,13 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
+using JetBrains.Annotations;
 using UnityEngine;
 
 public class GameController : MonoBehaviour
 {
     #region Public Fields
 
+    public const int WinningMoneyDiffThreshold = 20;
     public GameObject PlayerPrefab, CoinPrefab;
 
     #endregion Public Fields
@@ -49,15 +52,16 @@ public class GameController : MonoBehaviour
 
     [SerializeField] private int _activePlayerIndex;
     [SerializeField] private int _dieNumber = 6;
+
+    private Tile[,] _gameGrid;
     [SerializeField] private int _height;
-    private List<RoundEndListener> _roundEndListeners;
-    [SerializeField] private GameObject[] _tilePrefabs;
-    [SerializeField] private Canvas _ui;
-    private UIController _uiController;
     [SerializeField] private int _width;
 
-    //    public Transform GameBoard;
-    private Tile[,] GameGrid;
+    private List<RoundEndListener> _roundEndListeners;
+    [SerializeField] private GameObject[] _tilePrefabs;
+
+    [SerializeField] private Canvas _cnvUi;
+    private UIController _uiController;
 
     #endregion Private Fields
 
@@ -69,7 +73,7 @@ public class GameController : MonoBehaviour
         private set { _activePlayerIndex = value % PlayerControllers.Length; }
     }
 
-    public PlayerController CurrentPlayer
+    [NotNull] public PlayerController CurrentPlayer
     {
         get { return PlayerControllers[ActivePlayerIndex]; }
         private set
@@ -83,6 +87,10 @@ public class GameController : MonoBehaviour
         }
     }
 
+    public PlayerController[] PlayerControllers { get; private set; }
+    public int PlayerMovesLeft { get; private set; }
+    public int TurnNumber { get; private set; }
+
     public int Height
     {
         get { return _height; }
@@ -94,11 +102,6 @@ public class GameController : MonoBehaviour
         get { return _width; }
         private set { _width = value; }
     }
-
-
-    public PlayerController[] PlayerControllers { get; private set; }
-    public int PlayerMovesLeft { get; private set; }
-    public int TurnNumber { get; private set; }
 
     #endregion Public Properties
 
@@ -116,7 +119,7 @@ public class GameController : MonoBehaviour
 
     public Tile GetGameTile(int x, int y)
     {
-        return GameGrid[x, y];
+        return _gameGrid[x, y];
     }
 
     public bool IsInBounds(Vector3 pos)
@@ -143,6 +146,23 @@ public class GameController : MonoBehaviour
 
     #region Private Methods
 
+    private void CheckIfWin()
+    {
+        IOrderedEnumerable<PlayerController> sortedPlayers = PlayerControllers.OrderByDescending(x => x.Money);
+        PlayerController firstPlace = sortedPlayers.FirstOrDefault();
+        PlayerController lastPlace = sortedPlayers.LastOrDefault();
+
+        if (firstPlace == null || lastPlace == null) return;
+
+        int moneyDiff = firstPlace.Money - lastPlace.Money;
+        if (moneyDiff >= WinningMoneyDiffThreshold)
+        {
+            //TODO: What happens on win
+            _uiController.ShowWinSplash(firstPlace);
+            _uiController.ToggleInteraction(false);
+        }
+    }
+
     private void CheckInput()
     {
         // WASD control
@@ -159,17 +179,12 @@ public class GameController : MonoBehaviour
                     CurrentPlayer.Move(tile);
                     NextTurn();
                     _uiController.ToggleRollDice(true);
-                    _uiController.ToggleSelectDie(false);
+                    CheckIfWin();
                 }
             }
         }
 
-    //                _uiController.OnClickRollDice();
-    }
-
-    private PlayerController GetActivePlayer()
-    {
-        return PlayerControllers[ActivePlayerIndex];
+        //                _uiController.OnClickRollDice();
     }
 
     private void NextTurn()
@@ -182,6 +197,7 @@ public class GameController : MonoBehaviour
             foreach (RoundEndListener roundEndListener in _roundEndListeners)
                 roundEndListener.OnRoundEnd(TurnNumber);
         }
+
         CurrentPlayer.OnTurnStart(this);
     }
 
@@ -190,11 +206,11 @@ public class GameController : MonoBehaviour
     {
         _gameController = this;
         _roundEndListeners = new List<RoundEndListener>();
-        GameGrid = new Tile[Width, Height];
+        _gameGrid = new Tile[Width, Height];
         var playerSpawnLocations = new List<KeyValuePair<int, int>>();
 
-        for (var x = 0; x <= GameGrid.GetUpperBound(0); x++)
-        for (var y = 0; y <= GameGrid.GetUpperBound(1); y++)
+        for (var x = 0; x <= _gameGrid.GetUpperBound(0); x++)
+        for (var y = 0; y <= _gameGrid.GetUpperBound(1); y++)
         {
             GameObject tileToMake = _tilePrefabs[0];
             Vector2 facing = Vector2.zero;
@@ -240,9 +256,9 @@ public class GameController : MonoBehaviour
             GameObject tileInstance = Instantiate(tileToMake, new Vector3(x, y, 0), Quaternion.identity);
             var tile = tileInstance.GetComponent<Tile>();
             tile.Direction = facing;
-            GameGrid[x, y] = tile;
+            _gameGrid[x, y] = tile;
 
-            _uiController = _ui.GetComponent<UIController>();
+            _uiController = _cnvUi.GetComponent<UIController>();
             _uiController.GameController = this;
 
             //TODO: Assign data to each tile when created, to have different tile types
@@ -264,6 +280,8 @@ public class GameController : MonoBehaviour
         CurrentPlayer.OnTurnStart(this);
 
         TurnNumber = 1;
+
+        _uiController.HideWinSplash();
     }
 
     // Update is called once per frame
