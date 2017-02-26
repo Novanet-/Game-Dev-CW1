@@ -1164,14 +1164,14 @@ MonoBehaviour:
   CoinPrefab: {fileID: 1091708721671586, guid: 89de11eecc767aa41bca766e8daad9b3, type: 2}
   DieNumber: 6
   _activePlayerIndex: 0
-  _height: 16
-  _playerControllers: []
+  _dieNumber: 6
   _tilePrefabs:
   - {fileID: 1442128544956010, guid: b777f3c1225d6574d943ea1e995eb4be, type: 2}
   - {fileID: 1735148349812292, guid: 610839de9d5b4254cbe815a5156640c4, type: 2}
   - {fileID: 1428098173528816, guid: 8e6c88f666a29204cb8cb3b5d0c4a61b, type: 2}
   - {fileID: 1893418614078452, guid: 5c2474fdc5e5dd74cb264c8cf4605848, type: 2}
   _ui: {fileID: 417302021}
+  _height: 16
   _width: 16
 --- !u!1 &1011403910
 GameObject:
