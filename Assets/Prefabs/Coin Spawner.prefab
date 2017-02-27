@@ -53,7 +53,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fbf3575480402db40813e763382412fb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  color: 0
+  color: 1
   eraseRenderer: 0
   originalLayer: 0
   originalMaterials: []
