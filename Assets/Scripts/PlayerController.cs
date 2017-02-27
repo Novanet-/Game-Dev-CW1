@@ -1,4 +1,5 @@
 ﻿using System;
+using cakeslice;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -65,6 +66,7 @@ public class PlayerController : MonoBehaviour
 
     public void OnTurnEnd(GameController gameController)
     {
+        GetComponent<Outline>().enabled = false;
         foreach (Tile tile in _glowignTiles)
             tile.StopGlowing();
     }
@@ -72,6 +74,7 @@ public class PlayerController : MonoBehaviour
     public void OnTurnStart(GameController gameController)
     {
         PlayerMoves = 0;
+        GetComponent<Outline>().enabled = true;
     }
 
     public void GetAvailibleMoves(int dice1, int dice2, GameController gameController)
@@ -119,6 +122,7 @@ public class PlayerController : MonoBehaviour
             throw new Exception("CurrentPlayer's Starting Position is Invalid!");
 
         //        Id = UnityEngine.Random.Range(0, 1000000);
+        GetComponent<Outline>().enabled = false;
     }
 
     // Update is called once per frame

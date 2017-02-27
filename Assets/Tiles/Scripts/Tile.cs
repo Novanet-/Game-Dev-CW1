@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using cakeslice;
 using JetBrains.Annotations;
 using UnityEngine;
 
@@ -68,8 +69,8 @@ public class Tile : MonoBehaviour
 
     public void Glow()
     {
-        var spriteRenderer = GetComponent<SpriteRenderer>();
-        spriteRenderer.color = Color.yellow;
+
+        GetComponent<Outline>().enabled = true;
         IsValidMove = true;
     }
 
@@ -99,13 +100,12 @@ public class Tile : MonoBehaviour
     {
         SetSprite(GetComponent<SpriteRenderer>());
         _playerMovementListeners = new List<PlayerMovementListener>();
-        IsValidMove = false;
+        StopGlowing();
     }
 
     public void StopGlowing()
     {
-        var spriteRenderer = GetComponent<SpriteRenderer>();
-        spriteRenderer.color = Color.white;
+        GetComponent<Outline>().enabled = false;
         IsValidMove = false;
     }
 

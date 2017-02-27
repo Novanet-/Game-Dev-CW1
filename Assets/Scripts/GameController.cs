@@ -1,7 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using JetBrains.Annotations;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class GameController : MonoBehaviour
 {
@@ -78,12 +80,7 @@ public class GameController : MonoBehaviour
         get { return PlayerControllers[ActivePlayerIndex]; }
         private set
         {
-            for (var i = 0; i < PlayerControllers.Length; i++)
-                if (value == PlayerControllers[i])
-                {
-                    _activePlayerIndex = i;
-                    return;
-                }
+            _activePlayerIndex = Array.IndexOf(PlayerControllers, value);
         }
     }
 
@@ -190,7 +187,9 @@ public class GameController : MonoBehaviour
     private void NextTurn()
     {
         CurrentPlayer.OnTurnEnd(this);
+
         ActivePlayerIndex++;
+
         if (ActivePlayerIndex == 0)
         {
             TurnNumber++;
@@ -278,6 +277,7 @@ public class GameController : MonoBehaviour
 
         CurrentPlayer.PlayerMoves = RollDice(_dieNumber);
         CurrentPlayer.OnTurnStart(this);
+
 
         TurnNumber = 1;
 

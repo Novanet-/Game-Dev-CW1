@@ -21,6 +21,7 @@ GameObject:
   - component: {fileID: 4580304341827222}
   - component: {fileID: 212567249171726474}
   - component: {fileID: 114960694295806844}
+  - component: {fileID: 114160484247935114}
   m_Layer: 0
   m_Name: Wall
   m_TagString: Untagged
@@ -41,6 +42,21 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &114160484247935114
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1735148349812292}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fbf3575480402db40813e763382412fb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  color: 0
+  eraseRenderer: 0
+  originalLayer: 0
+  originalMaterials: []
 --- !u!114 &114960694295806844
 MonoBehaviour:
   m_ObjectHideFlags: 1
