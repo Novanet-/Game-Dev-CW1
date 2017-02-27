@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using cakeslice;
 using JetBrains.Annotations;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -189,9 +188,7 @@ public class GameController : MonoBehaviour
     {
         CurrentPlayer.OnTurnEnd(this);
 
-        CurrentPlayer.GetComponent<Outline>().enabled = false;
         ActivePlayerIndex++;
-        CurrentPlayer.GetComponent<Outline>().enabled = true;
 
         if (ActivePlayerIndex == 0)
         {
@@ -276,14 +273,11 @@ public class GameController : MonoBehaviour
             var playerController = playerInstance.GetComponent<PlayerController>();
             PlayerControllers[i] = playerController;
             playerController.Id = i + 1;
-            var playerOutline = playerInstance.GetComponent<Outline>();
-            playerOutline.enabled = false;
         }
 
         CurrentPlayer.PlayerMoves = RollDice(_dieNumber);
         CurrentPlayer.OnTurnStart(this);
 
-        CurrentPlayer.GetComponent<Outline>().enabled = true;
 
         TurnNumber = 1;
 
