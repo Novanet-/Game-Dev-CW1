@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using cakeslice;
 using JetBrains.Annotations;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -273,11 +274,11 @@ public class GameController : MonoBehaviour
             var playerController = playerInstance.GetComponent<PlayerController>();
             PlayerControllers[i] = playerController;
             playerController.Id = i + 1;
+            if (i != 0) 
+                playerController.OnTurnEnd(this);
         }
 
-        CurrentPlayer.PlayerMoves = RollDice(_dieNumber);
         CurrentPlayer.OnTurnStart(this);
-
 
         TurnNumber = 1;
 

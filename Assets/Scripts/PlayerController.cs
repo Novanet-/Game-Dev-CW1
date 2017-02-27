@@ -67,6 +67,7 @@ public class PlayerController : MonoBehaviour
     public void OnTurnEnd(GameController gameController)
     {
         GetComponent<Outline>().enabled = false;
+        if (_glowignTiles != null)
         foreach (Tile tile in _glowignTiles)
             tile.StopGlowing();
     }
@@ -122,7 +123,6 @@ public class PlayerController : MonoBehaviour
             throw new Exception("CurrentPlayer's Starting Position is Invalid!");
 
         //        Id = UnityEngine.Random.Range(0, 1000000);
-        GetComponent<Outline>().enabled = false;
     }
 
     // Update is called once per frame
