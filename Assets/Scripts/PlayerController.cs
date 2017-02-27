@@ -49,7 +49,6 @@ public class PlayerController : MonoBehaviour
         Tile newTile = _gameController.GetGameTile((int) _pos.x, (int) _pos.y);
         if (newTile.CanLandOn())
         {
-            PlayerMoves--;
             oldTile.CurrentPlayer = null;
             transform.position = _pos;
             newTile.CurrentPlayer = this;
@@ -57,8 +56,6 @@ public class PlayerController : MonoBehaviour
         }
         else
         {
-            if (direction == Vector2.zero)
-                PlayerMoves--;
             _pos = oldPos;
             transform.position = _pos;
             oldTile.CurrentPlayer = this;
@@ -74,12 +71,13 @@ public class PlayerController : MonoBehaviour
 
     public void OnTurnStart(GameController gameController)
     {
+        PlayerMoves = 0;
     }
 
     public void GetAvailibleMoves(int dice1, int dice2, GameController gameController)
     {
     _glowignTiles = GetPath(gameController.GetGameTile((int) transform.position.x, (int) transform.position.y), Vector3.zero, dice1);
-    GetPath(gameController.GetGameTile((int) transform.position.x, (int) transform.position.y), Vector3.zero, dice1).UnionWith(_glowignTiles);
+    _glowignTiles.UnionWith(GetPath(gameController.GetGameTile((int) transform.position.x, (int) transform.position.y), Vector3.zero, dice2));
         foreach (Tile tile in _glowignTiles)
             tile.Glow();
     }

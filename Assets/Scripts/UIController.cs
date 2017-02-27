@@ -4,30 +4,47 @@ using UnityEngine.UI;
 
 public class UIController : MonoBehaviour
 {
-    #region Public Fields
-
-    [HideInInspector] public GameController GameController { get; set; }
-
-    #endregion Public Fields
-
     #region Private Fields
 
+    [SerializeField] private string _playerWinString = "Player {0} wins!";
+
+    [SerializeField] private Button _btnDie1;
+    [SerializeField] private Button _btnDie2;
+    [SerializeField] private Button _btnRollDice;
     [SerializeField] private GameObject _pnlScoreboard;
     private ScoreboardController _scoreboardController;
     [SerializeField] private Text _txtCurrentPlayer;
     [SerializeField] private Text _txtDie1;
     [SerializeField] private Text _txtDie2;
-
-    [SerializeField] private Button _btnRollDice;
-    [SerializeField] private Button _btnDie1;
-    [SerializeField] private Button _btnDie2;
     [SerializeField] private Text _txtMovesLeft;
     [SerializeField] private Text _txtTurnNumber;
+    [SerializeField] private Text _txtWinSplash;
 
     #endregion Private Fields
 
+    #region Public Properties
+
+    [HideInInspector] public GameController GameController { get; set; }
+    public bool IsInteractable { get; set; }
+
+    #endregion Public Properties
+
     #region Public Methods
 
+    public void ToggleInteraction(bool interactable)
+    {
+        ToggleRollDice(interactable);
+        IsInteractable = interactable;
+    }
+
+
+
+    public void HideWinSplash()
+    {
+        _txtWinSplash.enabled = false;
+    }
+
+    /// <exception cref="Exception">Invalid dice choice</exception>
     public void OnClickChooseDice(int dieNumber)
     {
         //        CurrentPlayer.PlayerMoves = RollDice(_dieNumber)
@@ -37,11 +54,14 @@ public class UIController : MonoBehaviour
             case 1:
                 GameController.CurrentPlayer.PlayerMoves = Convert.ToInt32(_txtDie1.text);
                 break;
+
             case 2:
                 GameController.CurrentPlayer.PlayerMoves = Convert.ToInt32(_txtDie2.text);
                 break;
+
+            default:
+                throw new Exception("Invalid dice choice");
         }
-        ToggleSelectDie(false);
     }
 
     public void OnClickRollDice()
@@ -53,9 +73,21 @@ public class UIController : MonoBehaviour
         _txtDie1.text = die1.ToString();
         _txtDie2.text = die2.ToString();
         ToggleRollDice(false);
-        ToggleSelectDie(true);
+//        ToggleSelectDie(true);
         GameController.CurrentPlayer.GetAvailibleMoves(die1, die2, GameController);
     }
+
+    public void ShowWinSplash(PlayerController winningPlayer)
+    {
+        _txtWinSplash.text = string.Format(_playerWinString, winningPlayer.Id);
+        _txtWinSplash.enabled = true;
+    }
+
+    public bool ToggleRollDice(bool interactable)
+    {
+        return _btnRollDice.interactable = interactable;
+    }
+
 
     public void UpdateUI(GameController gameController)
     {
@@ -71,21 +103,9 @@ public class UIController : MonoBehaviour
 
     #region Private Methods
 
-    public bool ToggleRollDice(bool buttonEnabled)
-    {
-        return _btnRollDice.interactable = buttonEnabled;
-    }
-
-    public bool ToggleSelectDie(bool buttonEnabled)
-    {
-        _btnDie1.interactable = buttonEnabled;
-        return _btnDie2.interactable = buttonEnabled;
-    }
-
     private void Start()
     {
         _scoreboardController = _pnlScoreboard.GetComponent<ScoreboardController>();
-        ToggleSelectDie(false);
     }
 
     #endregion Private Methods
