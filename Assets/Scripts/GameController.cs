@@ -28,6 +28,7 @@ public class GameController : MonoBehaviour
     private const int River = 2;
     private const int Wall = 1;
     private static GameController _gameController;
+    public List<KeyValuePair<int, int>> CoinSpawners { get; private set; }
 
     // P is a Path
     // W is Wall
@@ -200,10 +201,12 @@ public class GameController : MonoBehaviour
         _uiController.ToggleRollDice(true);
     }
 
+
     // Use this for initialization
     private void Start()
     {
         _gameController = this;
+        CoinSpawners = new List<KeyValuePair<int, int>>();
         _roundEndListeners = new List<RoundEndListener>();
         _gameGrid = new Tile[Width, Height];
         var playerSpawnLocations = new List<KeyValuePair<int, int>>();
@@ -220,6 +223,7 @@ public class GameController : MonoBehaviour
                     break;
 
                 case 'G':
+                    CoinSpawners.Add(new KeyValuePair<int, int>(x, y));
                     tileToMake = _tilePrefabs[Gold];
                     break;
 

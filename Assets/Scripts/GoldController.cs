@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class GoldController : MonoBehaviour, PlayerMovementListener
 {
-    private int _gold;
+    public int Gold { get; private set; }
     [SerializeField] private Sprite[] _sprites;
     private int _spriteNum;
     private Tile _tile;
@@ -39,11 +39,11 @@ public class GoldController : MonoBehaviour, PlayerMovementListener
 
     private void GivePlayerGold(PlayerController player)
     {
-        if (_gold > 0)
+        if (Gold > 0)
         {
             player.Money = player.Money + 10;
-            _gold = _gold - 10;
-            Debug.Log("Log Given Gold, remaining gold: " + _gold);
+            Gold = Gold - 10;
+            Debug.Log("Log Given Gold, remaining gold: " + Gold);
         }
 
         var spriteRenderer = GetComponent<SpriteRenderer>();
@@ -54,7 +54,7 @@ public class GoldController : MonoBehaviour, PlayerMovementListener
     // Use this for initialization
 	void Start()
 	{
-	    _gold = 10;
+	    Gold = 10;
         var spriteRenderer = GetComponent<SpriteRenderer>();
 	    _spriteNum = 1;
         spriteRenderer.sprite = _sprites[_spriteNum];
@@ -68,7 +68,7 @@ public class GoldController : MonoBehaviour, PlayerMovementListener
 
     public void getGold()
     {
-        _gold = _gold + 10;
+        Gold = Gold + 10;
         var spriteRenderer = GetComponent<SpriteRenderer>();
         _spriteNum = Mathf.Clamp(_spriteNum + 1, 0, _sprites.Length - 1);
         spriteRenderer.sprite = _sprites[_spriteNum];

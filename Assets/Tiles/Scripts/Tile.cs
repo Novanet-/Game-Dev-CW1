@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using cakeslice;
 using JetBrains.Annotations;
 using UnityEngine;
@@ -128,6 +129,53 @@ public class Tile : MonoBehaviour
         else if (oldPlayer != null && newPlayer == null)
             foreach (PlayerMovementListener listener in _playerMovementListeners)
                 listener.PlayerLeaves(CurrentPlayer);
+    }
+
+    public int Distance(Tile destination)
+    {
+        Queue<KeyValuePair<Tile, int>> tiles = new Queue<KeyValuePair<Tile, int>>();
+        HashSet<Tile> visited = new HashSet<Tile>();
+        tiles.Enqueue(new KeyValuePair<Tile, int>(this, 0));
+        while (tiles.Count > 0)
+        {
+            KeyValuePair<Tile, int> pair =  tiles.Dequeue();
+            Tile tile = pair.Key;
+            if (tile == destination)
+            {
+                return pair.Value;
+            }
+            else
+            {
+                foreach (Tile neighbour in tile.GetNeighbours())
+                {
+                    if (neighbour.CanLandOn() && !visited.Contains(neighbour))
+                    {
+                        visited.Add(neighbour);
+                        tiles.Enqueue(new KeyValuePair<Tile, int>(neighbour, pair.Value + 1));
+                    }
+                }
+            }
+        }
+        return -1;
+    }
+
+    public int GetGoldHeat()
+    {
+        GameController gameController = GameController.GetGameController();
+        List<CoinSpawnerController> coinSpawners = new List<CoinSpawnerController>();
+        int heat = 0;
+        foreach (KeyValuePair<int, int> coinSpawnerLocation in gameController.CoinSpawners)
+        {
+            coinSpawners.Add((CoinSpawnerController)gameController.GetGameTile(coinSpawnerLocation.Key, coinSpawnerLocation.Value));
+        }
+
+        foreach (CoinSpawnerController coinSpawnerController in coinSpawners)
+        {
+            heat += coinSpawnerController.GetGoldAmount()/ Distance(coinSpawnerController);
+        }
+
+
+        return heat;
     }
 
     #endregion Private Methods

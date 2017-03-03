@@ -70,4 +70,9 @@ public class CoinSpawnerController : Tile, RoundEndListener
             _goldSpawnTime = Time.time;
         }
     }
+
+    public int GetGoldAmount()
+    {
+        return gold.Gold;
+    }
 }
