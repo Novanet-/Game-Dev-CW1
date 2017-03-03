@@ -20,11 +20,12 @@ public class UIController : MonoBehaviour
     [SerializeField] private Text _txtTurnNumber;
     [SerializeField] private Text _txtWinSplash;
 
+    private static UIController _uiController;
     #endregion Private Fields
 
     #region Public Properties
 
-    [HideInInspector] public GameController GameController { get; set; }
+    [HideInInspector] private GameController GameController { get; set; }
     public bool IsInteractable { get; set; }
 
     #endregion Public Properties
@@ -103,8 +104,14 @@ public class UIController : MonoBehaviour
 
     #region Private Methods
 
+    public static UIController GetUIController()
+    {
+        return _uiController;
+    }
+
     private void Start()
     {
+        _uiController = this;
         _scoreboardController = _pnlScoreboard.GetComponent<ScoreboardController>();
     }
 

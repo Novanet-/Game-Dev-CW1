@@ -175,8 +175,6 @@ public class GameController : MonoBehaviour
                 {
                     CurrentPlayer.Move(tile.Path);
                     NextTurn();
-                    _uiController.ToggleRollDice(true);
-                    CheckIfWin();
                 }
             }
         }
@@ -184,7 +182,7 @@ public class GameController : MonoBehaviour
         //                _uiController.OnClickRollDice();
     }
 
-    private void NextTurn()
+    public void NextTurn()
     {
         CurrentPlayer.OnTurnEnd(this);
 
@@ -197,7 +195,9 @@ public class GameController : MonoBehaviour
                 roundEndListener.OnRoundEnd(TurnNumber);
         }
 
+        CheckIfWin();
         CurrentPlayer.OnTurnStart(this);
+        _uiController.ToggleRollDice(true);
     }
 
     // Use this for initialization

@@ -1,9 +1,6 @@
-﻿using System;
-using cakeslice;
-using System.Collections;
+﻿using cakeslice;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
@@ -83,9 +80,18 @@ public class PlayerController : MonoBehaviour
 
     public void OnTurnStart(GameController gameController)
     {
-        PlayerMoves = 0;
         GetComponent<Outline>().enabled = true;
+        if (IsAI)
+        {
+            UIController.GetUIController().OnClickRollDice();
+            int move = Random.Range(0, _glowignTiles.Count);
+            Tile tile = _glowignTiles.ElementAt(move);
+            Move(tile.Path);
+           _gameController.NextTurn();
+        }
     }
+
+    public bool IsAI { get; set; }
 
     public void GetAvailibleMoves(int dice1, int dice2, GameController gameController)
     {
