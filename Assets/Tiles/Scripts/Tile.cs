@@ -67,7 +67,7 @@ public class Tile : MonoBehaviour
         return nieghbours;
     }
 
-    public void Glow()
+    public virtual void Glow()
     {
 
         GetComponent<Outline>().enabled = true;

@@ -1,9 +1,12 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class River : Tile, PlayerMovementListener{
     private readonly int MOVESTOPUSH = 1;
+    private Tile toPushTo;
 
 
     // Use this for initialization
@@ -11,7 +14,9 @@ public class River : Tile, PlayerMovementListener{
 	{
 	    base.Start();
         this.AddPlayerMovementListener(this);
-		
+	    toPushTo = GameController.GetGameController()
+	        .GetGameTile((int)(transform.position.x + Direction.x), (int)(transform.position.y + Direction.y));
+
 	}
 	
 	// Update is called once per frame
@@ -37,10 +42,10 @@ public class River : Tile, PlayerMovementListener{
     private void MovePlayer(PlayerController player)
     {
         //hack to avoid PLayerMoves never decrementing when being pushed by a river that can't push a player
-        if (player.PlayerMoves > -MOVESTOPUSH)
+        if (player.PlayerMoves > 2* -MOVESTOPUSH && player.PlayerMoves <= 0)
         {
             player.PlayerMoves--;
-            player.Move(Direction);
+            player.Move(toPushTo);
         }
     }
 

@@ -136,7 +136,6 @@ public class GameController : MonoBehaviour
     public int RollDice(int d)
     {
         int rollDice = Random.Range(1, d + 1);
-        Debug.Log(string.Format("Rolled a {0}", rollDice));
         return rollDice;
     }
 

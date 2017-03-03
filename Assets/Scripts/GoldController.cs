@@ -43,6 +43,7 @@ public class GoldController : MonoBehaviour, PlayerMovementListener
         {
             player.Money = player.Money + 10;
             _gold = _gold - 10;
+            Debug.Log("Log Given Gold, remaining gold: " + _gold);
         }
 
         var spriteRenderer = GetComponent<SpriteRenderer>();

@@ -12,7 +12,7 @@ public class PlayerController : MonoBehaviour
     #region Private Fields
 
     private GameController _gameController;
-    private HashSet<Stack<Tile>> _glowignTiles;
+    private HashSet<Tile> _glowignTiles;
     
 
     [SerializeField] private int _money;
@@ -27,7 +27,7 @@ public class PlayerController : MonoBehaviour
     public bool CanBePushed { get; set; }
     public int Id { get; set; }
 
-    public float speed = 1;
+    public float speed = 3;
 
     public int Money
     {
@@ -43,33 +43,33 @@ public class PlayerController : MonoBehaviour
 
     public void Move(IEnumerable<Tile> path)
     {
+        PlayerMoves = 1;
+        Tile lastTile = null; 
         foreach (Tile tile in path)
         {
-            Move((Vector2)tile.transform.position - _tilePos);
+            _animationPath.Enqueue(tile.transform.position);
+            lastTile = tile;
         }
+        Move(lastTile);
     }
 
-    public void Move(Vector2 direction)
+    public void Move(Tile newTile) 
     {
         Vector2 oldPos = _tilePos;
         Tile oldTile = _gameController.GetGameTile((int) _tilePos.x, (int) _tilePos.y);
-        _tilePos = _tilePos + direction;
-        _tilePos.x = Mathf.Clamp(_tilePos.x, 0, _gameController.Width - 1);
-        _tilePos.y = Mathf.Clamp(_tilePos.y, 0, _gameController.Height - 1);
-        Tile newTile = _gameController.GetGameTile((int) _tilePos.x, (int) _tilePos.y);
+        _tilePos = newTile.transform.position;
         if (newTile.CanLandOn())
         {
+            PlayerMoves--;
             oldTile.CurrentPlayer = null;
             _animationPath.Enqueue(_tilePos);
             newTile.CurrentPlayer = this;
-            Debug.Log("Moving to:" + _tilePos.x + " " + _tilePos.y);
             
         }
         else
         {
             _tilePos = oldPos;
             oldTile.CurrentPlayer = this;
-            Debug.Log("Staying at:" + _tilePos.x + " " + _tilePos.y);
         }
     }
 
@@ -77,8 +77,8 @@ public class PlayerController : MonoBehaviour
     {
         GetComponent<Outline>().enabled = false;
         if (_glowignTiles != null)
-        foreach (Stack<Tile> paths in _glowignTiles)
-            paths.Peek().StopGlowing();
+        foreach (Tile tile in _glowignTiles)
+            tile.StopGlowing();
     }
 
     public void OnTurnStart(GameController gameController)
@@ -89,11 +89,14 @@ public class PlayerController : MonoBehaviour
 
     public void GetAvailibleMoves(int dice1, int dice2, GameController gameController)
     {
-    _glowignTiles = GetPath(gameController.GetGameTile((int) _tilePos.x, (int) _tilePos.y), new Stack<Tile>(), dice1);
-    _glowignTiles.UnionWith(GetPath(gameController.GetGameTile((int) _tilePos.x, (int) _tilePos.y), new Stack<Tile>(), dice2));
-        foreach (Stack<Tile> path in _glowignTiles)
+        
+    HashSet<Stack<Tile>> paths = GetPath(gameController.GetGameTile((int) _tilePos.x, (int) _tilePos.y), new Stack<Tile>(), dice1);
+    paths.UnionWith(GetPath(gameController.GetGameTile((int) _tilePos.x, (int) _tilePos.y), new Stack<Tile>(), dice2));
+        _glowignTiles = new HashSet<Tile>();
+        foreach (Stack<Tile> path in paths)
         {
             Tile endPoint = path.Peek();
+            _glowignTiles.Add(endPoint);
             endPoint.Glow();
             endPoint.Path = path.Reverse();
         }
@@ -117,7 +120,6 @@ public class PlayerController : MonoBehaviour
         }
 
         remainingMoves--;
-        Debug.Log(remainingMoves);
         foreach (Tile neighbour in tile.GetNeighbours())
             if (!path.Contains(neighbour))
             {
@@ -157,12 +159,12 @@ public class PlayerController : MonoBehaviour
             {
                 _animationPath.Dequeue();
                 if (_animationPath.Count > 0)
-                    target = _animationPath.Dequeue();
+                    target = _animationPath.Peek();
                 else
                     return;
             }
 
-            float frac = Mathf.Min(Vector3.Distance(currentPos, target), speed);
+            float frac = speed/Vector3.Distance(currentPos, target) * Time.deltaTime;
             transform.position = Vector3.Lerp(currentPos, target, frac);
 
 
