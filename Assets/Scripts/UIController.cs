@@ -12,7 +12,9 @@ public class UIController : MonoBehaviour
     [SerializeField] private Button _btnDie2;
     [SerializeField] private Button _btnRollDice;
     [SerializeField] private GameObject _pnlScoreboard;
+    [SerializeField] private GameObject _pnlTutorial;
     private ScoreboardController _scoreboardController;
+    private TutorialController _tutorialController;
     [SerializeField] private Text _txtCurrentPlayer;
     [SerializeField] private Text _txtDie1;
     [SerializeField] private Text _txtDie2;
@@ -106,6 +108,7 @@ public class UIController : MonoBehaviour
     private void Start()
     {
         _scoreboardController = _pnlScoreboard.GetComponent<ScoreboardController>();
+        _tutorialController = _pnlTutorial.GetComponent<TutorialController>();
     }
 
     #endregion Private Methods
