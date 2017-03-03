@@ -258,7 +258,7 @@ public class GameController : MonoBehaviour
             _gameGrid[x, y] = tile;
 
             _uiController = UIController.GetUIController();
-
+            _uiController.GameController = this;
             //TODO: Assign data to each tile when created, to have different tile types
         }
 
@@ -272,10 +272,9 @@ public class GameController : MonoBehaviour
             var playerController = playerInstance.GetComponent<PlayerController>();
             PlayerControllers[i] = playerController;
             playerController.Id = i + 1;
-            if (i != 0) 
-                playerController.OnTurnEnd(this);
-            else
+            if (i != 0)
             {
+                playerController.OnTurnEnd(this);
                 playerController.IsAI = true;
             }
         }

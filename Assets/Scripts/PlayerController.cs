@@ -87,7 +87,7 @@ public class PlayerController : MonoBehaviour
         {
             UIController.GetUIController().OnClickRollDice();
             int move = Random.Range(0, _glowignTiles.Count);
-            Tile tile = _glowignTiles.ElementAt(move);
+            Tile tile = _glowignTiles.First();
             Move(tile.Path);
            _gameController.NextTurn();
         }

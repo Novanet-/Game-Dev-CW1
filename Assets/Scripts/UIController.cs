@@ -27,7 +27,7 @@ public class UIController : MonoBehaviour
 
     #region Public Properties
 
-    [HideInInspector] private GameController GameController { get; set; }
+    [HideInInspector] public GameController GameController { get; set; }
     public bool IsInteractable { get; set; }
 
     #endregion Public Properties
@@ -114,7 +114,6 @@ public class UIController : MonoBehaviour
     private void Start()
     {
         _uiController = this;
-        GameController = GameController.GetGameController();
         _scoreboardController = _pnlScoreboard.GetComponent<ScoreboardController>();
         _tutorialController = _pnlTutorial.GetComponent<TutorialController>();
     }
