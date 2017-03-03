@@ -257,8 +257,7 @@ public class GameController : MonoBehaviour
             tile.Direction = facing;
             _gameGrid[x, y] = tile;
 
-            _uiController = _cnvUi.GetComponent<UIController>();
-            _uiController.GameController = this;
+            _uiController = UIController.GetUIController();
 
             //TODO: Assign data to each tile when created, to have different tile types
         }
@@ -275,6 +274,10 @@ public class GameController : MonoBehaviour
             playerController.Id = i + 1;
             if (i != 0) 
                 playerController.OnTurnEnd(this);
+            else
+            {
+                playerController.IsAI = true;
+            }
         }
 
         CurrentPlayer.OnTurnStart(this);
@@ -287,7 +290,6 @@ public class GameController : MonoBehaviour
     // Update is called once per frame
     private void Update()
     {
-        _uiController.UpdateUI(this);
         CheckInput();
     }
 

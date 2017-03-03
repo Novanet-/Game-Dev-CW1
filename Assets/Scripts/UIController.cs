@@ -92,14 +92,14 @@ public class UIController : MonoBehaviour
     }
 
 
-    public void UpdateUI(GameController gameController)
+    public void Update()
     {
-        _txtCurrentPlayer.text = gameController.CurrentPlayer.Id.ToString();
-        string playerMovesLeftString = gameController.PlayerMovesLeft == -1 ? "??" : gameController.PlayerMovesLeft.ToString();
+        _txtCurrentPlayer.text = GameController.CurrentPlayer.Id.ToString();
+        string playerMovesLeftString = GameController.PlayerMovesLeft == -1 ? "??" : GameController.PlayerMovesLeft.ToString();
         _txtMovesLeft.text = playerMovesLeftString;
-        _txtTurnNumber.text = gameController.TurnNumber.ToString();
-        _scoreboardController.UpdateScoreboard(gameController.PlayerControllers);
-        _scoreboardController.UpdateCurrentTurn(gameController.CurrentPlayer);
+        _txtTurnNumber.text = GameController.TurnNumber.ToString();
+        _scoreboardController.UpdateScoreboard(GameController.PlayerControllers);
+        _scoreboardController.UpdateCurrentTurn(GameController.CurrentPlayer);
     }
 
     #endregion Public Methods
@@ -114,6 +114,7 @@ public class UIController : MonoBehaviour
     private void Start()
     {
         _uiController = this;
+        GameController = GameController.GetGameController();
         _scoreboardController = _pnlScoreboard.GetComponent<ScoreboardController>();
         _tutorialController = _pnlTutorial.GetComponent<TutorialController>();
     }
