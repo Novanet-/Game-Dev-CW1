@@ -23,6 +23,7 @@ public class UIController : MonoBehaviour
     [SerializeField] private Text _txtWinSplash;
 
     private static UIController _uiController;
+
     #endregion Private Fields
 
     #region Public Properties
@@ -40,6 +41,21 @@ public class UIController : MonoBehaviour
         IsInteractable = interactable;
     }
 
+    public void ToggleButtonGlowing(Button button, bool glowing)
+    {
+        ColorBlock oldColour = button.colors;
+        ColorBlock newColour = oldColour;
+        if (glowing)
+        {
+            newColour.colorMultiplier = 2;
+            button.colors = newColour;
+        }
+        else
+        {
+            newColour.colorMultiplier = 1;
+            button.colors = newColour;
+        }
+    }
 
 
     public void HideWinSplash()

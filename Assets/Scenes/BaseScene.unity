@@ -432,6 +432,10 @@ MonoBehaviour:
   - 9
   _txtTutorial: {fileID: 2144518772}
   _txtTutorialCurrentPage: {fileID: 653359286}
+  _btnRollDice: {fileID: 1978003252}
+  _btnDie1: {fileID: 1623461212}
+  _btnDie2: {fileID: 1933967169}
+  _glowTile: {fileID: 0}
 --- !u!114 &592417719
 MonoBehaviour:
   m_ObjectHideFlags: 0
