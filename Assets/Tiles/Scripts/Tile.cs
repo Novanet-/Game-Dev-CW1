@@ -99,11 +99,15 @@ public class Tile : MonoBehaviour
         renderer.sprite = _sprites[pos];
     }
 
-    public virtual void Start()
+    public virtual void Awake()
     {
+        
         SetSprite(GetComponent<SpriteRenderer>());
         _playerMovementListeners = new List<PlayerMovementListener>();
         StopGlowing();
+    }
+    public virtual void Start()
+    {
     }
 
     public void StopGlowing()
@@ -173,7 +177,7 @@ public class Tile : MonoBehaviour
         foreach (CoinSpawnerController coinSpawnerController in coinSpawners)
         {
             float gold = coinSpawnerController.GetGoldAmount();
-            float distance =  Distance(coinSpawnerController);
+            float distance =  Mathf.Floor(Distance(coinSpawnerController) + 3 / 4f);
 
             heat = heat + gold / distance;
         }

@@ -43,7 +43,7 @@ public class GoldController : MonoBehaviour, PlayerMovementListener
         {
             player.Money = player.Money + 10;
             Gold = Gold - 10;
-            Debug.Log("Log Given Gold, remaining gold: " + Gold);
+            Debug.Log("Log Given Gold to Player" + player.Id + ", remaining gold: " + Gold);
         }
 
         var spriteRenderer = GetComponent<SpriteRenderer>();
@@ -52,7 +52,7 @@ public class GoldController : MonoBehaviour, PlayerMovementListener
     }
 
     // Use this for initialization
-	void Start()
+	void Awake()
 	{
 	    Gold = 10;
         var spriteRenderer = GetComponent<SpriteRenderer>();

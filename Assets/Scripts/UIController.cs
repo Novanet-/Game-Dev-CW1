@@ -28,7 +28,7 @@ public class UIController : MonoBehaviour
 
     #region Public Properties
 
-    [HideInInspector] public GameController GameController { get; set; }
+    [HideInInspector] private GameController GameController { get; set; }
     public bool IsInteractable { get; set; }
 
     #endregion Public Properties
@@ -127,9 +127,13 @@ public class UIController : MonoBehaviour
         return _uiController;
     }
 
-    private void Start()
+    private void Awake()
     {
         _uiController = this;
+    }
+    private void Start()
+    {
+        GameController = GameController.GetGameController();
         _scoreboardController = _pnlScoreboard.GetComponent<ScoreboardController>();
         _tutorialController = _pnlTutorial.GetComponent<TutorialController>();
     }
