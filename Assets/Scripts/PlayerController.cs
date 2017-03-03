@@ -12,7 +12,7 @@ public class PlayerController : MonoBehaviour
 
     private GameController _gameController;
     private HashSet<Tile> _glowignTiles;
-    
+
 
     [SerializeField] private int _money;
 
@@ -43,7 +43,7 @@ public class PlayerController : MonoBehaviour
     public void Move(IEnumerable<Tile> path)
     {
         PlayerMoves = 1;
-        Tile lastTile = null; 
+        Tile lastTile = null;
         foreach (Tile tile in path)
         {
             _animationPath.Enqueue(tile.transform.position);
@@ -52,7 +52,7 @@ public class PlayerController : MonoBehaviour
         Move(lastTile);
     }
 
-    public void Move(Tile newTile) 
+    public void Move(Tile newTile)
     {
         Vector2 oldPos = _tilePos;
         Tile oldTile = _gameController.GetGameTile((int) _tilePos.x, (int) _tilePos.y);
@@ -63,7 +63,6 @@ public class PlayerController : MonoBehaviour
             oldTile.CurrentPlayer = null;
             _animationPath.Enqueue(_tilePos);
             newTile.CurrentPlayer = this;
-            
         }
         else
         {
@@ -76,8 +75,8 @@ public class PlayerController : MonoBehaviour
     {
         GetComponent<Outline>().enabled = false;
         if (_glowignTiles != null)
-        foreach (Tile tile in _glowignTiles)
-            tile.StopGlowing();
+            foreach (Tile tile in _glowignTiles)
+                tile.StopGlowing();
     }
 
     public void OnTurnStart(GameController gameController)
@@ -97,9 +96,8 @@ public class PlayerController : MonoBehaviour
 
     public void GetAvailibleMoves(int dice1, int dice2, GameController gameController)
     {
-        
-    HashSet<Stack<Tile>> paths = GetPath(gameController.GetGameTile((int) _tilePos.x, (int) _tilePos.y), new Stack<Tile>(), dice1);
-    paths.UnionWith(GetPath(gameController.GetGameTile((int) _tilePos.x, (int) _tilePos.y), new Stack<Tile>(), dice2));
+        HashSet<Stack<Tile>> paths = GetPath(gameController.GetGameTile((int) _tilePos.x, (int) _tilePos.y), new Stack<Tile>(), dice1);
+        paths.UnionWith(GetPath(gameController.GetGameTile((int) _tilePos.x, (int) _tilePos.y), new Stack<Tile>(), dice2));
         _glowignTiles = new HashSet<Tile>();
         foreach (Stack<Tile> path in paths)
         {
@@ -145,7 +143,7 @@ public class PlayerController : MonoBehaviour
         _tilePos = transform.position;
         CanBePushed = true;
         _gameController = GameController.GetGameController();
-        Tile tile = _gameController.GetGameTile((int)_tilePos.x, (int)_tilePos.y);
+        Tile tile = _gameController.GetGameTile((int) _tilePos.x, (int) _tilePos.y);
 
         if (tile.CanLandOn())
             tile.CurrentPlayer = this;
@@ -172,12 +170,9 @@ public class PlayerController : MonoBehaviour
                     return;
             }
 
-            float frac = speed/Vector3.Distance(currentPos, target) * Time.deltaTime;
+            float frac = speed / Vector3.Distance(currentPos, target) * Time.deltaTime;
             transform.position = Vector3.Lerp(currentPos, target, frac);
-
-
         }
-
     }
 
     #endregion Private Methods

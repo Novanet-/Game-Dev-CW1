@@ -40,6 +40,10 @@ public class UIController : MonoBehaviour
         IsInteractable = interactable;
     }
 
+    public void ToggleButtonGlowing(Button button, bool glowing)
+    {
+        button.GetComponent<Outline>().enabled = glowing;
+    }
 
 
     public void HideWinSplash()
