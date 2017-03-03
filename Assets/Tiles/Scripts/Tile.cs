@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using cakeslice;
 using JetBrains.Annotations;
 using UnityEngine;
@@ -98,11 +99,15 @@ public class Tile : MonoBehaviour
         renderer.sprite = _sprites[pos];
     }
 
-    public virtual void Start()
+    public virtual void Awake()
     {
+        
         SetSprite(GetComponent<SpriteRenderer>());
         _playerMovementListeners = new List<PlayerMovementListener>();
         StopGlowing();
+    }
+    public virtual void Start()
+    {
     }
 
     public void StopGlowing()
@@ -128,6 +133,57 @@ public class Tile : MonoBehaviour
         else if (oldPlayer != null && newPlayer == null)
             foreach (PlayerMovementListener listener in _playerMovementListeners)
                 listener.PlayerLeaves(CurrentPlayer);
+    }
+
+    public int Distance(Tile destination)
+    {
+        Queue<KeyValuePair<Tile, int>> tiles = new Queue<KeyValuePair<Tile, int>>();
+        HashSet<Tile> visited = new HashSet<Tile>();
+        tiles.Enqueue(new KeyValuePair<Tile, int>(this, 0));
+        while (tiles.Count > 0)
+        {
+            KeyValuePair<Tile, int> pair =  tiles.Dequeue();
+            Tile tile = pair.Key;
+            if (tile == destination)
+            {
+                return pair.Value;
+            }
+            else
+            {
+                foreach (Tile neighbour in tile.GetNeighbours())
+                {
+                    if (neighbour.CanPassThrough() && !visited.Contains(neighbour))
+                    {
+                        visited.Add(neighbour);
+                        tiles.Enqueue(new KeyValuePair<Tile, int>(neighbour, pair.Value + 1));
+                    }
+                }
+            }
+        }
+        Debug.Log("Cannot Reach " + destination.transform.position + " from " + this.transform.position);
+        return -1;
+    }
+
+    public float GetGoldHeat()
+    {
+        GameController gameController = GameController.GetGameController();
+        List<CoinSpawnerController> coinSpawners = new List<CoinSpawnerController>();
+        float heat = 0;
+        foreach (KeyValuePair<int, int> coinSpawnerLocation in gameController.CoinSpawners)
+        {
+            coinSpawners.Add((CoinSpawnerController)gameController.GetGameTile(coinSpawnerLocation.Key, coinSpawnerLocation.Value));
+        }
+
+        foreach (CoinSpawnerController coinSpawnerController in coinSpawners)
+        {
+            float gold = coinSpawnerController.GetGoldAmount();
+            float distance =  Mathf.Floor(Distance(coinSpawnerController) + 3 / 4f);
+
+            heat = heat + gold / distance;
+        }
+
+
+        return heat;
     }
 
     #endregion Private Methods

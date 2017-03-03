@@ -13,16 +13,21 @@ public class CoinSpawnerController : Tile, RoundEndListener
     private int _timeForMoreGold;
     private float _goldSpawnTime;
     // Use this for initialization
+    public void Awake()
+    {
+        base.Awake();
+        GameObject goldObject = Instantiate(GoldPrefab, transform);
+	    goldObject.transform.position = transform.position;
+	    gold = goldObject.GetComponent<GoldController>();
+	    gold.Tile  = this;
+    }
+
 	public override void Start ()
 	{
         base.Start();
 	    GameObject tile = Instantiate(TilePrefab, transform);
         tile.transform.position = transform.position;
 
-        GameObject goldObject = Instantiate(GoldPrefab, transform);
-	    goldObject.transform.position = transform.position;
-	    gold = goldObject.GetComponent<GoldController>();
-	    gold.Tile  = this;
 	    _timeForMoreGold = Random.Range(4, 7);
 
 
@@ -69,5 +74,10 @@ public class CoinSpawnerController : Tile, RoundEndListener
             _timeForMoreGold = Random.Range(4, 7);
             _goldSpawnTime = Time.time;
         }
+    }
+
+    public int GetGoldAmount()
+    {
+        return gold.Gold;
     }
 }

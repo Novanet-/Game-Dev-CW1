@@ -28,7 +28,7 @@ public class UIController : MonoBehaviour
 
     #region Public Properties
 
-    [HideInInspector] public GameController GameController { get; set; }
+    [HideInInspector] private GameController GameController { get; set; }
     public bool IsInteractable { get; set; }
 
     #endregion Public Properties
@@ -93,7 +93,7 @@ public class UIController : MonoBehaviour
         _txtDie2.text = die2.ToString();
         ToggleRollDice(false);
 //        ToggleSelectDie(true);
-        GameController.CurrentPlayer.GetAvailibleMoves(die1, die2, GameController);
+        GameController.CurrentPlayer.GetAvailibleMoves(die1, die2);
     }
 
     public void ShowWinSplash(PlayerController winningPlayer)
@@ -127,9 +127,13 @@ public class UIController : MonoBehaviour
         return _uiController;
     }
 
-    private void Start()
+    private void Awake()
     {
         _uiController = this;
+    }
+    private void Start()
+    {
+        GameController = GameController.GetGameController();
         _scoreboardController = _pnlScoreboard.GetComponent<ScoreboardController>();
         _tutorialController = _pnlTutorial.GetComponent<TutorialController>();
     }

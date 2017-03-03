@@ -10,7 +10,7 @@ public class GameController : MonoBehaviour
 {
     #region Public Fields
 
-    public const int WinningMoneyDiffThreshold = 20;
+    public const int WinningMoneyDiffThreshold = 50;
     public GameObject PlayerPrefab, CoinPrefab;
 
     #endregion Public Fields
@@ -28,6 +28,8 @@ public class GameController : MonoBehaviour
     private const int River = 2;
     private const int Wall = 1;
     private static GameController _gameController;
+    public List<KeyValuePair<int, int>> CoinSpawners { get; private set; }
+    public List<KeyValuePair<int, int>> PlayerSpawnLocations { get; private set; }
 
     // P is a Path
     // W is Wall
@@ -157,6 +159,7 @@ public class GameController : MonoBehaviour
             //TODO: What happens on win
             _uiController.ShowWinSplash(firstPlace);
             _uiController.ToggleInteraction(false);
+            GameInProgress = false;
         }
     }
 
@@ -186,27 +189,35 @@ public class GameController : MonoBehaviour
     {
         CurrentPlayer.OnTurnEnd(this);
 
-        ActivePlayerIndex++;
-
-        if (ActivePlayerIndex == 0)
-        {
-            TurnNumber++;
-            foreach (RoundEndListener roundEndListener in _roundEndListeners)
-                roundEndListener.OnRoundEnd(TurnNumber);
-        }
-
         CheckIfWin();
-        CurrentPlayer.OnTurnStart(this);
-        _uiController.ToggleRollDice(true);
+        if (GameInProgress)
+        {
+            ActivePlayerIndex++;
+
+            if (ActivePlayerIndex == 0)
+            {
+                TurnNumber++;
+                foreach (RoundEndListener roundEndListener in _roundEndListeners)
+                    roundEndListener.OnRoundEnd(TurnNumber);
+            }
+
+            CurrentPlayer.OnTurnStart(this);
+            _uiController.ToggleRollDice(true);
+        }
     }
 
-    // Use this for initialization
-    private void Start()
+    public bool GameInProgress { get; set; }
+
+
+    private void Awake()
     {
+        GameInProgress = true;
         _gameController = this;
+        CoinSpawners = new List<KeyValuePair<int, int>>();
         _roundEndListeners = new List<RoundEndListener>();
         _gameGrid = new Tile[Width, Height];
-        var playerSpawnLocations = new List<KeyValuePair<int, int>>();
+
+       PlayerSpawnLocations = new List<KeyValuePair<int, int>>();
 
         for (var x = 0; x <= _gameGrid.GetUpperBound(0); x++)
         for (var y = 0; y <= _gameGrid.GetUpperBound(1); y++)
@@ -216,10 +227,11 @@ public class GameController : MonoBehaviour
             switch (_map[15 - y, x])
             {
                 case 'C':
-                    playerSpawnLocations.Add(new KeyValuePair<int, int>(x, y));
+                    PlayerSpawnLocations.Add(new KeyValuePair<int, int>(x, y));
                     break;
 
                 case 'G':
+                    CoinSpawners.Add(new KeyValuePair<int, int>(x, y));
                     tileToMake = _tilePrefabs[Gold];
                     break;
 
@@ -257,17 +269,20 @@ public class GameController : MonoBehaviour
             tile.Direction = facing;
             _gameGrid[x, y] = tile;
 
-            _uiController = UIController.GetUIController();
-            _uiController.GameController = this;
             //TODO: Assign data to each tile when created, to have different tile types
         }
+    }
+    // Use this for initialization
+    private void Start()
+    {
 
+        _uiController = UIController.GetUIController();
         PlayerControllers = new PlayerController[4];
         ActivePlayerIndex = 0;
         for (var i = 0; i < PlayerControllers.Length; i++)
         {
-            int x = playerSpawnLocations[i].Key;
-            int y = playerSpawnLocations[i].Value;
+            int x = PlayerSpawnLocations[i].Key;
+            int y = PlayerSpawnLocations[i].Value;
             GameObject playerInstance = Instantiate(PlayerPrefab, new Vector3(x, y, 0), Quaternion.identity);
             var playerController = playerInstance.GetComponent<PlayerController>();
             PlayerControllers[i] = playerController;
@@ -275,8 +290,8 @@ public class GameController : MonoBehaviour
             if (i != 0)
             {
                 playerController.OnTurnEnd(this);
-                playerController.IsAI = true;
             }
+                playerController.IsAI = true;
         }
 
         CurrentPlayer.OnTurnStart(this);

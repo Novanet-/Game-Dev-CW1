@@ -11,7 +11,7 @@ public class PlayerController : MonoBehaviour
     #region Private Fields
 
     private GameController _gameController;
-    private HashSet<Tile> _glowignTiles;
+    private HashSet<Tile> _glowingTiles;
 
 
     [SerializeField] private int _money;
@@ -54,8 +54,10 @@ public class PlayerController : MonoBehaviour
 
     public void Move(Tile newTile)
     {
+        GameController gameController = GameController.GetGameController();
+
         Vector2 oldPos = _tilePos;
-        Tile oldTile = _gameController.GetGameTile((int) _tilePos.x, (int) _tilePos.y);
+        Tile oldTile = gameController.GetGameTile((int) _tilePos.x, (int) _tilePos.y);
         _tilePos = newTile.transform.position;
         if (newTile.CanLandOn())
         {
@@ -73,36 +75,31 @@ public class PlayerController : MonoBehaviour
 
     public void OnTurnEnd(GameController gameController)
     {
+        IsMyTurn = false;
         GetComponent<Outline>().enabled = false;
-        if (_glowignTiles != null)
-            foreach (Tile tile in _glowignTiles)
+        if (_glowingTiles != null)
+            foreach (Tile tile in _glowingTiles)
                 tile.StopGlowing();
     }
 
     public void OnTurnStart(GameController gameController)
     {
         GetComponent<Outline>().enabled = true;
-        if (IsAI)
-        {
-            UIController.GetUIController().OnClickRollDice();
-            int move = Random.Range(0, _glowignTiles.Count);
-            Tile tile = _glowignTiles.First();
-            Move(tile.Path);
-           _gameController.NextTurn();
-        }
+        IsMyTurn = true;
     }
 
     public bool IsAI { get; set; }
 
-    public void GetAvailibleMoves(int dice1, int dice2, GameController gameController)
+    public void GetAvailibleMoves(int dice1, int dice2)
     {
+        GameController gameController = GameController.GetGameController();
         HashSet<Stack<Tile>> paths = GetPath(gameController.GetGameTile((int) _tilePos.x, (int) _tilePos.y), new Stack<Tile>(), dice1);
         paths.UnionWith(GetPath(gameController.GetGameTile((int) _tilePos.x, (int) _tilePos.y), new Stack<Tile>(), dice2));
-        _glowignTiles = new HashSet<Tile>();
+        _glowingTiles = new HashSet<Tile>();
         foreach (Stack<Tile> path in paths)
         {
             Tile endPoint = path.Peek();
-            _glowignTiles.Add(endPoint);
+            _glowingTiles.Add(endPoint);
             endPoint.Glow();
             endPoint.Path = path.Reverse();
         }
@@ -137,11 +134,15 @@ public class PlayerController : MonoBehaviour
         return routes;
     }
 
-    private void Start()
+    private void Awake()
     {
         _animationPath = new Queue<Vector3>();
         _tilePos = transform.position;
         CanBePushed = true;
+    }
+
+    private void Start()
+    {
         _gameController = GameController.GetGameController();
         Tile tile = _gameController.GetGameTile((int) _tilePos.x, (int) _tilePos.y);
 
@@ -156,6 +157,25 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     private void Update()
     {
+        if (IsAI && IsMyTurn && _animationPath.Count == 0) 
+        {
+            UIController.GetUIController().OnClickRollDice();
+            float highestHeat = 0;
+            Tile moveTo = null;
+            foreach (Tile tile in _glowingTiles)
+            {
+                float heat = tile.GetGoldHeat();
+                if (heat > highestHeat)
+                {
+                    highestHeat = heat;
+                    moveTo = tile;
+                }
+            }
+            Move(moveTo.Path);
+            GameController.GetGameController().NextTurn();
+        }
+
+
         if (_animationPath.Count > 0)
         {
             Vector3 currentPos = transform.position;
@@ -174,6 +194,8 @@ public class PlayerController : MonoBehaviour
             transform.position = Vector3.Lerp(currentPos, target, frac);
         }
     }
+
+    private bool IsMyTurn{ get; set; }
 
     #endregion Private Methods
 }
