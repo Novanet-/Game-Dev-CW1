@@ -1,5 +1,4 @@
-﻿using System;
-using JetBrains.Annotations;
+﻿using JetBrains.Annotations;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -38,36 +37,13 @@ public class TutorialController : MonoBehaviour
     public void UpdateTutorial(int newPageNumber)
     {
         _currentPageNumber = Mod(newPageNumber, TutorialPages.Length);
-        _txtTutorial.text = newLineReplace(TutorialPages[_currentPageNumber]);
+        _txtTutorial.text = (TutorialPages[_currentPageNumber]);
         _txtTutorialCurrentPage.text = string.Format("{0}/{1}", _currentPageNumber + 1, TutorialPages.Length);
     }
 
     #endregion Public Methods
 
     #region Private Methods
-
-    private string newLineReplace(string inText)
-    {
-        bool newLinesRemaining = true;
-
-        while (newLinesRemaining)
-        {
-            int cIndex = inText.IndexOf("\\n", StringComparison.Ordinal); // Gets the Index of "\n"
-
-
-            if (cIndex == -1)
-            {
-                newLinesRemaining = false;
-            }
-            else
-            {
-                inText = inText.Remove(cIndex, 2); // Removes "\n from original String"
-                inText = inText.Insert(cIndex, "\r\n"); // Adds the actual New Line symbol
-            }
-        }
-
-        return inText;
-    }
 
     private static int Mod(int x, int m)
     {
