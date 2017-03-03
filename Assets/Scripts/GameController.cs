@@ -136,7 +136,6 @@ public class GameController : MonoBehaviour
     public int RollDice(int d)
     {
         int rollDice = Random.Range(1, d + 1);
-        Debug.Log(string.Format("Rolled a {0}", rollDice));
         return rollDice;
     }
 
@@ -174,7 +173,7 @@ public class GameController : MonoBehaviour
                 Tile tile = GetGameTile(Mathf.RoundToInt(mouseClick.x), Mathf.RoundToInt(mouseClick.y));
                 if (tile.IsValidMove)
                 {
-                    CurrentPlayer.Move(tile);
+                    CurrentPlayer.Move(tile.Path);
                     NextTurn();
                     _uiController.ToggleRollDice(true);
                     CheckIfWin();

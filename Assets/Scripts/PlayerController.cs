@@ -1,6 +1,9 @@
 ﻿using System;
 using cakeslice;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
@@ -10,10 +13,12 @@ public class PlayerController : MonoBehaviour
 
     private GameController _gameController;
     private HashSet<Tile> _glowignTiles;
+    
 
     [SerializeField] private int _money;
 
-    private Vector2 _pos;
+    private Vector2 _tilePos;
+    private Queue<Vector3> _animationPath;
 
     #endregion Private Fields
 
@@ -21,6 +26,8 @@ public class PlayerController : MonoBehaviour
 
     public bool CanBePushed { get; set; }
     public int Id { get; set; }
+
+    public float speed = 3;
 
     public int Money
     {
@@ -34,33 +41,35 @@ public class PlayerController : MonoBehaviour
 
     #region Public Methods
 
-    public void Move(Tile tile)
+    public void Move(IEnumerable<Tile> path)
     {
-        Vector2 direction = tile.transform.position - transform.position;
-        Move(direction);
+        PlayerMoves = 1;
+        Tile lastTile = null; 
+        foreach (Tile tile in path)
+        {
+            _animationPath.Enqueue(tile.transform.position);
+            lastTile = tile;
+        }
+        Move(lastTile);
     }
 
-    public void Move(Vector2 direction)
+    public void Move(Tile newTile) 
     {
-        Vector2 oldPos = _pos;
-        Tile oldTile = _gameController.GetGameTile((int) _pos.x, (int) _pos.y);
-        _pos = _pos + direction;
-        _pos.x = Mathf.Clamp(_pos.x, 0, _gameController.Width - 1);
-        _pos.y = Mathf.Clamp(_pos.y, 0, _gameController.Height - 1);
-        Tile newTile = _gameController.GetGameTile((int) _pos.x, (int) _pos.y);
+        Vector2 oldPos = _tilePos;
+        Tile oldTile = _gameController.GetGameTile((int) _tilePos.x, (int) _tilePos.y);
+        _tilePos = newTile.transform.position;
         if (newTile.CanLandOn())
         {
+            PlayerMoves--;
             oldTile.CurrentPlayer = null;
-            transform.position = _pos;
+            _animationPath.Enqueue(_tilePos);
             newTile.CurrentPlayer = this;
-            Debug.Log("Moving to:" + _pos.x + " " + _pos.y);
+            
         }
         else
         {
-            _pos = oldPos;
-            transform.position = _pos;
+            _tilePos = oldPos;
             oldTile.CurrentPlayer = this;
-            Debug.Log("Staying at:" + _pos.x + " " + _pos.y);
         }
     }
 
@@ -80,42 +89,55 @@ public class PlayerController : MonoBehaviour
 
     public void GetAvailibleMoves(int dice1, int dice2, GameController gameController)
     {
-    _glowignTiles = GetPath(gameController.GetGameTile((int) transform.position.x, (int) transform.position.y), Vector3.zero, dice1);
-    _glowignTiles.UnionWith(GetPath(gameController.GetGameTile((int) transform.position.x, (int) transform.position.y), Vector3.zero, dice2));
-        foreach (Tile tile in _glowignTiles)
-            tile.Glow();
+        
+    HashSet<Stack<Tile>> paths = GetPath(gameController.GetGameTile((int) _tilePos.x, (int) _tilePos.y), new Stack<Tile>(), dice1);
+    paths.UnionWith(GetPath(gameController.GetGameTile((int) _tilePos.x, (int) _tilePos.y), new Stack<Tile>(), dice2));
+        _glowignTiles = new HashSet<Tile>();
+        foreach (Stack<Tile> path in paths)
+        {
+            Tile endPoint = path.Peek();
+            _glowignTiles.Add(endPoint);
+            endPoint.Glow();
+            endPoint.Path = path.Reverse();
+        }
     }
 
     #endregion Public Methods
 
     #region Private Methods
 
-    private HashSet<Tile> GetPath(Tile tile, Vector3 lastDirection, int remainingMoves)
+    private HashSet<Stack<Tile>> GetPath(Tile tile, Stack<Tile> path, int remainingMoves)
     {
-        var tiles = new HashSet<Tile>();
+        HashSet<Stack<Tile>> routes = new HashSet<Stack<Tile>>();
         if (remainingMoves == 0)
+        {
             if (tile.CanLandOn())
             {
-                tiles.Add(tile);
-                return tiles;
+                path.Push(tile);
+                routes.Add(path);
             }
-            else
-            {
-                return tiles;
-            }
+            return routes;
+        }
 
-        foreach (KeyValuePair<Tile, Vector3> neighbour in tile.GetNeighbours())
-            if (!neighbour.Value.Equals(-lastDirection))
-                tiles.UnionWith(GetPath(neighbour.Key, neighbour.Value, remainingMoves - 1));
-        return tiles;
+        remainingMoves--;
+        foreach (Tile neighbour in tile.GetNeighbours())
+            if (!path.Contains(neighbour))
+            {
+                Stack<Tile> route = new Stack<Tile>(path.Reverse());
+
+                route.Push(tile);
+                routes.UnionWith(GetPath(neighbour, route, remainingMoves));
+            }
+        return routes;
     }
 
     private void Start()
     {
-        _pos = transform.position;
+        _animationPath = new Queue<Vector3>();
+        _tilePos = transform.position;
         CanBePushed = true;
         _gameController = GameController.GetGameController();
-        Tile tile = _gameController.GetGameTile((int) _pos.x, (int) _pos.y);
+        Tile tile = _gameController.GetGameTile((int)_tilePos.x, (int)_tilePos.y);
 
         if (tile.CanLandOn())
             tile.CurrentPlayer = this;
@@ -128,6 +150,26 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     private void Update()
     {
+        if (_animationPath.Count > 0)
+        {
+            Vector3 currentPos = transform.position;
+            Vector3 target = _animationPath.Peek();
+
+            if (Vector3.Distance(currentPos, target) < 0.01)
+            {
+                _animationPath.Dequeue();
+                if (_animationPath.Count > 0)
+                    target = _animationPath.Peek();
+                else
+                    return;
+            }
+
+            float frac = speed/Vector3.Distance(currentPos, target) * Time.deltaTime;
+            transform.position = Vector3.Lerp(currentPos, target, frac);
+
+
+        }
+
     }
 
     #endregion Private Methods
