@@ -48,33 +48,39 @@ public class TutorialController : MonoBehaviour
 
     private void SetHighlightedComponents(int currentPageNumber, int newPageNumber)
     {
-        UIController uiController;
-        switch (newPageNumber)
+        UIController uiController = UIController.GetUIController();
+        GameController gameController = GameController.GetGameController();
+        if (gameController != null && uiController != null)
         {
-            case 2:
-                _glowTile.StopGlowing();
-                uiController.ToggleButtonGlowing(_btnRollDice, true);
-                uiController.ToggleButtonGlowing(_btnDie1, false);
-                uiController.ToggleButtonGlowing(_btnDie2, false);
-                break;
-            case 3:
-                _glowTile.StopGlowing();
-                uiController.ToggleButtonGlowing(_btnRollDice, false);
-                uiController.ToggleButtonGlowing(_btnDie1, true);
-                uiController.ToggleButtonGlowing(_btnDie2, true);
-                break;
-            case 5:
-                _glowTile.Glow();
-                uiController.ToggleButtonGlowing(_btnRollDice, false);
-                uiController.ToggleButtonGlowing(_btnDie1, false);
-                uiController.ToggleButtonGlowing(_btnDie2, false);
-                break;
-            default:
-                _glowTile.StopGlowing();
-                uiController.ToggleButtonGlowing(_btnRollDice, false);
-                uiController.ToggleButtonGlowing(_btnDie1, false);
-                uiController.ToggleButtonGlowing(_btnDie2, false);
-                break;
+            _glowTile = gameController.GetGameTile(1, 1);
+
+            switch (newPageNumber)
+            {
+                case 2:
+                    if (gameController != null) _glowTile.StopGlowing();
+                    uiController.ToggleButtonGlowing(_btnRollDice, true);
+                    uiController.ToggleButtonGlowing(_btnDie1, false);
+                    uiController.ToggleButtonGlowing(_btnDie2, false);
+                    break;
+                case 3:
+                    if (gameController != null) _glowTile.StopGlowing();
+                    uiController.ToggleButtonGlowing(_btnRollDice, false);
+                    uiController.ToggleButtonGlowing(_btnDie1, true);
+                    uiController.ToggleButtonGlowing(_btnDie2, true);
+                    break;
+                case 5:
+                    if (gameController != null) _glowTile.Glow();
+                    uiController.ToggleButtonGlowing(_btnRollDice, false);
+                    uiController.ToggleButtonGlowing(_btnDie1, false);
+                    uiController.ToggleButtonGlowing(_btnDie2, false);
+                    break;
+                default:
+                    if (gameController != null) _glowTile.StopGlowing();
+                    uiController.ToggleButtonGlowing(_btnRollDice, false);
+                    uiController.ToggleButtonGlowing(_btnDie1, false);
+                    uiController.ToggleButtonGlowing(_btnDie2, false);
+                    break;
+            }
         }
     }
 
@@ -90,7 +96,6 @@ public class TutorialController : MonoBehaviour
     // Use this for initialization
     private void Start()
     {
-        _glowTile = GameController.GetGameController().GetGameTile(4, 5);
         InitTutorialPages();
         UpdateTutorial(0);
     }
