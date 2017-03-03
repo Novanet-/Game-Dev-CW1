@@ -50,9 +50,9 @@ public class Tile : MonoBehaviour
         return true;
     }
 
-    public List<KeyValuePair<Tile, Vector3>> GetNeighbours()
+    public List<Tile> GetNeighbours()
     {
-        var nieghbours = new List<KeyValuePair<Tile, Vector3>>();
+        var nieghbours = new List<Tile>();
         GameController gameController = GameController.GetGameController();
         foreach (Vector3 direction in _directions)
         {
@@ -61,7 +61,7 @@ public class Tile : MonoBehaviour
             {
                 Tile tile = gameController.GetGameTile((int) pos.x, (int) pos.y);
                 if (tile.CanPassThrough())
-                    nieghbours.Add(new KeyValuePair<Tile, Vector3>(tile, direction));
+                    nieghbours.Add(tile);
             }
         }
         return nieghbours;
@@ -75,6 +75,8 @@ public class Tile : MonoBehaviour
     }
 
     public bool IsValidMove { get; set; }
+
+    public IEnumerable<Tile> Path { get; set; }
 
     public virtual void LandedOn(PlayerController player)
     {

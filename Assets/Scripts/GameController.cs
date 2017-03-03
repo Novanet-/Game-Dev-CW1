@@ -174,7 +174,7 @@ public class GameController : MonoBehaviour
                 Tile tile = GetGameTile(Mathf.RoundToInt(mouseClick.x), Mathf.RoundToInt(mouseClick.y));
                 if (tile.IsValidMove)
                 {
-                    CurrentPlayer.Move(tile);
+                    CurrentPlayer.Move(tile.Path);
                     NextTurn();
                     _uiController.ToggleRollDice(true);
                     CheckIfWin();
