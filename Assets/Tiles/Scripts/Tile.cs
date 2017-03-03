@@ -148,7 +148,7 @@ public class Tile : MonoBehaviour
             {
                 foreach (Tile neighbour in tile.GetNeighbours())
                 {
-                    if (neighbour.CanLandOn() && !visited.Contains(neighbour))
+                    if (neighbour.CanPassThrough() && !visited.Contains(neighbour))
                     {
                         visited.Add(neighbour);
                         tiles.Enqueue(new KeyValuePair<Tile, int>(neighbour, pair.Value + 1));
@@ -156,14 +156,15 @@ public class Tile : MonoBehaviour
                 }
             }
         }
+        Debug.Log("Cannot Reach " + destination.transform.position + " from " + this.transform.position);
         return -1;
     }
 
-    public int GetGoldHeat()
+    public float GetGoldHeat()
     {
         GameController gameController = GameController.GetGameController();
         List<CoinSpawnerController> coinSpawners = new List<CoinSpawnerController>();
-        int heat = 0;
+        float heat = 0;
         foreach (KeyValuePair<int, int> coinSpawnerLocation in gameController.CoinSpawners)
         {
             coinSpawners.Add((CoinSpawnerController)gameController.GetGameTile(coinSpawnerLocation.Key, coinSpawnerLocation.Value));
@@ -171,7 +172,10 @@ public class Tile : MonoBehaviour
 
         foreach (CoinSpawnerController coinSpawnerController in coinSpawners)
         {
-            heat += coinSpawnerController.GetGoldAmount()/ Distance(coinSpawnerController);
+            float gold = coinSpawnerController.GetGoldAmount();
+            float distance =  Distance(coinSpawnerController);
+
+            heat = heat + gold / distance;
         }
 
 

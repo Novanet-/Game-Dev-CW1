@@ -93,7 +93,7 @@ public class UIController : MonoBehaviour
         _txtDie2.text = die2.ToString();
         ToggleRollDice(false);
 //        ToggleSelectDie(true);
-        GameController.CurrentPlayer.GetAvailibleMoves(die1, die2, GameController);
+        GameController.CurrentPlayer.GetAvailibleMoves(die1, die2);
     }
 
     public void ShowWinSplash(PlayerController winningPlayer)

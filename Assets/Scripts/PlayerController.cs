@@ -11,7 +11,7 @@ public class PlayerController : MonoBehaviour
     #region Private Fields
 
     private GameController _gameController;
-    private HashSet<Tile> _glowignTiles;
+    private HashSet<Tile> _glowingTiles;
 
 
     [SerializeField] private int _money;
@@ -74,8 +74,8 @@ public class PlayerController : MonoBehaviour
     public void OnTurnEnd(GameController gameController)
     {
         GetComponent<Outline>().enabled = false;
-        if (_glowignTiles != null)
-            foreach (Tile tile in _glowignTiles)
+        if (_glowingTiles != null)
+            foreach (Tile tile in _glowingTiles)
                 tile.StopGlowing();
     }
 
@@ -85,24 +85,34 @@ public class PlayerController : MonoBehaviour
         if (IsAI)
         {
             UIController.GetUIController().OnClickRollDice();
-            int move = Random.Range(0, _glowignTiles.Count);
-            Tile tile = _glowignTiles.First();
-            Move(tile.Path);
+            float highestHeat = 0;
+            Tile moveTo = null;
+            foreach (Tile tile in _glowingTiles)
+            {
+                float heat = tile.GetGoldHeat();
+                if (heat > highestHeat)
+                {
+                    highestHeat = heat;
+                    moveTo = tile;
+                }
+            }
+            Move(moveTo.Path);
            _gameController.NextTurn();
         }
     }
 
     public bool IsAI { get; set; }
 
-    public void GetAvailibleMoves(int dice1, int dice2, GameController gameController)
+    public void GetAvailibleMoves(int dice1, int dice2)
     {
+        GameController gameController = GameController.GetGameController();
         HashSet<Stack<Tile>> paths = GetPath(gameController.GetGameTile((int) _tilePos.x, (int) _tilePos.y), new Stack<Tile>(), dice1);
         paths.UnionWith(GetPath(gameController.GetGameTile((int) _tilePos.x, (int) _tilePos.y), new Stack<Tile>(), dice2));
-        _glowignTiles = new HashSet<Tile>();
+        _glowingTiles = new HashSet<Tile>();
         foreach (Stack<Tile> path in paths)
         {
             Tile endPoint = path.Peek();
-            _glowignTiles.Add(endPoint);
+            _glowingTiles.Add(endPoint);
             endPoint.Glow();
             endPoint.Path = path.Reverse();
         }
