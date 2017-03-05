@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Assets.Scripts;
 using cakeslice;
 using JetBrains.Annotations;
@@ -58,21 +59,19 @@ namespace Assets.Tiles.Scripts
             {
                 KeyValuePair<Tile, int> pair = tiles.Dequeue();
                 Tile tile = pair.Key;
-                if (tile == destination) {
-                    return pair.Value;
-                }
-                else
+                if (tile == destination) return pair.Value;
+
+                foreach (Tile neighbour in tile.GetNeighbours())
                 {
-                    foreach (Tile neighbour in tile.GetNeighbours())
-                    {
-                        if (neighbour.CanPassThrough() && !visited.Contains(neighbour))
+                    if (neighbour.CanPassThrough())
+                        if (!visited.Contains(neighbour))
                         {
                             visited.Add(neighbour);
                             tiles.Enqueue(new KeyValuePair<Tile, int>(neighbour, pair.Value + 1));
                         }
-                    }
                 }
             }
+
             Debug.Log("Cannot Reach " + destination.transform.position + " from " + transform.position);
             return -1;
         }
@@ -80,11 +79,12 @@ namespace Assets.Tiles.Scripts
         public float GetGoldHeat()
         {
             GameController gameController = GameController.GetGameController();
-            var coinSpawners = new List<CoinSpawnerController>();
             float heat = 0;
-            foreach (KeyValuePair<int, int> coinSpawnerLocation in gameController.CoinSpawners) {
-                coinSpawners.Add((CoinSpawnerController) gameController.GetGameTile(coinSpawnerLocation.Key, coinSpawnerLocation.Value));
-            }
+            List<CoinSpawnerController> coinSpawners =
+                    gameController.CoinSpawners.Select(
+                                                       coinSpawnerLocation =>
+                                                           gameController.GetGameTile(coinSpawnerLocation.Key, coinSpawnerLocation.Value) as
+                                                                   CoinSpawnerController).ToList();
 
             foreach (CoinSpawnerController coinSpawnerController in coinSpawners)
             {
@@ -99,18 +99,13 @@ namespace Assets.Tiles.Scripts
 
         public List<Tile> GetNeighbours()
         {
-            var nieghbours = new List<Tile>();
             GameController gameController = GameController.GetGameController();
-            foreach (Vector3 direction in _directions)
-            {
-                Vector3 pos = transform.position + direction;
-                if (gameController.IsInBounds(pos))
-                {
-                    Tile tile = gameController.GetGameTile((int) pos.x, (int) pos.y);
-                    if (tile.CanPassThrough()) nieghbours.Add(tile);
-                }
-            }
-            return nieghbours;
+            return
+                    _directions.Select(direction => transform.position + direction)
+                               .Where(pos => gameController.IsInBounds(pos))
+                               .Select(pos => gameController.GetGameTile((int) pos.x, (int) pos.y))
+                               .Where(tile => tile.CanPassThrough())
+                               .ToList();
         }
 
         public virtual void Glow()
@@ -119,7 +114,10 @@ namespace Assets.Tiles.Scripts
             IsValidMove = true;
         }
 
-        public virtual void LandedOn(PlayerController player) { Debug.Log("Landed on Tile at: " + transform.position.x + ", " + transform.position.y); }
+        public virtual void LandedOn(PlayerController player)
+        {
+            Debug.Log("Landed on Tile at: " + transform.position.x + ", " + transform.position.y);
+        }
 
         public void RemovePlayerMovementListener(IPlayerMovementListener listener) { _playerMovementListeners.Remove(listener); }
 
@@ -148,9 +146,9 @@ namespace Assets.Tiles.Scripts
         {
             PlayerController oldPlayer = CurrentPlayer;
             _currentPlayer = newPlayer;
-            if (oldPlayer == null && newPlayer != null) foreach (IPlayerMovementListener listener in _playerMovementListeners) listener.PlayerLandsOn(newPlayer);
-            else if (oldPlayer == newPlayer && oldPlayer != null) foreach (IPlayerMovementListener listener in _playerMovementListeners) listener.PlayerRemainsOn(newPlayer);
-            else if (oldPlayer != null && newPlayer == null) foreach (IPlayerMovementListener listener in _playerMovementListeners) listener.PlayerLeaves(CurrentPlayer);
+            if (oldPlayer == null && newPlayer != null) foreach (IPlayerMovementListener listener in _playerMovementListeners) { listener.PlayerLandsOn(newPlayer); }
+            else if (oldPlayer == newPlayer && oldPlayer != null) foreach (IPlayerMovementListener listener in _playerMovementListeners) { listener.PlayerRemainsOn(newPlayer); }
+            else if (oldPlayer != null && newPlayer == null) foreach (IPlayerMovementListener listener in _playerMovementListeners) { listener.PlayerLeaves(CurrentPlayer); }
         }
 
         #endregion Private Methods

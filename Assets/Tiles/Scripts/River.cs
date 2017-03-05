@@ -40,8 +40,11 @@ namespace Assets.Tiles.Scripts
         private void MovePlayer(PlayerController player)
         {
             //hack to avoid PLayerMoves never decrementing when being pushed by a river that can't push a player
-            if (player.PlayerMoves > 2 * -MOVESTOPUSH && player.PlayerMoves <= 0)
-            {
+            int i = 2 * -MOVESTOPUSH;
+
+            if (player.PlayerMoves <= i) return;
+
+            if (player.PlayerMoves <= 0) {
                 player.PlayerMoves--;
                 player.MoveToTile(toPushTo);
             }

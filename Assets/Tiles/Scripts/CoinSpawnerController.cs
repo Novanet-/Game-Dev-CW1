@@ -32,12 +32,11 @@ namespace Assets.Tiles.Scripts
 
         public void OnRoundEnd(int roundNumber)
         {
-            if (--_timeForMoreGold == 0)
-            {
-                gold.GetGold();
-                _timeForMoreGold = Random.Range(4, 7);
-                _goldSpawnTime = Time.time;
-            }
+            if (--_timeForMoreGold != 0) return;
+
+            gold.GetGold();
+            _timeForMoreGold = Random.Range(4, 7);
+            _goldSpawnTime = Time.time;
         }
 
         public override void SetSprite(SpriteRenderer renderer) { renderer.sprite = _sprites[Random.Range(0, _sprites.Length - 1)]; }
