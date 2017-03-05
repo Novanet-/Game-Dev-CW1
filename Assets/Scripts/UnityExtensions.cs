@@ -1,13 +1,16 @@
 ﻿using UnityEngine;
 
-public static class UnityExtensions
+namespace Assets.Scripts
 {
-    #region Public Methods
-
-    public static Vector3 ScreenToWorldLength(this Camera camera, Vector3 position)
+    public static class UnityExtensions
     {
-        return camera.ScreenToWorldPoint(position) - camera.ScreenToWorldPoint(Vector3.zero);
-    }
+        #region Public Methods
 
-    #endregion Public Methods
+        public static Vector3 ScreenToWorldLength(this Camera camera, Vector3 position)
+        {
+            return camera.ScreenToWorldPoint(position) - camera.ScreenToWorldPoint(Vector3.zero);
+        }
+
+        #endregion Public Methods
+    }
 }

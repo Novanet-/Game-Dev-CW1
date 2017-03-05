@@ -1,8 +1,11 @@
-﻿public interface RoundEndListener
+﻿namespace Assets.Scripts
 {
-    #region Public Methods
+    public interface RoundEndListener
+    {
+        #region Public Methods
 
-    void OnRoundEnd(int roundNumber);
+        void OnRoundEnd(int roundNumber);
 
-    #endregion Public Methods
+        #endregion Public Methods
+    }
 }

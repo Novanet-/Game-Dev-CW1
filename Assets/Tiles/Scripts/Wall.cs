@@ -1,16 +1,19 @@
 ﻿using UnityEngine;
 
-public class Wall : Tile
+namespace Assets.Tiles.Scripts
 {
-    #region Public Methods
-
-    public override bool CanLandOn()
+    public class Wall : Tile
     {
-        Debug.Log(("Calling Wall CanLandOn"));
-        return false;
+        #region Public Methods
+
+        public override bool CanLandOn()
+        {
+            Debug.Log(("Calling Wall CanLandOn"));
+            return false;
+        }
+
+        public override bool CanPassThrough() { return false; }
+
+        #endregion Public Methods
     }
-
-    public override bool CanPassThrough() { return false; }
-
-    #endregion Public Methods
 }
