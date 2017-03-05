@@ -117,19 +117,21 @@ namespace Assets.Scripts
             CurrentPlayer.OnTurnEnd(this);
 
             CheckIfWin();
-            if (GameInProgress)
+            if (!GameInProgress) return;
+
+            ActivePlayerIndex++;
+
+            if (ActivePlayerIndex == 0)
             {
-                ActivePlayerIndex++;
-
-                if (ActivePlayerIndex == 0)
+                TurnNumber++;
+                foreach (RoundEndListener roundEndListener in _roundEndListeners)
                 {
-                    TurnNumber++;
-                    foreach (RoundEndListener roundEndListener in _roundEndListeners) roundEndListener.OnRoundEnd(TurnNumber);
+                    roundEndListener.OnRoundEnd(TurnNumber);
                 }
-
-                CurrentPlayer.OnTurnStart(this);
-                _uiController.ToggleRollDice(true);
             }
+
+            CurrentPlayer.OnTurnStart(this);
+            _uiController.ToggleRollDice(true);
         }
 
         public void RemoveRoundEndListener(RoundEndListener listener) { _roundEndListeners.Remove(listener); }
@@ -232,18 +234,16 @@ namespace Assets.Scripts
             // WASD control
             // We add the direction to our position,
             // this moves the character 1 unit (32 pixels)
-            if (Input.GetMouseButtonDown(0))
+            if (!Input.GetMouseButtonDown(0)) return;
+
+            Vector3 mouseClick = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            if (!IsInBounds(mouseClick)) return;
+
+            Tile tile = GetGameTile(Mathf.RoundToInt(mouseClick.x), Mathf.RoundToInt(mouseClick.y));
+            if (tile.IsValidMove)
             {
-                Vector3 mouseClick = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-                if (IsInBounds(mouseClick))
-                {
-                    Tile tile = GetGameTile(Mathf.RoundToInt(mouseClick.x), Mathf.RoundToInt(mouseClick.y));
-                    if (tile.IsValidMove)
-                    {
-                        CurrentPlayer.Move(tile.Path);
-                        NextTurn();
-                    }
-                }
+                CurrentPlayer.MoveAlongPath(tile.Path);
+                NextTurn();
             }
 
             //                _uiController.OnClickRollDice();

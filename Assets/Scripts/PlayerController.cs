@@ -53,19 +53,15 @@ namespace Assets.Scripts
         public void GetAvailibleMoves(int dice1, int dice2)
         {
             GameController gameController = GameController.GetGameController();
+
             HashSet<Stack<Tile>> paths = GetPath(gameController.GetGameTile((int) _tilePos.x, (int) _tilePos.y), new Stack<Tile>(), dice1);
             paths.UnionWith(GetPath(gameController.GetGameTile((int) _tilePos.x, (int) _tilePos.y), new Stack<Tile>(), dice2));
             _glowingTiles = new HashSet<Tile>();
-            foreach (Stack<Tile> path in paths)
-            {
-                Tile endPoint = path.Peek();
-                _glowingTiles.Add(endPoint);
-                endPoint.Glow();
-                endPoint.Path = path.Reverse();
-            }
+
+            foreach (Stack<Tile> path in paths) { GlowPathEndpoints(path); }
         }
 
-        public void Move(IEnumerable<Tile> path)
+        public void MoveAlongPath(IEnumerable<Tile> path)
         {
             PlayerMoves = 1;
             Tile lastTile = null;
@@ -74,23 +70,19 @@ namespace Assets.Scripts
                 _animationPath.Enqueue(tile.transform.position);
                 lastTile = tile;
             }
-            Move(lastTile);
+
+            MoveToTile(lastTile);
         }
 
-        public void Move(Tile newTile)
+        public void MoveToTile(Tile newTile)
         {
             GameController gameController = GameController.GetGameController();
 
             Vector2 oldPos = _tilePos;
             Tile oldTile = gameController.GetGameTile((int) _tilePos.x, (int) _tilePos.y);
             _tilePos = newTile.transform.position;
-            if (newTile.CanLandOn())
-            {
-                PlayerMoves--;
-                oldTile.CurrentPlayer = null;
-                _animationPath.Enqueue(_tilePos);
-                newTile.CurrentPlayer = this;
-            }
+
+            if (newTile.CanLandOn()) { MovePlayer(oldTile, newTile); }
             else
             {
                 _tilePos = oldPos;
@@ -102,7 +94,9 @@ namespace Assets.Scripts
         {
             IsMyTurn = false;
             GetComponent<Outline>().enabled = false;
-            if (_glowingTiles != null) foreach (Tile tile in _glowingTiles) tile.StopGlowing();
+            if (_glowingTiles == null) return;
+
+            foreach (Tile tile in _glowingTiles) { tile.StopGlowing(); }
         }
 
         public void OnTurnStart(GameController gameController)
@@ -116,14 +110,7 @@ namespace Assets.Scripts
 
         #region Private Methods
 
-        private void Awake()
-        {
-            _animationPath = new Queue<Vector3>();
-            _tilePos = transform.position;
-            CanBePushed = true;
-        }
-
-        private HashSet<Stack<Tile>> GetPath(Tile tile, Stack<Tile> path, int remainingMoves)
+        private static HashSet<Stack<Tile>> GetPath(Tile tile, Stack<Tile> path, int remainingMoves)
         {
             var routes = new HashSet<Stack<Tile>>();
             if (remainingMoves == 0)
@@ -138,6 +125,7 @@ namespace Assets.Scripts
 
             remainingMoves--;
             foreach (Tile neighbour in tile.GetNeighbours())
+            {
                 if (!path.Contains(neighbour))
                 {
                     var route = new Stack<Tile>(path.Reverse());
@@ -145,7 +133,74 @@ namespace Assets.Scripts
                     route.Push(tile);
                     routes.UnionWith(GetPath(neighbour, route, remainingMoves));
                 }
+            }
+
             return routes;
+        }
+
+        private void AnimatePlayer()
+        {
+            Vector3 currentPos = transform.position;
+            Vector3 target = _animationPath.Peek();
+
+            if (Vector3.Distance(currentPos, target) < 0.01)
+            {
+                _animationPath.Dequeue();
+                if (_animationPath.Count > 0) target = _animationPath.Peek();
+                else return;
+            }
+
+            float frac = speed / Vector3.Distance(currentPos, target) * Time.deltaTime;
+            transform.position = Vector3.Lerp(currentPos, target, frac);
+        }
+
+        private void Awake()
+        {
+            _animationPath = new Queue<Vector3>();
+            _tilePos = transform.position;
+            CanBePushed = true;
+        }
+
+        private Tile GetBestMove()
+        {
+            float highestHeat = 0;
+            Tile moveTo = null;
+            foreach (Tile tile in _glowingTiles)
+            {
+                float heat = tile.GetGoldHeat();
+                if (heat > highestHeat)
+                {
+                    highestHeat = heat;
+                    moveTo = tile;
+                }
+            }
+
+            return moveTo;
+        }
+
+        private void GlowPathEndpoints(Stack<Tile> path)
+        {
+            Tile endPoint = path.Peek();
+            _glowingTiles.Add(endPoint);
+            endPoint.Glow();
+            endPoint.Path = path.Reverse();
+        }
+
+        private void MoveAI()
+        {
+            UIController.GetUIController().OnClickRollDice();
+            Tile bestMove = GetBestMove();
+
+            MoveAlongPath(bestMove.Path);
+            GameController.GetGameController().NextTurn();
+        }
+
+        private void MovePlayer(Tile oldTile, Tile newTile)
+        {
+            PlayerMoves--;
+            oldTile.CurrentPlayer = null;
+            _animationPath.Enqueue(_tilePos);
+            newTile.CurrentPlayer = this;
         }
 
         private void Start()
@@ -155,46 +210,16 @@ namespace Assets.Scripts
 
             if (tile.CanLandOn()) tile.CurrentPlayer = this;
             else throw new Exception("CurrentPlayer's Starting Position is Invalid!");
-
-            //        Id = UnityEngine.Random.Range(0, 1000000);
         }
 
         // Update is called once per frame
         private void Update()
         {
-            if (IsAI && IsMyTurn && _animationPath.Count == 0)
-            {
-                UIController.GetUIController().OnClickRollDice();
-                float highestHeat = 0;
-                Tile moveTo = null;
-                foreach (Tile tile in _glowingTiles)
-                {
-                    float heat = tile.GetGoldHeat();
-                    if (heat > highestHeat)
-                    {
-                        highestHeat = heat;
-                        moveTo = tile;
-                    }
-                }
-                Move(moveTo.Path);
-                GameController.GetGameController().NextTurn();
-            }
+            if (IsAI && IsMyTurn && _animationPath.Count == 0) MoveAI();
 
-            if (_animationPath.Count > 0)
-            {
-                Vector3 currentPos = transform.position;
-                Vector3 target = _animationPath.Peek();
+            if (_animationPath.Count <= 0) return;
 
-                if (Vector3.Distance(currentPos, target) < 0.01)
-                {
-                    _animationPath.Dequeue();
-                    if (_animationPath.Count > 0) target = _animationPath.Peek();
-                    else return;
-                }
-
-                float frac = speed / Vector3.Distance(currentPos, target) * Time.deltaTime;
-                transform.position = Vector3.Lerp(currentPos, target, frac);
-            }
+            AnimatePlayer();
         }
 
         #endregion Private Methods

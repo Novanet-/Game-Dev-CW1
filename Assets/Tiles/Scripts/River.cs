@@ -43,7 +43,7 @@ namespace Assets.Tiles.Scripts
             if (player.PlayerMoves > 2 * -MOVESTOPUSH && player.PlayerMoves <= 0)
             {
                 player.PlayerMoves--;
-                player.Move(toPushTo);
+                player.MoveToTile(toPushTo);
             }
         }
 

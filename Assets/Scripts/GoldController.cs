@@ -34,7 +34,7 @@ namespace Assets.Scripts
 
         #region Public Methods
 
-        public void getGold()
+        public void GetGold()
         {
             Gold = Gold + 10;
             var spriteRenderer = GetComponent<SpriteRenderer>();

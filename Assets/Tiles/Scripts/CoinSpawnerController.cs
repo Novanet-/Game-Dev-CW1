@@ -34,7 +34,7 @@ namespace Assets.Tiles.Scripts
         {
             if (--_timeForMoreGold == 0)
             {
-                gold.getGold();
+                gold.GetGold();
                 _timeForMoreGold = Random.Range(4, 7);
                 _goldSpawnTime = Time.time;
             }
