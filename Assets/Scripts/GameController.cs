@@ -55,21 +55,13 @@ public class GameController : MonoBehaviour
     };
 
     [SerializeField] private int _activePlayerIndex;
-
     [SerializeField] private Canvas _cnvUi;
-
     [SerializeField] private int _dieNumber = 6;
-
     private Tile[,] _gameGrid;
-
     [SerializeField] private int _height;
-
     private List<RoundEndListener> _roundEndListeners;
-
     [SerializeField] private GameObject[] _tilePrefabs;
-
     private UIController _uiController;
-
     [SerializeField] private int _width;
 
     #endregion Private Fields

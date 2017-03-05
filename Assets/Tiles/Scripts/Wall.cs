@@ -2,6 +2,7 @@
 
 public class Wall : Tile
 {
+    #region Public Methods
 
     public override bool CanLandOn()
     {
@@ -9,8 +10,7 @@ public class Wall : Tile
         return false;
     }
 
-    public override bool CanPassThrough()
-    {
-        return false;
-    }
+    public override bool CanPassThrough() { return false; }
+
+    #endregion Public Methods
 }

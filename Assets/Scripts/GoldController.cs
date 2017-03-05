@@ -5,9 +5,7 @@ public class GoldController : MonoBehaviour, PlayerMovementListener
     #region Private Fields
 
     private int _spriteNum;
-
     [SerializeField] private Sprite[] _sprites;
-
     private Tile _tile;
 
     #endregion Private Fields

@@ -7,19 +7,12 @@ public class TutorialController : MonoBehaviour
     #region Private Fields
 
     [SerializeField] private Button _btnDie1;
-
     [SerializeField] private Button _btnDie2;
-
     [SerializeField] private Button _btnRollDice;
-
     private int _currentPageNumber;
-
     [SerializeField] private Tile _glowTile;
-
     [SerializeField] private string[] _tutorialPages;
-
     [SerializeField] private Text _txtTutorial;
-
     [SerializeField] private Text _txtTutorialCurrentPage;
 
     #endregion Private Fields

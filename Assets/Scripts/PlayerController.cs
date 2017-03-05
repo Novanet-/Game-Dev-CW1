@@ -32,9 +32,7 @@ public class PlayerController : MonoBehaviour
     public bool CanBePushed { get; set; }
     public int Id { get; set; }
     public bool IsAI { get; set; }
-
     public int Money { get { return _money; } set { _money = value; } }
-
     public int PlayerMoves { get; set; }
 
     #endregion Public Properties

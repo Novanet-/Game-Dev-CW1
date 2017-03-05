@@ -1,83 +1,82 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using cakeslice;
+﻿using cakeslice;
 using UnityEngine;
-using Random = UnityEngine.Random;
 
 public class CoinSpawnerController : Tile, RoundEndListener
 {
+    #region Private Fields
 
-	[SerializeField] private GameObject TilePrefab, GoldPrefab;
-	private GoldController gold;
-	private int _timeForMoreGold;
-	private float _goldSpawnTime;
-	// Use this for initialization
-	public void Awake()
-	{
-		base.Awake();
-		GameObject goldObject = Instantiate(GoldPrefab, transform);
-		goldObject.transform.position = transform.position;
-		gold = goldObject.GetComponent<GoldController>();
-		gold.Tile  = this;
-	}
+    private float _goldSpawnTime;
+    private int _timeForMoreGold;
+    private GoldController gold;
+    [SerializeField] private GameObject TilePrefab, GoldPrefab;
 
-	public override void Start ()
-	{
-		base.Start();
-		GameObject tile = Instantiate(TilePrefab, transform);
-		tile.transform.position = transform.position;
-
-		_timeForMoreGold = Random.Range(4, 7);
+    #endregion Private Fields
 
 
-		GameController controller = GameController.GetGameController();
-		controller.AddRoundEndListener(this);
-	}
-	
-	// Update is called once per frame
-	void Update () {
-			StopGlowing(2);
-		if (Time.time < _goldSpawnTime + 2)
-		{
-			Glow(2);
-		}
-	}
+    #region Public Methods
 
-	private void StopGlowing(int i)
-	{
-		Outline outline = GetComponent<Outline>();
-		outline.color = 1;
-		if (IsValidMove)
-			Glow();
-		else 
-			StopGlowing();
-	}   
+    // Use this for initialization
+    public void Awake()
+    {
+        base.Awake();
+        GameObject goldObject = Instantiate(GoldPrefab, transform);
+        goldObject.transform.position = transform.position;
+        gold = goldObject.GetComponent<GoldController>();
+        gold.Tile = this;
+    }
 
-	private void Glow(int i)
-	{
-		Outline outline = GetComponent<Outline>();
-		outline.color = i;
-		outline.enabled = true;
-	}
+    public int GetGoldAmount() { return gold.Gold; }
 
-	public override void SetSprite(SpriteRenderer renderer)
-	{
-		renderer.sprite = _sprites[Random.Range(0, _sprites.Length - 1)];
-	}
+    public void OnRoundEnd(int roundNumber)
+    {
+        if (--_timeForMoreGold == 0)
+        {
+            gold.getGold();
+            _timeForMoreGold = Random.Range(4, 7);
+            _goldSpawnTime = Time.time;
+        }
+    }
 
-	public void OnRoundEnd(int roundNumber)
-	{
-		if (--_timeForMoreGold == 0)
-		{
-			gold.getGold();
-			_timeForMoreGold = Random.Range(4, 7);
-			_goldSpawnTime = Time.time;
-		}
-	}
+    public override void SetSprite(SpriteRenderer renderer) { renderer.sprite = _sprites[Random.Range(0, _sprites.Length - 1)]; }
 
-	public int GetGoldAmount()
-	{
-		return gold.Gold;
-	}
+    public override void Start()
+    {
+        base.Start();
+        GameObject tile = Instantiate(TilePrefab, transform);
+        tile.transform.position = transform.position;
+
+        _timeForMoreGold = Random.Range(4, 7);
+
+        GameController controller = GameController.GetGameController();
+        controller.AddRoundEndListener(this);
+    }
+
+    #endregion Public Methods
+
+
+    #region Private Methods
+
+    private void Glow(int i)
+    {
+        var outline = GetComponent<Outline>();
+        outline.color = i;
+        outline.enabled = true;
+    }
+
+    private void StopGlowing(int i)
+    {
+        var outline = GetComponent<Outline>();
+        outline.color = 1;
+        if (IsValidMove) Glow();
+        else StopGlowing();
+    }
+
+    // Update is called once per frame
+    private void Update()
+    {
+        StopGlowing(2);
+        if (Time.time < _goldSpawnTime + 2) { Glow(2); }
+    }
+
+    #endregion Private Methods
 }

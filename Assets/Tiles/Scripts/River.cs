@@ -1,55 +1,51 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using Random = UnityEngine.Random;
+﻿using UnityEngine;
 
-public class River : Tile, PlayerMovementListener{
+public class River : Tile, PlayerMovementListener
+{
+    #region Private Fields
+
     private readonly int MOVESTOPUSH = 1;
     private Tile toPushTo;
 
+    #endregion Private Fields
+
+
+    #region Public Methods
+
+    public void PlayerLandsOn(PlayerController player) { MovePlayer(player); }
+
+    public void PlayerLeaves(PlayerController player) { }
+
+    public void PlayerRemainsOn(PlayerController player) { MovePlayer(player); }
+
+    public override void SetSprite(SpriteRenderer renderer) { renderer.sprite = _sprites[Random.Range(0, _sprites.Length)]; }
 
     // Use this for initialization
-	public override void  Start ()
-	{
-	    base.Start();
-        this.AddPlayerMovementListener(this);
-	    toPushTo = GameController.GetGameController()
-	        .GetGameTile((int)(transform.position.x + Direction.x), (int)(transform.position.y + Direction.y));
-
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
-
-    public override void SetSprite(SpriteRenderer renderer)
+    public override void Start()
     {
-        renderer.sprite = _sprites[Random.Range(0, _sprites.Length)];
+        base.Start();
+        AddPlayerMovementListener(this);
+        toPushTo = GameController.GetGameController()
+                                 .GetGameTile((int) (transform.position.x + Direction.x), (int) (transform.position.y + Direction.y));
     }
 
-    public void PlayerLandsOn(PlayerController player)
-    {
-        MovePlayer(player);
-    }
+    #endregion Public Methods
 
-    public void PlayerRemainsOn(PlayerController player)
-    {
-        MovePlayer(player);
-    }
+
+    #region Private Methods
 
     private void MovePlayer(PlayerController player)
     {
         //hack to avoid PLayerMoves never decrementing when being pushed by a river that can't push a player
-        if (player.PlayerMoves > 2* -MOVESTOPUSH && player.PlayerMoves <= 0)
+        if (player.PlayerMoves > 2 * -MOVESTOPUSH && player.PlayerMoves <= 0)
         {
             player.PlayerMoves--;
             player.Move(toPushTo);
         }
     }
 
-    public void PlayerLeaves(PlayerController player)
-    {
-    }
+    // Update is called once per frame
+    private void Update() { }
+
+    #endregion Private Methods
 }

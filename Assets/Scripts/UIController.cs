@@ -7,32 +7,19 @@ public class UIController : MonoBehaviour
     #region Private Fields
 
     private static UIController _uiController;
-
     [SerializeField] private Button _btnDie1;
-
     [SerializeField] private Button _btnDie2;
-
     [SerializeField] private Button _btnRollDice;
-
     [SerializeField] private string _playerWinString = "Player {0} wins!";
-
     [SerializeField] private GameObject _pnlScoreboard;
-
     [SerializeField] private GameObject _pnlTutorial;
-
     private ScoreboardController _scoreboardController;
     private TutorialController _tutorialController;
-
     [SerializeField] private Text _txtCurrentPlayer;
-
     [SerializeField] private Text _txtDie1;
-
     [SerializeField] private Text _txtDie2;
-
     [SerializeField] private Text _txtMovesLeft;
-
     [SerializeField] private Text _txtTurnNumber;
-
     [SerializeField] private Text _txtWinSplash;
 
     #endregion Private Fields

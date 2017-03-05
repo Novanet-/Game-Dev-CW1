@@ -6,7 +6,6 @@ public class ScoreboardController : MonoBehaviour
     #region Private Fields
 
     [SerializeField] private Text[] _txtCurrentPlayerIndicatorArray;
-
     [SerializeField] private Text[] _txtPlayerScoresArray;
 
     #endregion Private Fields
