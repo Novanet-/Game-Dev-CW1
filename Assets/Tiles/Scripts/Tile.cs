@@ -37,8 +37,18 @@ namespace Assets.Tiles.Scripts
 
         #region Public Methods
 
-        public void AddPlayerMovementListener(IPlayerMovementListener listener) { _playerMovementListeners.Add(listener); }
+        /// <summary>
+        /// Adds the player movement listener.
+        /// </summary>
+        /// <param name="listener">The listener.</param>
+        public void AddPlayerMovementListener(IPlayerMovementListener listener)
+        {
+            _playerMovementListeners.Add(listener);
+        }
 
+        /// <summary>
+        /// Awakes this instance.
+        /// </summary>
         public virtual void Awake()
         {
             SetSprite(GetComponent<SpriteRenderer>());
@@ -46,10 +56,33 @@ namespace Assets.Tiles.Scripts
             StopGlowing();
         }
 
-        public virtual bool CanLandOn() { return CurrentPlayer == null; }
+        /// <summary>
+        /// Determines whether this instance [can land on].
+        /// </summary>
+        /// <returns>
+        ///   <c>true</c> if this instance [can land on]; otherwise, <c>false</c>.
+        /// </returns>
+        public virtual bool CanLandOn()
+        {
+            return CurrentPlayer == null;
+        }
 
-        public virtual bool CanPassThrough() { return true; }
+        /// <summary>
+        /// Determines whether this instance [can pass through].
+        /// </summary>
+        /// <returns>
+        ///   <c>true</c> if this instance [can pass through]; otherwise, <c>false</c>.
+        /// </returns>
+        public virtual bool CanPassThrough()
+        {
+            return true;
+        }
 
+        /// <summary>
+        /// Distances the specified destination.
+        /// </summary>
+        /// <param name="destination">The destination.</param>
+        /// <returns></returns>
         public int Distance(Tile destination)
         {
             var tiles = new Queue<KeyValuePair<Tile, int>>();
@@ -76,6 +109,10 @@ namespace Assets.Tiles.Scripts
             return -1;
         }
 
+        /// <summary>
+        /// Gets the gold heat.
+        /// </summary>
+        /// <returns></returns>
         public float GetGoldHeat()
         {
             GameController gameController = GameController.GetGameController();
@@ -97,6 +134,10 @@ namespace Assets.Tiles.Scripts
             return heat;
         }
 
+        /// <summary>
+        /// Gets the neighbours.
+        /// </summary>
+        /// <returns></returns>
         public List<Tile> GetNeighbours()
         {
             GameController gameController = GameController.GetGameController();
@@ -108,19 +149,37 @@ namespace Assets.Tiles.Scripts
                                .ToList();
         }
 
+        /// <summary>
+        /// Glows this instance.
+        /// </summary>
         public virtual void Glow()
         {
             GetComponent<Outline>().enabled = true;
             IsValidMove = true;
         }
 
+        /// <summary>
+        /// Landeds the on.
+        /// </summary>
+        /// <param name="player">The player.</param>
         public virtual void LandedOn(PlayerController player)
         {
             Debug.Log("Landed on Tile at: " + transform.position.x + ", " + transform.position.y);
         }
 
-        public void RemovePlayerMovementListener(IPlayerMovementListener listener) { _playerMovementListeners.Remove(listener); }
+        /// <summary>
+        /// Removes the player movement listener.
+        /// </summary>
+        /// <param name="listener">The listener.</param>
+        public void RemovePlayerMovementListener(IPlayerMovementListener listener)
+        {
+            _playerMovementListeners.Remove(listener);
+        }
 
+        /// <summary>
+        /// Sets the sprite.
+        /// </summary>
+        /// <param name="renderer">The renderer.</param>
         public virtual void SetSprite(SpriteRenderer renderer)
         {
             var pos = 0;
@@ -131,6 +190,9 @@ namespace Assets.Tiles.Scripts
 
         public virtual void Start() { }
 
+        /// <summary>
+        /// Stops the glowing.
+        /// </summary>
         public void StopGlowing()
         {
             GetComponent<Outline>().enabled = false;
@@ -142,6 +204,10 @@ namespace Assets.Tiles.Scripts
 
         #region Private Methods
 
+        /// <summary>
+        /// Sets the player.
+        /// </summary>
+        /// <param name="newPlayer">The new player.</param>
         private void SetPlayer([CanBeNull] PlayerController newPlayer)
         {
             PlayerController oldPlayer = CurrentPlayer;

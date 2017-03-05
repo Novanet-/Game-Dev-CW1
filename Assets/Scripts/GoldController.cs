@@ -18,6 +18,12 @@ namespace Assets.Scripts
 
         public int Gold { get; private set; }
 
+        /// <summary>
+        /// Gets or sets the tile.
+        /// </summary>
+        /// <value>
+        /// The tile.
+        /// </value>
         public Tile Tile
         {
             get { return _tile; }
@@ -34,6 +40,9 @@ namespace Assets.Scripts
 
         #region Public Methods
 
+        /// <summary>
+        /// Gets the gold.
+        /// </summary>
         public void GetGold()
         {
             Gold = Gold + 10;
@@ -42,10 +51,22 @@ namespace Assets.Scripts
             spriteRenderer.sprite = _sprites[_spriteNum];
         }
 
+        /// <summary>
+        /// Players the lands on.
+        /// </summary>
+        /// <param name="player">The player.</param>
         public void PlayerLandsOn(PlayerController player) { GivePlayerGold(player); }
 
+        /// <summary>
+        /// Players the leaves.
+        /// </summary>
+        /// <param name="player">The player.</param>
         public void PlayerLeaves(PlayerController player) { }
 
+        /// <summary>
+        /// Players the remains on.
+        /// </summary>
+        /// <param name="player">The player.</param>
         public void PlayerRemainsOn(PlayerController player) { GivePlayerGold(player); }
 
         #endregion Public Methods
@@ -54,6 +75,9 @@ namespace Assets.Scripts
         #region Private Methods
 
         // Use this for initialization
+        /// <summary>
+        /// Awakes this instance.
+        /// </summary>
         private void Awake()
         {
             Gold = 10;
@@ -62,6 +86,10 @@ namespace Assets.Scripts
             spriteRenderer.sprite = _sprites[_spriteNum];
         }
 
+        /// <summary>
+        /// Gives the player gold.
+        /// </summary>
+        /// <param name="player">The player.</param>
         private void GivePlayerGold(PlayerController player)
         {
             if (Gold > 0)

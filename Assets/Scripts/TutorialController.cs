@@ -30,12 +30,20 @@ namespace Assets.Scripts
 
         #region Public Methods
 
+        /// <summary>
+        /// Advances the tutorial page.
+        /// </summary>
+        /// <param name="increment">The increment.</param>
         public void AdvanceTutorialPage(int increment)
         {
             _currentPageNumber = _currentPageNumber + increment;
             UpdateTutorial(_currentPageNumber);
         }
 
+        /// <summary>
+        /// Updates the tutorial.
+        /// </summary>
+        /// <param name="newPageNumber">The new page number.</param>
         public void UpdateTutorial(int newPageNumber)
         {
             SetHighlightedComponents(_currentPageNumber, newPageNumber);
@@ -51,6 +59,9 @@ namespace Assets.Scripts
 
         private static int Mod(int x, int m) { return (x % m + m) % m; }
 
+        /// <summary>
+        /// Initializes the tutorial pages.
+        /// </summary>
         private void InitTutorialPages()
         {
             TutorialPages[0] = "Hello.\n\nWelcome to Robbers\n\nPlease navigate the game tutorial using the buttons below to learn how to play.";
@@ -70,6 +81,11 @@ namespace Assets.Scripts
             TutorialPages[8] = "And that's pretty much the whole game, feel free to keep playing! Have fun!";
         }
 
+        /// <summary>
+        /// Sets the highlighted components.
+        /// </summary>
+        /// <param name="currentPageNumber">The current page number.</param>
+        /// <param name="newPageNumber">The new page number.</param>
         private void SetHighlightedComponents(int currentPageNumber, int newPageNumber)
         {
             UIController uiController = UIController.GetUIController();
@@ -112,6 +128,9 @@ namespace Assets.Scripts
         }
 
         // Use this for initialization
+        /// <summary>
+        /// Starts this instance.
+        /// </summary>
         private void Start()
         {
             InitTutorialPages();

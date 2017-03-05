@@ -50,6 +50,11 @@ namespace Assets.Scripts
 
         #region Public Methods
 
+        /// <summary>
+        /// Gets the availible moves.
+        /// </summary>
+        /// <param name="dice1">The dice1.</param>
+        /// <param name="dice2">The dice2.</param>
         public void GetAvailibleMoves(int dice1, int dice2)
         {
             GameController gameController = GameController.GetGameController();
@@ -61,6 +66,10 @@ namespace Assets.Scripts
             foreach (Stack<Tile> path in paths) { GlowPathEndpoints(path); }
         }
 
+        /// <summary>
+        /// Moves the along path.
+        /// </summary>
+        /// <param name="path">The path.</param>
         public void MoveAlongPath(IEnumerable<Tile> path)
         {
             PlayerMoves = 1;
@@ -74,6 +83,10 @@ namespace Assets.Scripts
             MoveToTile(lastTile);
         }
 
+        /// <summary>
+        /// Moves to tile.
+        /// </summary>
+        /// <param name="newTile">The new tile.</param>
         public void MoveToTile(Tile newTile)
         {
             GameController gameController = GameController.GetGameController();
@@ -90,6 +103,10 @@ namespace Assets.Scripts
             }
         }
 
+        /// <summary>
+        /// Called when [turn end].
+        /// </summary>
+        /// <param name="gameController">The game controller.</param>
         public void OnTurnEnd(GameController gameController)
         {
             IsMyTurn = false;
@@ -99,6 +116,10 @@ namespace Assets.Scripts
             foreach (Tile tile in _glowingTiles) { tile.StopGlowing(); }
         }
 
+        /// <summary>
+        /// Called when [turn start].
+        /// </summary>
+        /// <param name="gameController">The game controller.</param>
         public void OnTurnStart(GameController gameController)
         {
             GetComponent<Outline>().enabled = true;
@@ -110,6 +131,13 @@ namespace Assets.Scripts
 
         #region Private Methods
 
+        /// <summary>
+        /// Gets the path.
+        /// </summary>
+        /// <param name="tile">The tile.</param>
+        /// <param name="path">The path.</param>
+        /// <param name="remainingMoves">The remaining moves.</param>
+        /// <returns></returns>
         private static HashSet<Stack<Tile>> GetPath(Tile tile, Stack<Tile> path, int remainingMoves)
         {
             var routes = new HashSet<Stack<Tile>>();
@@ -138,6 +166,9 @@ namespace Assets.Scripts
             return routes;
         }
 
+        /// <summary>
+        /// Animates the player.
+        /// </summary>
         private void AnimatePlayer()
         {
             Vector3 currentPos = transform.position;
@@ -154,6 +185,9 @@ namespace Assets.Scripts
             transform.position = Vector3.Lerp(currentPos, target, frac);
         }
 
+        /// <summary>
+        /// Awakes this instance.
+        /// </summary>
         private void Awake()
         {
             _animationPath = new Queue<Vector3>();
@@ -161,6 +195,10 @@ namespace Assets.Scripts
             CanBePushed = true;
         }
 
+        /// <summary>
+        /// Gets the best move.
+        /// </summary>
+        /// <returns></returns>
         private Tile GetBestMove()
         {
             float highestHeat = 0;
@@ -178,6 +216,10 @@ namespace Assets.Scripts
             return moveTo;
         }
 
+        /// <summary>
+        /// Glows the path endpoints.
+        /// </summary>
+        /// <param name="path">The path.</param>
         private void GlowPathEndpoints(Stack<Tile> path)
         {
             Tile endPoint = path.Peek();
@@ -186,6 +228,9 @@ namespace Assets.Scripts
             endPoint.Path = path.Reverse();
         }
 
+        /// <summary>
+        /// Moves the ai.
+        /// </summary>
         private void MoveAI()
         {
             UIController.GetUIController().OnClickRollDice();
@@ -195,6 +240,11 @@ namespace Assets.Scripts
             GameController.GetGameController().NextTurn();
         }
 
+        /// <summary>
+        /// Moves the player.
+        /// </summary>
+        /// <param name="oldTile">The old tile.</param>
+        /// <param name="newTile">The new tile.</param>
         private void MovePlayer(Tile oldTile, Tile newTile)
         {
             PlayerMoves--;
@@ -203,6 +253,10 @@ namespace Assets.Scripts
             newTile.CurrentPlayer = this;
         }
 
+        /// <summary>
+        /// Starts this instance.
+        /// </summary>
+        /// <exception cref="System.Exception">CurrentPlayer's Starting Position is Invalid!</exception>
         private void Start()
         {
             _gameController = GameController.GetGameController();
@@ -213,6 +267,9 @@ namespace Assets.Scripts
         }
 
         // Update is called once per frame
+        /// <summary>
+        /// Updates this instance.
+        /// </summary>
         private void Update()
         {
             if (IsAI && IsMyTurn && _animationPath.Count == 0) MoveAI();

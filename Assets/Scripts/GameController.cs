@@ -58,13 +58,21 @@ namespace Assets.Scripts
         };
 
         [SerializeField] private int _activePlayerIndex;
+
         [SerializeField] private Canvas _cnvUi;
+
         [SerializeField] private int _dieNumber = 6;
+
         private Tile[,] _gameGrid;
+
         [SerializeField] private int _height;
+
         private List<IRoundEndListener> _roundEndListeners;
+
         [SerializeField] private GameObject[] _tilePrefabs;
+
         private UIController _uiController;
+
         [SerializeField] private int _width;
 
         #endregion Private Fields
@@ -100,10 +108,24 @@ namespace Assets.Scripts
 
         public static GameController GetGameController() { return _gameController; }
 
-        public void AddRoundEndListener(IRoundEndListener listener) { _roundEndListeners.Add(listener); }
+        /// <summary>
+        /// Adds the round end listener.
+        /// </summary>
+        /// <param name="listener">The listener.</param>
+        public void AddRoundEndListener(IRoundEndListener listener)
+        {
+            _roundEndListeners.Add(listener);
+        }
 
         public Tile GetGameTile(int x, int y) { return _gameGrid[x, y]; }
 
+        /// <summary>
+        /// Determines whether [is in bounds] [the specified position].
+        /// </summary>
+        /// <param name="pos">The position.</param>
+        /// <returns>
+        ///   <c>true</c> if [is in bounds] [the specified position]; otherwise, <c>false</c>.
+        /// </returns>
         public bool IsInBounds(Vector3 pos)
         {
             return pos.x >= 0 &&
@@ -112,6 +134,9 @@ namespace Assets.Scripts
                    pos.y < Height;
         }
 
+        /// <summary>
+        /// Nexts the turn.
+        /// </summary>
         public void NextTurn()
         {
             CurrentPlayer.OnTurnEnd(this);
@@ -124,18 +149,27 @@ namespace Assets.Scripts
             if (ActivePlayerIndex == 0)
             {
                 TurnNumber++;
-                foreach (IRoundEndListener roundEndListener in _roundEndListeners)
-                {
-                    roundEndListener.OnRoundEnd(TurnNumber);
-                }
+                foreach (IRoundEndListener roundEndListener in _roundEndListeners) { roundEndListener.OnRoundEnd(TurnNumber); }
             }
 
             CurrentPlayer.OnTurnStart(this);
             _uiController.ToggleRollDice(true);
         }
 
-        public void RemoveRoundEndListener(IRoundEndListener listener) { _roundEndListeners.Remove(listener); }
+        /// <summary>
+        /// Removes the round end listener.
+        /// </summary>
+        /// <param name="listener">The listener.</param>
+        public void RemoveRoundEndListener(IRoundEndListener listener)
+        {
+            _roundEndListeners.Remove(listener);
+        }
 
+        /// <summary>
+        /// Rolls the dice.
+        /// </summary>
+        /// <param name="d">The d.</param>
+        /// <returns></returns>
         public int RollDice(int d)
         {
             int rollDice = Random.Range(1, d + 1);
@@ -147,6 +181,9 @@ namespace Assets.Scripts
 
         #region Private Methods
 
+        /// <summary>
+        /// Awakes this instance.
+        /// </summary>
         private void Awake()
         {
             GameInProgress = true;
@@ -211,6 +248,9 @@ namespace Assets.Scripts
             }
         }
 
+        /// <summary>
+        /// Checks if win.
+        /// </summary>
         private void CheckIfWin()
         {
             IOrderedEnumerable<PlayerController> sortedPlayers = PlayerControllers.OrderByDescending(x => x.Money);
@@ -229,6 +269,9 @@ namespace Assets.Scripts
             }
         }
 
+        /// <summary>
+        /// Checks the input.
+        /// </summary>
         private void CheckInput()
         {
             // WASD control
@@ -250,6 +293,9 @@ namespace Assets.Scripts
         }
 
         // Use this for initialization
+        /// <summary>
+        /// Starts this instance.
+        /// </summary>
         private void Start()
         {
             _uiController = UIController.GetUIController();
@@ -275,7 +321,13 @@ namespace Assets.Scripts
         }
 
         // Update is called once per frame
-        private void Update() { CheckInput(); }
+        /// <summary>
+        /// Updates this instance.
+        /// </summary>
+        private void Update()
+        {
+            CheckInput();
+        }
 
         #endregion Private Methods
     }

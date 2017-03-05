@@ -15,14 +15,24 @@ namespace Assets.Scripts
 
         #region Public Methods
 
+        /// <summary>
+        /// Updates the current turn.
+        /// </summary>
+        /// <param name="currentPlayer">The current player.</param>
         public void UpdateCurrentTurn(PlayerController currentPlayer)
         {
-            for (var i = 0; i < _txtCurrentPlayerIndicatorArray.Length; i++) _txtCurrentPlayerIndicatorArray[i].enabled = Equals(i + 1, currentPlayer.Id);
+            for (var i = 0; i < _txtCurrentPlayerIndicatorArray.Length; i++) {
+                _txtCurrentPlayerIndicatorArray[i].enabled = Equals(i + 1, currentPlayer.Id);
+            }
         }
 
+        /// <summary>
+        /// Updates the scoreboard.
+        /// </summary>
+        /// <param name="players">The players.</param>
         public void UpdateScoreboard(PlayerController[] players)
         {
-            for (var i = 0; i < players.Length; i++) _txtPlayerScoresArray[i].text = players[i].Money.ToString();
+            for (var i = 0; i < players.Length; i++) { _txtPlayerScoresArray[i].text = players[i].Money.ToString(); }
         }
 
         #endregion Public Methods
