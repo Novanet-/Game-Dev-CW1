@@ -6,62 +6,57 @@ public class UIController : MonoBehaviour
 {
     #region Private Fields
 
-    [SerializeField] private string _playerWinString = "Player {0} wins!";
+    private static UIController _uiController;
 
     [SerializeField] private Button _btnDie1;
+
     [SerializeField] private Button _btnDie2;
+
     [SerializeField] private Button _btnRollDice;
+
+    [SerializeField] private string _playerWinString = "Player {0} wins!";
+
     [SerializeField] private GameObject _pnlScoreboard;
+
     [SerializeField] private GameObject _pnlTutorial;
+
     private ScoreboardController _scoreboardController;
     private TutorialController _tutorialController;
-    [SerializeField] private Text _txtCurrentPlayer;
-    [SerializeField] private Text _txtDie1;
-    [SerializeField] private Text _txtDie2;
-    [SerializeField] private Text _txtMovesLeft;
-    [SerializeField] private Text _txtTurnNumber;
-    [SerializeField] private Text _txtWinSplash;
 
-    private static UIController _uiController;
+    [SerializeField] private Text _txtCurrentPlayer;
+
+    [SerializeField] private Text _txtDie1;
+
+    [SerializeField] private Text _txtDie2;
+
+    [SerializeField] private Text _txtMovesLeft;
+
+    [SerializeField] private Text _txtTurnNumber;
+
+    [SerializeField] private Text _txtWinSplash;
 
     #endregion Private Fields
 
+
     #region Public Properties
 
-    [HideInInspector] private GameController GameController { get; set; }
     public bool IsInteractable { get; set; }
 
     #endregion Public Properties
 
+
+    #region Private Properties
+
+    [HideInInspector] private GameController GameController { get; set; }
+
+    #endregion Private Properties
+
+
     #region Public Methods
 
-    public void ToggleInteraction(bool interactable)
-    {
-        ToggleRollDice(interactable);
-        IsInteractable = interactable;
-    }
+    public static UIController GetUIController() { return _uiController; }
 
-    public void ToggleButtonGlowing(Button button, bool glowing)
-    {
-        ColorBlock oldColour = button.colors;
-        ColorBlock newColour = oldColour;
-        if (glowing)
-        {
-            newColour.colorMultiplier = 2;
-            button.colors = newColour;
-        }
-        else
-        {
-            newColour.colorMultiplier = 1;
-            button.colors = newColour;
-        }
-    }
-
-
-    public void HideWinSplash()
-    {
-        _txtWinSplash.enabled = false;
-    }
+    public void HideWinSplash() { _txtWinSplash.enabled = false; }
 
     /// <exception cref="Exception">Invalid dice choice</exception>
     public void OnClickChooseDice(int dieNumber)
@@ -92,7 +87,7 @@ public class UIController : MonoBehaviour
         _txtDie1.text = die1.ToString();
         _txtDie2.text = die2.ToString();
         ToggleRollDice(false);
-//        ToggleSelectDie(true);
+        //        ToggleSelectDie(true);
         GameController.CurrentPlayer.GetAvailibleMoves(die1, die2);
     }
 
@@ -102,11 +97,29 @@ public class UIController : MonoBehaviour
         _txtWinSplash.enabled = true;
     }
 
-    public bool ToggleRollDice(bool interactable)
+    public void ToggleButtonGlowing(Button button, bool glowing)
     {
-        return _btnRollDice.interactable = interactable;
+        ColorBlock oldColour = button.colors;
+        ColorBlock newColour = oldColour;
+        if (glowing)
+        {
+            newColour.colorMultiplier = 2;
+            button.colors = newColour;
+        }
+        else
+        {
+            newColour.colorMultiplier = 1;
+            button.colors = newColour;
+        }
     }
 
+    public void ToggleInteraction(bool interactable)
+    {
+        ToggleRollDice(interactable);
+        IsInteractable = interactable;
+    }
+
+    public bool ToggleRollDice(bool interactable) { return _btnRollDice.interactable = interactable; }
 
     public void Update()
     {
@@ -120,17 +133,11 @@ public class UIController : MonoBehaviour
 
     #endregion Public Methods
 
+
     #region Private Methods
 
-    public static UIController GetUIController()
-    {
-        return _uiController;
-    }
+    private void Awake() { _uiController = this; }
 
-    private void Awake()
-    {
-        _uiController = this;
-    }
     private void Start()
     {
         GameController = GameController.GetGameController();

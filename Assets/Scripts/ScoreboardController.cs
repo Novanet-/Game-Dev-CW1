@@ -3,28 +3,37 @@ using UnityEngine.UI;
 
 public class ScoreboardController : MonoBehaviour
 {
-    [SerializeField] private Text[] _txtPlayerScoresArray;
+    #region Private Fields
+
     [SerializeField] private Text[] _txtCurrentPlayerIndicatorArray;
 
-    // Use this for initialization
-    private void Start()
-    {
-    }
+    [SerializeField] private Text[] _txtPlayerScoresArray;
 
-    // Update is called once per frame
-    private void Update()
+    #endregion Private Fields
+
+
+    #region Public Methods
+
+    public void UpdateCurrentTurn(PlayerController currentPlayer)
     {
+        for (var i = 0; i < _txtCurrentPlayerIndicatorArray.Length; i++) _txtCurrentPlayerIndicatorArray[i].enabled = Equals(i + 1, currentPlayer.Id);
     }
 
     public void UpdateScoreboard(PlayerController[] players)
     {
-        for (var i = 0; i < players.Length; i++)
-            _txtPlayerScoresArray[i].text = players[i].Money.ToString();
+        for (var i = 0; i < players.Length; i++) _txtPlayerScoresArray[i].text = players[i].Money.ToString();
     }
 
-    public void UpdateCurrentTurn(PlayerController currentPlayer)
-    {
-        for (var i = 0; i < _txtCurrentPlayerIndicatorArray.Length; i++)
-            _txtCurrentPlayerIndicatorArray[i].enabled = Equals(i + 1, currentPlayer.Id);
-    }
+    #endregion Public Methods
+
+
+    #region Private Methods
+
+    // Use this for initialization
+    private void Start() { }
+
+    // Update is called once per frame
+    private void Update() { }
+
+    #endregion Private Methods
 }

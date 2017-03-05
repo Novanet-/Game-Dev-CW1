@@ -1,41 +1,65 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class GoldController : MonoBehaviour, PlayerMovementListener
 {
-    public int Gold { get; private set; }
-    [SerializeField] private Sprite[] _sprites;
+    #region Private Fields
+
     private int _spriteNum;
+
+    [SerializeField] private Sprite[] _sprites;
+
     private Tile _tile;
+
+    #endregion Private Fields
+
+
+    #region Public Properties
+
+    public int Gold { get; private set; }
 
     public Tile Tile
     {
         get { return _tile; }
         set
         {
-            if (_tile != null)
-            _tile.RemovePlayerMovementListener(this);
+            if (_tile != null) _tile.RemovePlayerMovementListener(this);
             _tile = value;
             _tile.AddPlayerMovementListener(this);
         }
     }
 
-    public void PlayerLandsOn(PlayerController player)
-	{
-		GivePlayerGold(player);
-	}
+    #endregion Public Properties
 
 
-	public void PlayerLeaves(PlayerController player)
-	{
-	}
+    #region Public Methods
 
-	public void PlayerRemainsOn(PlayerController player)
-	{
-		GivePlayerGold(player);
-	}
+    public void getGold()
+    {
+        Gold = Gold + 10;
+        var spriteRenderer = GetComponent<SpriteRenderer>();
+        _spriteNum = Mathf.Clamp(_spriteNum + 1, 0, _sprites.Length - 1);
+        spriteRenderer.sprite = _sprites[_spriteNum];
+    }
+
+    public void PlayerLandsOn(PlayerController player) { GivePlayerGold(player); }
+
+    public void PlayerLeaves(PlayerController player) { }
+
+    public void PlayerRemainsOn(PlayerController player) { GivePlayerGold(player); }
+
+    #endregion Public Methods
+
+
+    #region Private Methods
+
+    // Use this for initialization
+    private void Awake()
+    {
+        Gold = 10;
+        var spriteRenderer = GetComponent<SpriteRenderer>();
+        _spriteNum = 1;
+        spriteRenderer.sprite = _sprites[_spriteNum];
+    }
 
     private void GivePlayerGold(PlayerController player)
     {
@@ -47,30 +71,12 @@ public class GoldController : MonoBehaviour, PlayerMovementListener
         }
 
         var spriteRenderer = GetComponent<SpriteRenderer>();
-        _spriteNum = Mathf.Clamp(_spriteNum -1, 0, _sprites.Length - 1);
+        _spriteNum = Mathf.Clamp(_spriteNum - 1, 0, _sprites.Length - 1);
         spriteRenderer.sprite = _sprites[_spriteNum];
     }
 
-    // Use this for initialization
-	void Awake()
-	{
-	    Gold = 10;
-        var spriteRenderer = GetComponent<SpriteRenderer>();
-	    _spriteNum = 1;
-        spriteRenderer.sprite = _sprites[_spriteNum];
-	}
+    // Update is called once per frame
+    private void Update() { }
 
-	// Update is called once per frame
-	void Update()
-	{
-	}
-
-
-    public void getGold()
-    {
-        Gold = Gold + 10;
-        var spriteRenderer = GetComponent<SpriteRenderer>();
-        _spriteNum = Mathf.Clamp(_spriteNum + 1, 0, _sprites.Length - 1);
-        spriteRenderer.sprite = _sprites[_spriteNum];
-    }
+    #endregion Private Methods
 }

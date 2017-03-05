@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using cakeslice;
 using JetBrains.Annotations;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -15,11 +14,13 @@ public class GameController : MonoBehaviour
 
     #endregion Public Fields
 
+
     #region Internal Fields
 
     [SerializeField] internal int DieNumber = 6;
 
     #endregion Internal Fields
+
 
     #region Private Fields
 
@@ -28,8 +29,6 @@ public class GameController : MonoBehaviour
     private const int River = 2;
     private const int Wall = 1;
     private static GameController _gameController;
-    public List<KeyValuePair<int, int>> CoinSpawners { get; private set; }
-    public List<KeyValuePair<int, int>> PlayerSpawnLocations { get; private set; }
 
     // P is a Path
     // W is Wall
@@ -56,71 +55,59 @@ public class GameController : MonoBehaviour
     };
 
     [SerializeField] private int _activePlayerIndex;
+
+    [SerializeField] private Canvas _cnvUi;
+
     [SerializeField] private int _dieNumber = 6;
 
     private Tile[,] _gameGrid;
+
     [SerializeField] private int _height;
-    [SerializeField] private int _width;
 
     private List<RoundEndListener> _roundEndListeners;
+
     [SerializeField] private GameObject[] _tilePrefabs;
 
-    [SerializeField] private Canvas _cnvUi;
     private UIController _uiController;
+
+    [SerializeField] private int _width;
 
     #endregion Private Fields
 
+
     #region Public Properties
 
-    public int ActivePlayerIndex
-    {
-        get { return _activePlayerIndex; }
-        private set { _activePlayerIndex = value % PlayerControllers.Length; }
-    }
+    public int ActivePlayerIndex { get { return _activePlayerIndex; } private set { _activePlayerIndex = value % PlayerControllers.Length; } }
+
+    public List<KeyValuePair<int, int>> CoinSpawners { get; private set; }
 
     [NotNull] public PlayerController CurrentPlayer
     {
         get { return PlayerControllers[ActivePlayerIndex]; }
-        private set
-        {
-            _activePlayerIndex = Array.IndexOf(PlayerControllers, value);
-        }
+        private set { _activePlayerIndex = Array.IndexOf(PlayerControllers, value); }
     }
+
+    public bool GameInProgress { get; set; }
+
+    public int Height { get { return _height; } private set { _height = value; } }
 
     public PlayerController[] PlayerControllers { get; private set; }
     public int PlayerMovesLeft { get; private set; }
+    public List<KeyValuePair<int, int>> PlayerSpawnLocations { get; private set; }
     public int TurnNumber { get; private set; }
 
-    public int Height
-    {
-        get { return _height; }
-        private set { _height = value; }
-    }
-
-    public int Width
-    {
-        get { return _width; }
-        private set { _width = value; }
-    }
+    public int Width { get { return _width; } private set { _width = value; } }
 
     #endregion Public Properties
 
+
     #region Public Methods
 
-    public static GameController GetGameController()
-    {
-        return _gameController;
-    }
+    public static GameController GetGameController() { return _gameController; }
 
-    public void AddRoundEndListener(RoundEndListener listener)
-    {
-        _roundEndListeners.Add(listener);
-    }
+    public void AddRoundEndListener(RoundEndListener listener) { _roundEndListeners.Add(listener); }
 
-    public Tile GetGameTile(int x, int y)
-    {
-        return _gameGrid[x, y];
-    }
+    public Tile GetGameTile(int x, int y) { return _gameGrid[x, y]; }
 
     public bool IsInBounds(Vector3 pos)
     {
@@ -128,61 +115,6 @@ public class GameController : MonoBehaviour
                pos.y >= 0 &&
                pos.x < Width &&
                pos.y < Height;
-    }
-
-    public void RemoveRoundEndListener(RoundEndListener listener)
-    {
-        _roundEndListeners.Remove(listener);
-    }
-
-    public int RollDice(int d)
-    {
-        int rollDice = Random.Range(1, d + 1);
-        return rollDice;
-    }
-
-    #endregion Public Methods
-
-    #region Private Methods
-
-    private void CheckIfWin()
-    {
-        IOrderedEnumerable<PlayerController> sortedPlayers = PlayerControllers.OrderByDescending(x => x.Money);
-        PlayerController firstPlace = sortedPlayers.FirstOrDefault();
-        PlayerController lastPlace = sortedPlayers.LastOrDefault();
-
-        if (firstPlace == null || lastPlace == null) return;
-
-        int moneyDiff = firstPlace.Money - lastPlace.Money;
-        if (moneyDiff >= WinningMoneyDiffThreshold)
-        {
-            //TODO: What happens on win
-            _uiController.ShowWinSplash(firstPlace);
-            _uiController.ToggleInteraction(false);
-            GameInProgress = false;
-        }
-    }
-
-    private void CheckInput()
-    {
-        // WASD control
-        // We add the direction to our position,
-        // this moves the character 1 unit (32 pixels)
-        if (Input.GetMouseButtonDown(0))
-        {
-            Vector3 mouseClick = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            if (IsInBounds(mouseClick))
-            {
-                Tile tile = GetGameTile(Mathf.RoundToInt(mouseClick.x), Mathf.RoundToInt(mouseClick.y));
-                if (tile.IsValidMove)
-                {
-                    CurrentPlayer.Move(tile.Path);
-                    NextTurn();
-                }
-            }
-        }
-
-        //                _uiController.OnClickRollDice();
     }
 
     public void NextTurn()
@@ -197,8 +129,7 @@ public class GameController : MonoBehaviour
             if (ActivePlayerIndex == 0)
             {
                 TurnNumber++;
-                foreach (RoundEndListener roundEndListener in _roundEndListeners)
-                    roundEndListener.OnRoundEnd(TurnNumber);
+                foreach (RoundEndListener roundEndListener in _roundEndListeners) roundEndListener.OnRoundEnd(TurnNumber);
             }
 
             CurrentPlayer.OnTurnStart(this);
@@ -206,8 +137,18 @@ public class GameController : MonoBehaviour
         }
     }
 
-    public bool GameInProgress { get; set; }
+    public void RemoveRoundEndListener(RoundEndListener listener) { _roundEndListeners.Remove(listener); }
 
+    public int RollDice(int d)
+    {
+        int rollDice = Random.Range(1, d + 1);
+        return rollDice;
+    }
+
+    #endregion Public Methods
+
+
+    #region Private Methods
 
     private void Awake()
     {
@@ -217,7 +158,7 @@ public class GameController : MonoBehaviour
         _roundEndListeners = new List<RoundEndListener>();
         _gameGrid = new Tile[Width, Height];
 
-       PlayerSpawnLocations = new List<KeyValuePair<int, int>>();
+        PlayerSpawnLocations = new List<KeyValuePair<int, int>>();
 
         for (var x = 0; x <= _gameGrid.GetUpperBound(0); x++)
         for (var y = 0; y <= _gameGrid.GetUpperBound(1); y++)
@@ -272,10 +213,50 @@ public class GameController : MonoBehaviour
             //TODO: Assign data to each tile when created, to have different tile types
         }
     }
+
+    private void CheckIfWin()
+    {
+        IOrderedEnumerable<PlayerController> sortedPlayers = PlayerControllers.OrderByDescending(x => x.Money);
+        PlayerController firstPlace = sortedPlayers.FirstOrDefault();
+        PlayerController lastPlace = sortedPlayers.LastOrDefault();
+
+        if (firstPlace == null || lastPlace == null) return;
+
+        int moneyDiff = firstPlace.Money - lastPlace.Money;
+        if (moneyDiff >= WinningMoneyDiffThreshold)
+        {
+            //TODO: What happens on win
+            _uiController.ShowWinSplash(firstPlace);
+            _uiController.ToggleInteraction(false);
+            GameInProgress = false;
+        }
+    }
+
+    private void CheckInput()
+    {
+        // WASD control
+        // We add the direction to our position,
+        // this moves the character 1 unit (32 pixels)
+        if (Input.GetMouseButtonDown(0))
+        {
+            Vector3 mouseClick = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            if (IsInBounds(mouseClick))
+            {
+                Tile tile = GetGameTile(Mathf.RoundToInt(mouseClick.x), Mathf.RoundToInt(mouseClick.y));
+                if (tile.IsValidMove)
+                {
+                    CurrentPlayer.Move(tile.Path);
+                    NextTurn();
+                }
+            }
+        }
+
+        //                _uiController.OnClickRollDice();
+    }
+
     // Use this for initialization
     private void Start()
     {
-
         _uiController = UIController.GetUIController();
         PlayerControllers = new PlayerController[4];
         ActivePlayerIndex = 0;
@@ -287,11 +268,8 @@ public class GameController : MonoBehaviour
             var playerController = playerInstance.GetComponent<PlayerController>();
             PlayerControllers[i] = playerController;
             playerController.Id = i + 1;
-            if (i != 0)
-            {
-                playerController.OnTurnEnd(this);
-            }
-                playerController.IsAI = true;
+            if (i != 0) { playerController.OnTurnEnd(this); }
+            playerController.IsAI = true;
         }
 
         CurrentPlayer.OnTurnStart(this);
@@ -302,10 +280,7 @@ public class GameController : MonoBehaviour
     }
 
     // Update is called once per frame
-    private void Update()
-    {
-        CheckInput();
-    }
+    private void Update() { CheckInput(); }
 
     #endregion Private Methods
 }

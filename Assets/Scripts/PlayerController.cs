@@ -1,44 +1,68 @@
 ﻿using System;
-using cakeslice;
 using System.Collections.Generic;
 using System.Linq;
+using cakeslice;
 using UnityEngine;
-using Random = UnityEngine.Random;
 
 public class PlayerController : MonoBehaviour
 
 {
+    #region Public Fields
+
+    public float speed = 3;
+
+    #endregion Public Fields
+
+
     #region Private Fields
 
+    private Queue<Vector3> _animationPath;
     private GameController _gameController;
     private HashSet<Tile> _glowingTiles;
-
 
     [SerializeField] private int _money;
 
     private Vector2 _tilePos;
-    private Queue<Vector3> _animationPath;
 
     #endregion Private Fields
+
 
     #region Public Properties
 
     public bool CanBePushed { get; set; }
     public int Id { get; set; }
+    public bool IsAI { get; set; }
 
-    public float speed = 3;
-
-    public int Money
-    {
-        get { return _money; }
-        set { _money = value; }
-    }
+    public int Money { get { return _money; } set { _money = value; } }
 
     public int PlayerMoves { get; set; }
 
     #endregion Public Properties
 
+
+    #region Private Properties
+
+    private bool IsMyTurn { get; set; }
+
+    #endregion Private Properties
+
+
     #region Public Methods
+
+    public void GetAvailibleMoves(int dice1, int dice2)
+    {
+        GameController gameController = GameController.GetGameController();
+        HashSet<Stack<Tile>> paths = GetPath(gameController.GetGameTile((int) _tilePos.x, (int) _tilePos.y), new Stack<Tile>(), dice1);
+        paths.UnionWith(GetPath(gameController.GetGameTile((int) _tilePos.x, (int) _tilePos.y), new Stack<Tile>(), dice2));
+        _glowingTiles = new HashSet<Tile>();
+        foreach (Stack<Tile> path in paths)
+        {
+            Tile endPoint = path.Peek();
+            _glowingTiles.Add(endPoint);
+            endPoint.Glow();
+            endPoint.Path = path.Reverse();
+        }
+    }
 
     public void Move(IEnumerable<Tile> path)
     {
@@ -77,9 +101,7 @@ public class PlayerController : MonoBehaviour
     {
         IsMyTurn = false;
         GetComponent<Outline>().enabled = false;
-        if (_glowingTiles != null)
-            foreach (Tile tile in _glowingTiles)
-                tile.StopGlowing();
+        if (_glowingTiles != null) foreach (Tile tile in _glowingTiles) tile.StopGlowing();
     }
 
     public void OnTurnStart(GameController gameController)
@@ -88,30 +110,21 @@ public class PlayerController : MonoBehaviour
         IsMyTurn = true;
     }
 
-    public bool IsAI { get; set; }
-
-    public void GetAvailibleMoves(int dice1, int dice2)
-    {
-        GameController gameController = GameController.GetGameController();
-        HashSet<Stack<Tile>> paths = GetPath(gameController.GetGameTile((int) _tilePos.x, (int) _tilePos.y), new Stack<Tile>(), dice1);
-        paths.UnionWith(GetPath(gameController.GetGameTile((int) _tilePos.x, (int) _tilePos.y), new Stack<Tile>(), dice2));
-        _glowingTiles = new HashSet<Tile>();
-        foreach (Stack<Tile> path in paths)
-        {
-            Tile endPoint = path.Peek();
-            _glowingTiles.Add(endPoint);
-            endPoint.Glow();
-            endPoint.Path = path.Reverse();
-        }
-    }
-
     #endregion Public Methods
+
 
     #region Private Methods
 
+    private void Awake()
+    {
+        _animationPath = new Queue<Vector3>();
+        _tilePos = transform.position;
+        CanBePushed = true;
+    }
+
     private HashSet<Stack<Tile>> GetPath(Tile tile, Stack<Tile> path, int remainingMoves)
     {
-        HashSet<Stack<Tile>> routes = new HashSet<Stack<Tile>>();
+        var routes = new HashSet<Stack<Tile>>();
         if (remainingMoves == 0)
         {
             if (tile.CanLandOn())
@@ -126,7 +139,7 @@ public class PlayerController : MonoBehaviour
         foreach (Tile neighbour in tile.GetNeighbours())
             if (!path.Contains(neighbour))
             {
-                Stack<Tile> route = new Stack<Tile>(path.Reverse());
+                var route = new Stack<Tile>(path.Reverse());
 
                 route.Push(tile);
                 routes.UnionWith(GetPath(neighbour, route, remainingMoves));
@@ -134,22 +147,13 @@ public class PlayerController : MonoBehaviour
         return routes;
     }
 
-    private void Awake()
-    {
-        _animationPath = new Queue<Vector3>();
-        _tilePos = transform.position;
-        CanBePushed = true;
-    }
-
     private void Start()
     {
         _gameController = GameController.GetGameController();
         Tile tile = _gameController.GetGameTile((int) _tilePos.x, (int) _tilePos.y);
 
-        if (tile.CanLandOn())
-            tile.CurrentPlayer = this;
-        else
-            throw new Exception("CurrentPlayer's Starting Position is Invalid!");
+        if (tile.CanLandOn()) tile.CurrentPlayer = this;
+        else throw new Exception("CurrentPlayer's Starting Position is Invalid!");
 
         //        Id = UnityEngine.Random.Range(0, 1000000);
     }
@@ -157,7 +161,7 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     private void Update()
     {
-        if (IsAI && IsMyTurn && _animationPath.Count == 0) 
+        if (IsAI && IsMyTurn && _animationPath.Count == 0)
         {
             UIController.GetUIController().OnClickRollDice();
             float highestHeat = 0;
@@ -175,7 +179,6 @@ public class PlayerController : MonoBehaviour
             GameController.GetGameController().NextTurn();
         }
 
-
         if (_animationPath.Count > 0)
         {
             Vector3 currentPos = transform.position;
@@ -184,18 +187,14 @@ public class PlayerController : MonoBehaviour
             if (Vector3.Distance(currentPos, target) < 0.01)
             {
                 _animationPath.Dequeue();
-                if (_animationPath.Count > 0)
-                    target = _animationPath.Peek();
-                else
-                    return;
+                if (_animationPath.Count > 0) target = _animationPath.Peek();
+                else return;
             }
 
             float frac = speed / Vector3.Distance(currentPos, target) * Time.deltaTime;
             transform.position = Vector3.Lerp(currentPos, target, frac);
         }
     }
-
-    private bool IsMyTurn{ get; set; }
 
     #endregion Private Methods
 }

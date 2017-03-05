@@ -8,20 +8,18 @@ public class GameState : MonoBehaviour
 
     #endregion Private Fields
 
+
     #region Public Methods
 
-    public void Start()
-    {
-    }
+    public void Start() { }
 
     #endregion Public Methods
+
 
     #region Private Methods
 
     // Update is called once per frame
-    private void Update()
-    {
-    }
+    private void Update() { }
 
     #endregion Private Methods
 }
