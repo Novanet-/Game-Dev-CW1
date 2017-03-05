@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Assets.Tiles.Scripts
 {
-    public class CoinSpawnerController : Tile, RoundEndListener
+    public class CoinSpawnerController : Tile, IRoundEndListener
     {
         #region Private Fields
 

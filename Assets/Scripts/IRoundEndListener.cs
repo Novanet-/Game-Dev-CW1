@@ -1,6 +1,6 @@
 ﻿namespace Assets.Scripts
 {
-    public interface RoundEndListener
+    public interface IRoundEndListener
     {
         #region Public Methods
 

@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Assets.Tiles.Scripts
 {
-    public class River : Tile, PlayerMovementListener
+    public class River : Tile, IPlayerMovementListener
     {
         #region Private Fields
 

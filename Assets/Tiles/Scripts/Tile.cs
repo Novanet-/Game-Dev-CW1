@@ -19,7 +19,7 @@ namespace Assets.Tiles.Scripts
 
         private readonly HashSet<Vector3> _directions = new HashSet<Vector3>(new[] {Vector3.left, Vector3.right, Vector3.up, Vector3.down});
         private PlayerController _currentPlayer;
-        private List<PlayerMovementListener> _playerMovementListeners;
+        private List<IPlayerMovementListener> _playerMovementListeners;
 
         #endregion Private Fields
 
@@ -36,12 +36,12 @@ namespace Assets.Tiles.Scripts
 
         #region Public Methods
 
-        public void AddPlayerMovementListener(PlayerMovementListener listener) { _playerMovementListeners.Add(listener); }
+        public void AddPlayerMovementListener(IPlayerMovementListener listener) { _playerMovementListeners.Add(listener); }
 
         public virtual void Awake()
         {
             SetSprite(GetComponent<SpriteRenderer>());
-            _playerMovementListeners = new List<PlayerMovementListener>();
+            _playerMovementListeners = new List<IPlayerMovementListener>();
             StopGlowing();
         }
 
@@ -121,7 +121,7 @@ namespace Assets.Tiles.Scripts
 
         public virtual void LandedOn(PlayerController player) { Debug.Log("Landed on Tile at: " + transform.position.x + ", " + transform.position.y); }
 
-        public void RemovePlayerMovementListener(PlayerMovementListener listener) { _playerMovementListeners.Remove(listener); }
+        public void RemovePlayerMovementListener(IPlayerMovementListener listener) { _playerMovementListeners.Remove(listener); }
 
         public virtual void SetSprite(SpriteRenderer renderer)
         {
@@ -148,9 +148,9 @@ namespace Assets.Tiles.Scripts
         {
             PlayerController oldPlayer = CurrentPlayer;
             _currentPlayer = newPlayer;
-            if (oldPlayer == null && newPlayer != null) foreach (PlayerMovementListener listener in _playerMovementListeners) listener.PlayerLandsOn(newPlayer);
-            else if (oldPlayer == newPlayer && oldPlayer != null) foreach (PlayerMovementListener listener in _playerMovementListeners) listener.PlayerRemainsOn(newPlayer);
-            else if (oldPlayer != null && newPlayer == null) foreach (PlayerMovementListener listener in _playerMovementListeners) listener.PlayerLeaves(CurrentPlayer);
+            if (oldPlayer == null && newPlayer != null) foreach (IPlayerMovementListener listener in _playerMovementListeners) listener.PlayerLandsOn(newPlayer);
+            else if (oldPlayer == newPlayer && oldPlayer != null) foreach (IPlayerMovementListener listener in _playerMovementListeners) listener.PlayerRemainsOn(newPlayer);
+            else if (oldPlayer != null && newPlayer == null) foreach (IPlayerMovementListener listener in _playerMovementListeners) listener.PlayerLeaves(CurrentPlayer);
         }
 
         #endregion Private Methods

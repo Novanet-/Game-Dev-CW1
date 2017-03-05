@@ -62,7 +62,7 @@ namespace Assets.Scripts
         [SerializeField] private int _dieNumber = 6;
         private Tile[,] _gameGrid;
         [SerializeField] private int _height;
-        private List<RoundEndListener> _roundEndListeners;
+        private List<IRoundEndListener> _roundEndListeners;
         [SerializeField] private GameObject[] _tilePrefabs;
         private UIController _uiController;
         [SerializeField] private int _width;
@@ -100,7 +100,7 @@ namespace Assets.Scripts
 
         public static GameController GetGameController() { return _gameController; }
 
-        public void AddRoundEndListener(RoundEndListener listener) { _roundEndListeners.Add(listener); }
+        public void AddRoundEndListener(IRoundEndListener listener) { _roundEndListeners.Add(listener); }
 
         public Tile GetGameTile(int x, int y) { return _gameGrid[x, y]; }
 
@@ -124,7 +124,7 @@ namespace Assets.Scripts
             if (ActivePlayerIndex == 0)
             {
                 TurnNumber++;
-                foreach (RoundEndListener roundEndListener in _roundEndListeners)
+                foreach (IRoundEndListener roundEndListener in _roundEndListeners)
                 {
                     roundEndListener.OnRoundEnd(TurnNumber);
                 }
@@ -134,7 +134,7 @@ namespace Assets.Scripts
             _uiController.ToggleRollDice(true);
         }
 
-        public void RemoveRoundEndListener(RoundEndListener listener) { _roundEndListeners.Remove(listener); }
+        public void RemoveRoundEndListener(IRoundEndListener listener) { _roundEndListeners.Remove(listener); }
 
         public int RollDice(int d)
         {
@@ -152,7 +152,7 @@ namespace Assets.Scripts
             GameInProgress = true;
             _gameController = this;
             CoinSpawners = new List<KeyValuePair<int, int>>();
-            _roundEndListeners = new List<RoundEndListener>();
+            _roundEndListeners = new List<IRoundEndListener>();
             _gameGrid = new Tile[Width, Height];
 
             PlayerSpawnLocations = new List<KeyValuePair<int, int>>();

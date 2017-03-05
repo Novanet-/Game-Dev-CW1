@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Assets.Scripts
 {
-    public class GoldController : MonoBehaviour, PlayerMovementListener
+    public class GoldController : MonoBehaviour, IPlayerMovementListener
     {
         #region Private Fields
 

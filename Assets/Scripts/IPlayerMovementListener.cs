@@ -1,6 +1,6 @@
 ﻿namespace Assets.Scripts
 {
-    public interface PlayerMovementListener
+    public interface IPlayerMovementListener
     {
         #region Public Methods
 
