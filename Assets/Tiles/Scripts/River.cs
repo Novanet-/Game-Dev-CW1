@@ -1,55 +1,82 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using Assets.Scripts;
 using UnityEngine;
-using Random = UnityEngine.Random;
 
-public class River : Tile, PlayerMovementListener{
-    private readonly int MOVESTOPUSH = 1;
-    private Tile toPushTo;
-
-
-    // Use this for initialization
-	public override void  Start ()
-	{
-	    base.Start();
-        this.AddPlayerMovementListener(this);
-	    toPushTo = GameController.GetGameController()
-	        .GetGameTile((int)(transform.position.x + Direction.x), (int)(transform.position.y + Direction.y));
-
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
-
-    public override void SetSprite(SpriteRenderer renderer)
+namespace Assets.Tiles.Scripts
+{
+    public class River : Tile, IPlayerMovementListener
     {
-        renderer.sprite = _sprites[Random.Range(0, _sprites.Length)];
-    }
+        #region Private Fields
 
-    public void PlayerLandsOn(PlayerController player)
-    {
-        MovePlayer(player);
-    }
+        private readonly int MOVESTOPUSH = 1;
+        private Tile toPushTo;
 
-    public void PlayerRemainsOn(PlayerController player)
-    {
-        MovePlayer(player);
-    }
+        #endregion Private Fields
 
-    private void MovePlayer(PlayerController player)
-    {
-        //hack to avoid PLayerMoves never decrementing when being pushed by a river that can't push a player
-        if (player.PlayerMoves > 2* -MOVESTOPUSH && player.PlayerMoves <= 0)
+
+        #region Public Methods
+
+        /// <summary>
+        /// Players the lands on.
+        /// </summary>
+        /// <param name="player">The player.</param>
+        public void PlayerLandsOn(PlayerController player) { MovePlayer(player); }
+
+        /// <summary>
+        /// Players the leaves.
+        /// </summary>
+        /// <param name="player">The player.</param>
+        public void PlayerLeaves(PlayerController player) { }
+
+        /// <summary>
+        /// Players the remains on.
+        /// </summary>
+        /// <param name="player">The player.</param>
+        public void PlayerRemainsOn(PlayerController player) { MovePlayer(player); }
+
+        /// <summary>
+        /// Sets the sprite.
+        /// </summary>
+        /// <param name="renderer">The renderer.</param>
+        public override void SetSprite(SpriteRenderer renderer) { renderer.sprite = _sprites[Random.Range(0, _sprites.Length)]; }
+
+        // Use this for initialization
+        /// <summary>
+        /// Starts this instance.
+        /// </summary>
+        public override void Start()
         {
-            player.PlayerMoves--;
-            player.Move(toPushTo);
+            base.Start();
+            AddPlayerMovementListener(this);
+            toPushTo = GameController.GetGameController()
+                                     .GetGameTile((int) (transform.position.x + Direction.x), (int) (transform.position.y + Direction.y));
         }
-    }
 
-    public void PlayerLeaves(PlayerController player)
-    {
+        #endregion Public Methods
+
+
+        #region Private Methods
+
+        /// <summary>
+        /// Moves the player.
+        /// </summary>
+        /// <param name="player">The player.</param>
+        private void MovePlayer(PlayerController player)
+        {
+            //hack to avoid PLayerMoves never decrementing when being pushed by a river that can't push a player
+            int i = 2 * -MOVESTOPUSH;
+
+            if (player.PlayerMoves <= i) return;
+
+            if (player.PlayerMoves <= 0)
+            {
+                player.PlayerMoves--;
+                player.MoveToTile(toPushTo);
+            }
+        }
+
+        // Update is called once per frame
+        private void Update() { }
+
+        #endregion Private Methods
     }
 }
