@@ -62,7 +62,7 @@ namespace Assets.Scripts
         /// <exception cref="Exception">Invalid dice choice</exception>
         public void OnClickChooseDice(int dieNumber)
         {
-            //        CurrentPlayer.PlayerMoves = RollDice(_dieNumber)
+            //        ActivePlayer.PlayerMoves = RollDice(_dieNumber)
         }
 
         /// <summary>
@@ -70,7 +70,7 @@ namespace Assets.Scripts
         /// </summary>
         public void OnClickRollDice()
         {
-            //        CurrentPlayer.PlayerMoves = RollDice(_dieNumber)
+            //        ActivePlayer.PlayerMoves = RollDice(_dieNumber)
             int dieNumber = GameController.DieNumber;
             int die1 = GameController.RollDice(dieNumber);
             int die2 = GameController.RollDice(dieNumber);
@@ -78,7 +78,7 @@ namespace Assets.Scripts
             _txtDie2.text = die2.ToString();
             ToggleRollDice(false);
             //        ToggleSelectDie(true);
-            GameController.CurrentPlayer.GetAvailibleMoves(die1, die2);
+            GameController.ActivePlayer.GetAvailibleMoves(die1, die2);
         }
 
         /// <summary>
@@ -86,6 +86,7 @@ namespace Assets.Scripts
         /// </summary>
         public void OnClickEndTurn()
         {
+            GameController.ActivePlayer.StayStill();
             GameController.NextTurn();
         }
 
@@ -145,12 +146,12 @@ namespace Assets.Scripts
         /// </summary>
         public void Update()
         {
-            _txtCurrentPlayer.text = GameController.CurrentPlayer.Id.ToString();
+            _txtCurrentPlayer.text = GameController.ActivePlayer.Id.ToString();
             string playerMovesLeftString = GameController.PlayerMovesLeft == -1 ? "??" : GameController.PlayerMovesLeft.ToString();
             _txtMovesLeft.text = playerMovesLeftString;
             _txtTurnNumber.text = GameController.TurnNumber.ToString();
             _scoreboardController.UpdateScoreboard(GameController.PlayerControllers);
-            _scoreboardController.UpdateCurrentTurn(GameController.CurrentPlayer);
+            _scoreboardController.UpdateCurrentTurn(GameController.ActivePlayer);
         }
 
         #endregion Public Methods

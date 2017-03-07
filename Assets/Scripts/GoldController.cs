@@ -96,7 +96,11 @@ namespace Assets.Scripts
             {
                 player.Money = player.Money + 10;
                 Gold = Gold - 10;
-                Debug.Log("Log Given Gold to Player" + player.Id + ", remaining gold: " + Gold);
+                Debug.Log("Log Given Gold to Player " + player.Id + ", remaining gold: " + Gold);
+            }
+            else
+            {
+                Debug.Log("No Here! Player " + player.Id + ", has gone without!");
             }
 
             var spriteRenderer = GetComponent<SpriteRenderer>();

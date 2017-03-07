@@ -73,7 +73,7 @@ namespace Assets.Scripts
         public Dictionary<TileType, ICollection<Tile>> TilebyType { get; private set; }
 
         [NotNull]
-        public PlayerController CurrentPlayer
+        public PlayerController ActivePlayer
         {
             get { return PlayerControllers[ActivePlayerIndex]; }
             private set { _activePlayerIndex = PlayerControllers.IndexOf(value); }
@@ -140,7 +140,7 @@ namespace Assets.Scripts
         /// </summary>
         public void NextTurn()
         {
-            CurrentPlayer.OnTurnEnd(this);
+            ActivePlayer.OnTurnEnd(this);
 
             CheckIfWin();
             if (!GameInProgress) return;
@@ -156,7 +156,7 @@ namespace Assets.Scripts
                 }
             }
 
-            CurrentPlayer.OnTurnStart(this);
+            ActivePlayer.OnTurnStart(this);
             _uiController.ToggleRollDice(true);
         }
 
@@ -301,7 +301,7 @@ namespace Assets.Scripts
             Tile tile = GetGameTile(Mathf.RoundToInt(mouseClick.x), Mathf.RoundToInt(mouseClick.y));
             if (tile.IsValidMove)
             {
-                CurrentPlayer.MoveAlongPath(tile.Path);
+                ActivePlayer.MoveAlongPath(tile.Path);
                 NextTurn();
             }
 
@@ -325,7 +325,7 @@ namespace Assets.Scripts
                 playerController.OnGameStart(this);
             }
 
-            CurrentPlayer.OnTurnStart(this);
+            ActivePlayer.OnTurnStart(this);
 
             TurnNumber = 1;
 
