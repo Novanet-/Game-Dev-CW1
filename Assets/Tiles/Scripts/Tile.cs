@@ -220,5 +220,9 @@ namespace Assets.Tiles.Scripts
         }
 
         #endregion Private Methods
+
+        public virtual void PlayerMovedOver(PlayerController player, bool doneMoving)
+        {
+        }
     }
 }

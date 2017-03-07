@@ -302,7 +302,6 @@ namespace Assets.Scripts
             if (tile.IsValidMove)
             {
                 ActivePlayer.MoveAlongPath(tile.Path);
-                NextTurn();
             }
 
             //                _uiController.OnClickRollDice();
