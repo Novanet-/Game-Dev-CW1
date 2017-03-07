@@ -26,13 +26,11 @@ namespace Assets.Scripts
 
         #endregion Private Fields
 
-
         #region Public Properties
 
         public bool IsInteractable { get; set; }
 
         #endregion Public Properties
-
 
         #region Private Properties
 
@@ -40,16 +38,21 @@ namespace Assets.Scripts
 
         #endregion Private Properties
 
-
         #region Public Methods
 
         /// <summary>
         /// Gets the UI controller.
         /// </summary>
         /// <returns></returns>
-        public static UIController GetUIController() { return _uiController; }
+        public static UIController GetUIController()
+        {
+            return _uiController;
+        }
 
-        public void HideWinSplash() { _txtWinSplash.enabled = false; }
+        public void HideWinSplash()
+        {
+            _txtWinSplash.enabled = false;
+        }
 
         /// <summary>
         /// Called when [click choose dice].
@@ -90,6 +93,14 @@ namespace Assets.Scripts
             ToggleRollDice(false);
             //        ToggleSelectDie(true);
             GameController.CurrentPlayer.GetAvailibleMoves(die1, die2);
+        }
+
+        /// <summary>
+        /// Called when [click roll dice].
+        /// </summary>
+        public void OnClickEndTurn()
+        {
+            GameController.NextTurn();
         }
 
         /// <summary>
@@ -138,7 +149,10 @@ namespace Assets.Scripts
         /// </summary>
         /// <param name="interactable">if set to <c>true</c> [interactable].</param>
         /// <returns></returns>
-        public bool ToggleRollDice(bool interactable) { return _btnRollDice.interactable = interactable; }
+        public bool ToggleRollDice(bool interactable)
+        {
+            return _btnRollDice.interactable = interactable;
+        }
 
         /// <summary>
         /// Updates this instance.
@@ -155,13 +169,15 @@ namespace Assets.Scripts
 
         #endregion Public Methods
 
-
         #region Private Methods
 
         /// <summary>
         /// Awakes this instance.
         /// </summary>
-        private void Awake() { _uiController = this; }
+        private void Awake()
+        {
+            _uiController = this;
+        }
 
         /// <summary>
         /// Starts this instance.
