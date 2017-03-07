@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 using UnityEngine.UI;
 
 namespace Assets.Scripts
@@ -30,9 +31,9 @@ namespace Assets.Scripts
         /// Updates the scoreboard.
         /// </summary>
         /// <param name="players">The players.</param>
-        public void UpdateScoreboard(PlayerController[] players)
+        public void UpdateScoreboard(List<PlayerController> players)
         {
-            for (var i = 0; i < players.Length; i++) { _txtPlayerScoresArray[i].text = players[i].Money.ToString(); }
+            for (var i = 0; i < players.Count; i++) { _txtPlayerScoresArray[i].text = players[i].Money.ToString(); }
         }
 
         #endregion Public Methods

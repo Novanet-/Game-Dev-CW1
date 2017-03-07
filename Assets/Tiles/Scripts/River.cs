@@ -8,7 +8,7 @@ namespace Assets.Tiles.Scripts
         #region Private Fields
 
         private readonly int MOVESTOPUSH = 1;
-        private Tile toPushTo;
+        public Tile DestinationTile { get; private set; }
 
         #endregion Private Fields
 
@@ -47,7 +47,7 @@ namespace Assets.Tiles.Scripts
         {
             base.Start();
             AddPlayerMovementListener(this);
-            toPushTo = GameController.GetGameController()
+            DestinationTile = GameController.GetGameController()
                                      .GetGameTile((int) (transform.position.x + Direction.x), (int) (transform.position.y + Direction.y));
         }
 
@@ -62,15 +62,10 @@ namespace Assets.Tiles.Scripts
         /// <param name="player">The player.</param>
         private void MovePlayer(PlayerController player)
         {
-            //hack to avoid PLayerMoves never decrementing when being pushed by a river that can't push a player
-            int i = 2 * -MOVESTOPUSH;
-
-            if (player.PlayerMoves <= i) return;
-
-            if (player.PlayerMoves <= 0)
+            if (player.CanBePushed)
             {
-                player.PlayerMoves--;
-                player.MoveToTile(toPushTo);
+                player.CanBePushed = false;
+                player.MoveToTile(DestinationTile);
             }
         }
 
