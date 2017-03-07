@@ -23,6 +23,7 @@ namespace Assets.Scripts
         private HashSet<Tile> _glowingTiles;
 
         [SerializeField] private int _money;
+        [SerializeField] private Sprite[] _spriteTextures;
 
         private Vector2 _tilePos;
 
@@ -224,7 +225,7 @@ namespace Assets.Scripts
                     River river = (River) tile;
                     Tile finalTile = river.DestinationTile;
                     if (finalTile.IsValidMove) destinationTile = finalTile;
-                } 
+                }
                 float heat = destinationTile.GetGoldHeat();
                 if (heat > highestHeat)
                 {
@@ -245,7 +246,7 @@ namespace Assets.Scripts
             Tile endPoint = path.Peek();
             _glowingTiles.Add(endPoint);
             endPoint.Path = path.Reverse();
-            if (!IsAI) 
+            if (!IsAI)
                 endPoint.SetValidMove();
         }
 
@@ -331,6 +332,11 @@ namespace Assets.Scripts
         public void StayStill()
         {
             MovePlayer(GetCurrentTile(), GetCurrentTile());
+        }
+
+        public Sprite CalculateAssignedSprite()
+        {
+            return _spriteTextures[this.Id - 1];
         }
     }
 }

@@ -55,6 +55,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speed: 10
   _money: 0
+  _spriteTextures:
+  - {fileID: 21300004, guid: cb8d512c02b5e334cadc56bd4512cb17, type: 3}
+  - {fileID: 21300004, guid: c074b5b222572fc4e8d06ec981bb7e1b, type: 3}
+  - {fileID: 21300004, guid: cb0e34acaa4d05f44b2926728a3710fe, type: 3}
+  - {fileID: 21300004, guid: 4f0725d0bfd85d743a7386a7f31c6981, type: 3}
 --- !u!114 &114719439521071198
 MonoBehaviour:
   m_ObjectHideFlags: 1

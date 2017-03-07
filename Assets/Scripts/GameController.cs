@@ -321,6 +321,7 @@ namespace Assets.Scripts
                 var playerController = playerInstance.GetComponent<PlayerController>();
                 PlayerControllers.Add(playerController);
                 playerController.Id = PlayerControllers.IndexOf(playerController) + 1;
+                playerInstance.GetComponent<SpriteRenderer>().sprite = playerController.CalculateAssignedSprite();
                 playerController.OnGameStart(this);
             }
 
