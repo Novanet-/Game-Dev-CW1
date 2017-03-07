@@ -100,14 +100,18 @@ namespace Assets.Scripts
             }
             else
             {
-                Debug.Log("No Here! Player " + player.Id + ", has gone without!");
+                Debug.Log("No Gold Here! Player " + player.Id + ", has gone without!");
             }
 
+        }
+
+        public void PlayerTouched(PlayerController player)
+        {
+            Debug.Log("Player " + player.Id + " Touched GoldSpawner!");
             var spriteRenderer = GetComponent<SpriteRenderer>();
             _spriteNum = Mathf.Clamp(_spriteNum - 1, 0, _sprites.Length - 1);
             spriteRenderer.sprite = _sprites[_spriteNum];
         }
-
         // Update is called once per frame
         private void Update() { }
 

@@ -67,6 +67,13 @@ namespace Assets.Tiles.Scripts
             controller.AddRoundEndListener(this);
         }
 
+        public override void PlayerMovedOver(PlayerController player, bool doneMoving)
+        {
+            base.PlayerMovedOver(player, doneMoving);
+            if (doneMoving)
+                gold.PlayerTouched(player);
+        }
+
         #endregion Public Methods
 
 

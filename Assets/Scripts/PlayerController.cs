@@ -76,6 +76,7 @@ namespace Assets.Scripts
         /// <param name="path">The path.</param>
         public void MoveAlongPath(IEnumerable<Tile> path)
         {
+            HaveMoved = true;
             Tile lastTile = null;
             foreach (Tile tile in path)
             {
@@ -182,6 +183,8 @@ namespace Assets.Scripts
             if (Vector3.Distance(currentPos, target) < 0.01)
             {
                 _animationPath.Dequeue();
+                Tile tile = _gameController.GetGameTile((int) currentPos.x, (int) currentPos.y);
+                tile.PlayerMovedOver(this, _animationPath.Count == 0);
                 if (_animationPath.Count > 0) target = _animationPath.Peek();
                 else return;
             }
@@ -256,7 +259,6 @@ namespace Assets.Scripts
 
             bestMove.Glow();
             MoveAlongPath(bestMove.Path);
-            HaveMoved = true;
         }
 
         /// <summary>
@@ -288,15 +290,21 @@ namespace Assets.Scripts
             if (_animationPath.Count > 0)
                 AnimatePlayer();
 
-            if (IsAI && IsMyTurn)
+            if (IsMyTurn)
+            {
                 if (HaveMoved)
                 {
                     if (_animationPath.Count == 0)
                     {
                         _gameController.NextTurn();
                     }
-                }else
-                    MoveAI();
+                }
+                else
+                {
+                    if (IsAI)
+                        MoveAI();
+                }
+            }
         }
 
         public bool HaveMoved { get; set; }
