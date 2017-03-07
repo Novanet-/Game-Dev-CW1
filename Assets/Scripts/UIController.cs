@@ -63,20 +63,6 @@ namespace Assets.Scripts
         public void OnClickChooseDice(int dieNumber)
         {
             //        CurrentPlayer.PlayerMoves = RollDice(_dieNumber)
-
-            switch (dieNumber)
-            {
-                case 1:
-                    GameController.CurrentPlayer.PlayerMoves = Convert.ToInt32(_txtDie1.text);
-                    break;
-
-                case 2:
-                    GameController.CurrentPlayer.PlayerMoves = Convert.ToInt32(_txtDie2.text);
-                    break;
-
-                default:
-                    throw new Exception("Invalid dice choice");
-            }
         }
 
         /// <summary>

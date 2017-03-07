@@ -117,14 +117,11 @@ namespace Assets.Tiles.Scripts
         {
             GameController gameController = GameController.GetGameController();
             float heat = 0;
-            List<CoinSpawnerController> coinSpawners =
-                    gameController.CoinSpawners.Select(
-                                                       coinSpawnerLocation =>
-                                                           gameController.GetGameTile(coinSpawnerLocation.Key, coinSpawnerLocation.Value) as
-                                                                   CoinSpawnerController).ToList();
+            ICollection<Tile> coinSpawners = gameController.TilebyType[TileType.Gold];
 
-            foreach (CoinSpawnerController coinSpawnerController in coinSpawners)
+            foreach (Tile tile in coinSpawners)
             {
+                CoinSpawnerController coinSpawnerController = tile.GetComponent<CoinSpawnerController>();
                 float gold = coinSpawnerController.GetGoldAmount();
                 float distance = Mathf.Floor(Distance(coinSpawnerController) + 3 / 4f);
 
@@ -152,10 +149,10 @@ namespace Assets.Tiles.Scripts
         /// <summary>
         /// Glows this instance.
         /// </summary>
-        public virtual void Glow()
+        public virtual void SetValidMove()
         {
-            GetComponent<Outline>().enabled = true;
             IsValidMove = true;
+            this.Glow();
         }
 
         /// <summary>
@@ -193,6 +190,11 @@ namespace Assets.Tiles.Scripts
         /// <summary>
         /// Stops the glowing.
         /// </summary>
+        public void Glow()
+        {
+            GetComponent<Outline>().enabled = true;
+        }
+
         public void StopGlowing()
         {
             GetComponent<Outline>().enabled = false;

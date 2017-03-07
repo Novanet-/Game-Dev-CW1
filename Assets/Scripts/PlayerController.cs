@@ -12,8 +12,7 @@ namespace Assets.Scripts
     {
         #region Public Fields
 
-        public float speed = 3;
-
+        public float speed;
         #endregion Public Fields
 
 
@@ -36,7 +35,7 @@ namespace Assets.Scripts
         public int Id { get; set; }
         public bool IsAI { get; set; }
         public int Money { get { return _money; } set { _money = value; } }
-        public int PlayerMoves { get; set; }
+        //public int PlayerMoves { get; set; }
 
         #endregion Public Properties
 
@@ -63,7 +62,10 @@ namespace Assets.Scripts
             paths.UnionWith(GetPath(gameController.GetGameTile((int) _tilePos.x, (int) _tilePos.y), new Stack<Tile>(), dice2));
             _glowingTiles = new HashSet<Tile>();
 
-            foreach (Stack<Tile> path in paths) { GlowPathEndpoints(path); }
+                foreach (Stack<Tile> path in paths)
+                {
+                    GlowPathEndpoints(path);
+                }
         }
 
         /// <summary>
@@ -72,7 +74,6 @@ namespace Assets.Scripts
         /// <param name="path">The path.</param>
         public void MoveAlongPath(IEnumerable<Tile> path)
         {
-            PlayerMoves = 1;
             Tile lastTile = null;
             foreach (Tile tile in path)
             {
@@ -123,6 +124,8 @@ namespace Assets.Scripts
         public void OnTurnStart(GameController gameController)
         {
             GetComponent<Outline>().enabled = true;
+            CanBePushed = true;
+            HaveMoved = false;
             IsMyTurn = true;
         }
 
@@ -205,7 +208,14 @@ namespace Assets.Scripts
             Tile moveTo = null;
             foreach (Tile tile in _glowingTiles)
             {
-                float heat = tile.GetGoldHeat();
+                Tile destinationTile = tile;
+                if (tile.GetType() == typeof(River))
+                {
+                    River river = (River) tile;
+                    Tile finalTile = river.DestinationTile;
+                    if (finalTile.IsValidMove) destinationTile = finalTile;
+                } 
+                float heat = destinationTile.GetGoldHeat();
                 if (heat > highestHeat)
                 {
                     highestHeat = heat;
@@ -224,8 +234,9 @@ namespace Assets.Scripts
         {
             Tile endPoint = path.Peek();
             _glowingTiles.Add(endPoint);
-            endPoint.Glow();
             endPoint.Path = path.Reverse();
+            if (!IsAI) 
+                endPoint.SetValidMove();
         }
 
         /// <summary>
@@ -236,8 +247,10 @@ namespace Assets.Scripts
             UIController.GetUIController().OnClickRollDice();
             Tile bestMove = GetBestMove();
 
+            bestMove.Glow();
+            bestMove.SetValidMove();
             MoveAlongPath(bestMove.Path);
-            GameController.GetGameController().NextTurn();
+            HaveMoved = true;
         }
 
         /// <summary>
@@ -247,7 +260,6 @@ namespace Assets.Scripts
         /// <param name="newTile">The new tile.</param>
         private void MovePlayer(Tile oldTile, Tile newTile)
         {
-            PlayerMoves--;
             oldTile.CurrentPlayer = null;
             _animationPath.Enqueue(_tilePos);
             newTile.CurrentPlayer = this;
@@ -259,11 +271,6 @@ namespace Assets.Scripts
         /// <exception cref="System.Exception">CurrentPlayer's Starting Position is Invalid!</exception>
         private void Start()
         {
-            _gameController = GameController.GetGameController();
-            Tile tile = _gameController.GetGameTile((int) _tilePos.x, (int) _tilePos.y);
-
-            if (tile.CanLandOn()) tile.CurrentPlayer = this;
-            else throw new Exception("CurrentPlayer's Starting Position is Invalid!");
         }
 
         // Update is called once per frame
@@ -272,13 +279,39 @@ namespace Assets.Scripts
         /// </summary>
         private void Update()
         {
-            if (IsAI && IsMyTurn && _animationPath.Count == 0) MoveAI();
+            if (_animationPath.Count > 0)
+                AnimatePlayer();
 
-            if (_animationPath.Count <= 0) return;
-
-            AnimatePlayer();
+            if (IsAI && IsMyTurn)
+                if (HaveMoved)
+                {
+                    if (_animationPath.Count == 0)
+                    {
+                        _gameController.NextTurn();
+                    }
+                }else
+                    MoveAI();
         }
 
+        public bool HaveMoved { get; set; }
+
         #endregion Private Methods
+
+        public void OnGameStart(GameController gameController)
+        {
+            IsMyTurn = false;
+            HaveMoved = false;
+            GetComponent<Outline>().enabled = false;
+            if (Id > 0)
+            {
+                IsAI = true;
+            }
+            else IsAI = false;
+            _gameController = GameController.GetGameController();
+            Tile tile = _gameController.GetGameTile((int) _tilePos.x, (int) _tilePos.y);
+
+            if (tile.CanLandOn()) tile.CurrentPlayer = this;
+            else throw new Exception("CurrentPlayer's Starting Position is Invalid!");
+        }
     }
 }

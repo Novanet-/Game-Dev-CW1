@@ -19,16 +19,13 @@ namespace Assets.Scripts
 
         #region Internal Fields
 
-        [SerializeField] internal int DieNumber = 6;
+        [SerializeField]
+        internal int DieNumber = 6;
 
         #endregion Internal Fields
 
         #region Private Fields
 
-        private const int Gold = 3;
-        private const int Path = 0;
-        private const int River = 2;
-        private const int Wall = 1;
         private static GameController _gameController;
 
         // P is a Path
@@ -64,24 +61,22 @@ namespace Assets.Scripts
         [SerializeField] private GameObject[] _tilePrefabs;
         private UIController _uiController;
 
-        [SerializeField] private int _width;
+        [SerializeField]
+        private int _width;
 
         #endregion Private Fields
 
         #region Public Properties
 
-        public int ActivePlayerIndex
-        {
-            get { return _activePlayerIndex; }
-            private set { _activePlayerIndex = value % PlayerControllers.Length; }
-        }
+        public int ActivePlayerIndex { get { return _activePlayerIndex; } private set { _activePlayerIndex = value % PlayerControllers.Count; } }
 
-        public List<KeyValuePair<int, int>> CoinSpawners { get; private set; }
+        public Dictionary<TileType, ICollection<Tile>> TilebyType { get; private set; }
 
-        [NotNull] public PlayerController CurrentPlayer
+        [NotNull]
+        public PlayerController CurrentPlayer
         {
             get { return PlayerControllers[ActivePlayerIndex]; }
-            private set { _activePlayerIndex = Array.IndexOf(PlayerControllers, value); }
+            private set { _activePlayerIndex = PlayerControllers.IndexOf(value); }
         }
 
         public bool GameInProgress { get; set; }
@@ -92,9 +87,8 @@ namespace Assets.Scripts
             private set { _height = value; }
         }
 
-        public PlayerController[] PlayerControllers { get; private set; }
+        public List<PlayerController> PlayerControllers { get; private set; }
         public int PlayerMovesLeft { get; private set; }
-        public List<KeyValuePair<int, int>> PlayerSpawnLocations { get; private set; }
         public int TurnNumber { get; private set; }
 
         public int Width
@@ -197,64 +191,77 @@ namespace Assets.Scripts
         {
             GameInProgress = true;
             _gameController = this;
-            CoinSpawners = new List<KeyValuePair<int, int>>();
             _roundEndListeners = new List<IRoundEndListener>();
             _gameGrid = new Tile[Width, Height];
 
-            PlayerSpawnLocations = new List<KeyValuePair<int, int>>();
+
+            TilebyType = new Dictionary<TileType, ICollection<Tile>>();
+            foreach (TileType type in Enum.GetValues(typeof(TileType)))
+            {
+                TilebyType.Add(type, new List<Tile>());
+            }
 
             for (var x = 0; x <= _gameGrid.GetUpperBound(0); x++)
-            for (var y = 0; y <= _gameGrid.GetUpperBound(1); y++)
-            {
-                GameObject tileToMake = _tilePrefabs[0];
-                Vector2 facing = Vector2.zero;
-                switch (_map[15 - y, x])
+                for (var y = 0; y <= _gameGrid.GetUpperBound(1); y++)
                 {
-                    case 'C':
-                        PlayerSpawnLocations.Add(new KeyValuePair<int, int>(x, y));
-                        break;
+                    GameObject tileToMake = _tilePrefabs[0];
+                    Vector2 facing = Vector2.zero;
+                    TileType type = TileType.Path;
+                    switch (_map[15 - y, x])
+                    {
+                        case 'C':
+                            type = TileType.PlayerSpawner;
+                            break;
 
-                    case 'G':
-                        CoinSpawners.Add(new KeyValuePair<int, int>(x, y));
-                        tileToMake = _tilePrefabs[Gold];
-                        break;
+                        case 'G':
+                            tileToMake = _tilePrefabs[(int)TileType.Gold];
+                            type = TileType.Gold;
+                            break;
 
-                    case 'W':
-                        tileToMake = _tilePrefabs[Wall];
-                        break;
+                        case 'W':
+                            tileToMake = _tilePrefabs[(int)TileType.Wall];
+                            type = TileType.Wall;
+                            break;
 
-                    case 'R':
-                        tileToMake = _tilePrefabs[River];
-                        facing = Vector2.up;
-                        break;
+                        case 'R':
+                            tileToMake = _tilePrefabs[(int)TileType.River];
+                            type = TileType.River;
+                            facing = Vector2.up;
+                            break;
 
-                    case 'S':
-                        tileToMake = _tilePrefabs[River];
-                        facing = Vector2.down;
-                        break;
+                        case 'S':
+                            tileToMake = _tilePrefabs[(int)TileType.River];
+                            type = TileType.River;
+                            facing = Vector2.down;
+                            break;
 
-                    case 'T':
-                        tileToMake = _tilePrefabs[River];
-                        facing = Vector2.left;
-                        break;
+                        case 'T':
+                            tileToMake = _tilePrefabs[(int)TileType.River];
+                            type = TileType.River;
+                            facing = Vector2.left;
+                            break;
 
-                    case 'U':
-                        tileToMake = _tilePrefabs[River];
-                        facing = Vector2.right;
-                        break;
+                        case 'U':
+                            tileToMake = _tilePrefabs[(int)TileType.River];
+                            type = TileType.River;
+                            facing = Vector2.right;
+                            break;
 
-                    default:
-                        tileToMake = _tilePrefabs[Path];
-                        break;
+                        default:
+                            tileToMake = _tilePrefabs[(int)TileType.Path];
+                            break;
+                    }
+
+                    GameObject tileInstance = Instantiate(tileToMake, new Vector3(x, y, 0), Quaternion.identity);
+                    var tile = tileInstance.GetComponent<Tile>();
+                    tile.Direction = facing;
+                    _gameGrid[x, y] = tile;
+                    TilebyType[type].Add(tile);
+
+                    //TODO: Assign data to each tile when created, to have different tile types
                 }
 
-                GameObject tileInstance = Instantiate(tileToMake, new Vector3(x, y, 0), Quaternion.identity);
-                var tile = tileInstance.GetComponent<Tile>();
-                tile.Direction = facing;
-                _gameGrid[x, y] = tile;
-
-                //TODO: Assign data to each tile when created, to have different tile types
-            }
+            PlayerControllers = new List<PlayerController>(TilebyType[TileType.PlayerSpawner].Count);
         }
 
         /// <summary>
@@ -308,22 +315,14 @@ namespace Assets.Scripts
         private void Start()
         {
             _uiController = UIController.GetUIController();
-            PlayerControllers = new PlayerController[4];
-            ActivePlayerIndex = 0;
-            for (var i = 0; i < PlayerControllers.Length; i++)
+            ICollection<Tile> playerSpawnLocations = TilebyType[TileType.PlayerSpawner];
+            foreach (Tile location in playerSpawnLocations)
             {
-                int x = PlayerSpawnLocations[i].Key;
-                int y = PlayerSpawnLocations[i].Value;
-                GameObject playerInstance = Instantiate(PlayerPrefab, new Vector3(x, y, 0), Quaternion.identity);
+                GameObject playerInstance = Instantiate(PlayerPrefab, location.transform.position, Quaternion.identity);
                 var playerController = playerInstance.GetComponent<PlayerController>();
-                PlayerControllers[i] = playerController;
-                playerController.Id = i + 1;
-                if (i != 0)
-                {
-                    playerController.OnTurnEnd(this);
-                    playerController.IsAI = true;
-
-                }
+                PlayerControllers.Add(playerController);
+                playerController.Id = PlayerControllers.IndexOf(playerController) + 1;
+                playerController.OnGameStart(this);
             }
 
             CurrentPlayer.OnTurnStart(this);
@@ -344,4 +343,5 @@ namespace Assets.Scripts
 
         #endregion Private Methods
     }
+
 }
