@@ -43,7 +43,7 @@ namespace Assets.Scripts
             {'W', 'W', 'G', 'R', 'W', 'W', 'S', 'W', 'S', 'W', 'W', 'W', 'W', 'W', 'G', 'W'},
             {'W', 'G', 'W', 'R', 'W', 'G', 'S', 'W', 'S', 'P', 'P', 'P', 'G', 'W', 'P', 'W'},
             {'W', 'P', 'W', 'R', 'W', 'W', 'S', 'W', 'S', 'W', 'W', 'P', 'W', 'W', 'P', 'W'},
-            {'W', 'P', 'W', 'R', 'S', 'T', 'T', 'W', 'U', 'P', 'P', 'C', 'P', 'W', 'P', 'W'},
+            {'W', 'P', 'W', 'R', 'T', 'T', 'T', 'W', 'U', 'P', 'P', 'C', 'P', 'W', 'P', 'W'},
             {'W', 'P', 'W', 'P', 'W', 'P', 'W', 'W', 'P', 'W', 'P', 'W', 'P', 'P', 'P', 'W'},
             {'W', 'P', 'P', 'P', 'W', 'P', 'P', 'P', 'P', 'W', 'P', 'W', 'W', 'P', 'W', 'W'},
             {'W', 'W', 'C', 'W', 'P', 'P', 'W', 'W', 'P', 'W', 'P', 'P', 'P', 'P', 'W', 'W'},
@@ -129,10 +129,10 @@ namespace Assets.Scripts
         /// </returns>
         public bool IsInBounds(Vector3 pos)
         {
-            return pos.x >= 0 &&
-                   pos.y >= 0 &&
-                   pos.x < Width &&
-                   pos.y < Height;
+            return pos.x >= -0.5 &&
+                   pos.y >= -0.5 &&
+                   pos.x < Width - 0.5 &&
+                   pos.y < Height - 0.5;
         }
 
         /// <summary>
@@ -296,6 +296,7 @@ namespace Assets.Scripts
             if (!Input.GetMouseButtonDown(0)) return;
 
             Vector3 mouseClick = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            Debug.Log(mouseClick);
             if (!IsInBounds(mouseClick)) return;
 
             Tile tile = GetGameTile(Mathf.RoundToInt(mouseClick.x), Mathf.RoundToInt(mouseClick.y));
