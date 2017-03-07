@@ -17,13 +17,11 @@ namespace Assets.Scripts
 
         #endregion Public Fields
 
-
         #region Internal Fields
 
         [SerializeField] internal int DieNumber = 6;
 
         #endregion Internal Fields
-
 
         #region Private Fields
 
@@ -58,29 +56,25 @@ namespace Assets.Scripts
         };
 
         [SerializeField] private int _activePlayerIndex;
-
         [SerializeField] private Canvas _cnvUi;
-
         [SerializeField] private int _dieNumber = 6;
-
         private Tile[,] _gameGrid;
-
         [SerializeField] private int _height;
-
         private List<IRoundEndListener> _roundEndListeners;
-
         [SerializeField] private GameObject[] _tilePrefabs;
-
         private UIController _uiController;
 
         [SerializeField] private int _width;
 
         #endregion Private Fields
 
-
         #region Public Properties
 
-        public int ActivePlayerIndex { get { return _activePlayerIndex; } private set { _activePlayerIndex = value % PlayerControllers.Length; } }
+        public int ActivePlayerIndex
+        {
+            get { return _activePlayerIndex; }
+            private set { _activePlayerIndex = value % PlayerControllers.Length; }
+        }
 
         public List<KeyValuePair<int, int>> CoinSpawners { get; private set; }
 
@@ -92,21 +86,31 @@ namespace Assets.Scripts
 
         public bool GameInProgress { get; set; }
 
-        public int Height { get { return _height; } private set { _height = value; } }
+        public int Height
+        {
+            get { return _height; }
+            private set { _height = value; }
+        }
 
         public PlayerController[] PlayerControllers { get; private set; }
         public int PlayerMovesLeft { get; private set; }
         public List<KeyValuePair<int, int>> PlayerSpawnLocations { get; private set; }
         public int TurnNumber { get; private set; }
 
-        public int Width { get { return _width; } private set { _width = value; } }
+        public int Width
+        {
+            get { return _width; }
+            private set { _width = value; }
+        }
 
         #endregion Public Properties
 
-
         #region Public Methods
 
-        public static GameController GetGameController() { return _gameController; }
+        public static GameController GetGameController()
+        {
+            return _gameController;
+        }
 
         /// <summary>
         /// Adds the round end listener.
@@ -117,7 +121,10 @@ namespace Assets.Scripts
             _roundEndListeners.Add(listener);
         }
 
-        public Tile GetGameTile(int x, int y) { return _gameGrid[x, y]; }
+        public Tile GetGameTile(int x, int y)
+        {
+            return _gameGrid[x, y];
+        }
 
         /// <summary>
         /// Determines whether [is in bounds] [the specified position].
@@ -149,7 +156,10 @@ namespace Assets.Scripts
             if (ActivePlayerIndex == 0)
             {
                 TurnNumber++;
-                foreach (IRoundEndListener roundEndListener in _roundEndListeners) { roundEndListener.OnRoundEnd(TurnNumber); }
+                foreach (IRoundEndListener roundEndListener in _roundEndListeners)
+                {
+                    roundEndListener.OnRoundEnd(TurnNumber);
+                }
             }
 
             CurrentPlayer.OnTurnStart(this);
@@ -177,7 +187,6 @@ namespace Assets.Scripts
         }
 
         #endregion Public Methods
-
 
         #region Private Methods
 
@@ -309,8 +318,12 @@ namespace Assets.Scripts
                 var playerController = playerInstance.GetComponent<PlayerController>();
                 PlayerControllers[i] = playerController;
                 playerController.Id = i + 1;
-                if (i != 0) { playerController.OnTurnEnd(this); }
-                playerController.IsAI = true;
+                if (i != 0)
+                {
+                    playerController.OnTurnEnd(this);
+                    playerController.IsAI = true;
+
+                }
             }
 
             CurrentPlayer.OnTurnStart(this);
