@@ -61,11 +61,13 @@ namespace Assets.Scripts
             HashSet<Stack<Tile>> paths = GetPath(gameController.GetGameTile((int) _tilePos.x, (int) _tilePos.y), new Stack<Tile>(), dice1);
             paths.UnionWith(GetPath(gameController.GetGameTile((int) _tilePos.x, (int) _tilePos.y), new Stack<Tile>(), dice2));
             _glowingTiles = new HashSet<Tile>();
-
                 foreach (Stack<Tile> path in paths)
                 {
                     GlowPathEndpoints(path);
                 }
+            Stack<Tile> doNothing = new Stack<Tile>();
+            doNothing.Push(GetCurrentTile());
+            GlowPathEndpoints(doNothing);
         }
 
         /// <summary>
@@ -198,14 +200,19 @@ namespace Assets.Scripts
             CanBePushed = true;
         }
 
+        private Tile GetCurrentTile()
+        {
+            return _gameController.GetGameTile((int) _tilePos.x, (int) _tilePos.y);
+        }
+
         /// <summary>
         /// Gets the best move.
         /// </summary>
         /// <returns></returns>
         private Tile GetBestMove()
         {
-            float highestHeat = 0;
             Tile moveTo = null;
+            float highestHeat = 0;
             foreach (Tile tile in _glowingTiles)
             {
                 Tile destinationTile = tile;
@@ -248,7 +255,6 @@ namespace Assets.Scripts
             Tile bestMove = GetBestMove();
 
             bestMove.Glow();
-            bestMove.SetValidMove();
             MoveAlongPath(bestMove.Path);
             HaveMoved = true;
         }
@@ -268,7 +274,7 @@ namespace Assets.Scripts
         /// <summary>
         /// Starts this instance.
         /// </summary>
-        /// <exception cref="System.Exception">CurrentPlayer's Starting Position is Invalid!</exception>
+        /// <exception cref="System.Exception">ActivePlayer's Starting Position is Invalid!</exception>
         private void Start()
         {
         }
@@ -302,7 +308,7 @@ namespace Assets.Scripts
             IsMyTurn = false;
             HaveMoved = false;
             GetComponent<Outline>().enabled = false;
-            if (Id > 0)
+            if (Id > 1)
             {
                 IsAI = true;
             }
@@ -311,7 +317,12 @@ namespace Assets.Scripts
             Tile tile = _gameController.GetGameTile((int) _tilePos.x, (int) _tilePos.y);
 
             if (tile.CanLandOn()) tile.CurrentPlayer = this;
-            else throw new Exception("CurrentPlayer's Starting Position is Invalid!");
+            else throw new Exception("ActivePlayer's Starting Position is Invalid!");
+        }
+
+        public void StayStill()
+        {
+            MovePlayer(GetCurrentTile(), GetCurrentTile());
         }
     }
 }
