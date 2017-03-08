@@ -110,7 +110,7 @@ namespace Assets.Tiles.Scripts
         {
             var outline = GetComponent<Outline>();
             outline.color = 1;
-            if (IsValidMove) SetValidMove();
+            if (IsValidMove) Glow();
             else StopGlowing();
         }
 
