@@ -32,6 +32,7 @@ namespace Assets.Scripts
         // W is Wall
         // R, S, T, U are River Tiles (Up, Down, Left, Right, respectively)
         // C is a Player Spawn Point
+        //J is the Police station
         private readonly char[,] _map =
         {
             {'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W'},
@@ -41,7 +42,7 @@ namespace Assets.Scripts
             {'U', 'U', 'U', 'U', 'U', 'U', 'U', 'U', 'S', 'P', 'P', 'P', 'W', 'W', 'W', 'W'},
             {'U', 'U', 'U', 'U', 'U', 'U', 'S', 'U', 'S', 'W', 'G', 'W', 'W', 'W', 'W', 'W'},
             {'W', 'W', 'G', 'R', 'W', 'W', 'S', 'W', 'S', 'W', 'W', 'W', 'W', 'W', 'G', 'W'},
-            {'W', 'G', 'W', 'R', 'W', 'G', 'S', 'W', 'S', 'P', 'P', 'P', 'G', 'W', 'P', 'W'},
+            {'W', 'G', 'W', 'R', 'W', 'J', 'S', 'W', 'S', 'P', 'P', 'P', 'G', 'W', 'P', 'W'},
             {'W', 'P', 'W', 'R', 'W', 'W', 'S', 'W', 'S', 'W', 'W', 'P', 'W', 'W', 'P', 'W'},
             {'W', 'P', 'W', 'R', 'T', 'T', 'T', 'W', 'U', 'P', 'P', 'C', 'P', 'W', 'P', 'W'},
             {'W', 'P', 'W', 'P', 'W', 'P', 'W', 'W', 'P', 'W', 'P', 'W', 'P', 'P', 'P', 'W'},

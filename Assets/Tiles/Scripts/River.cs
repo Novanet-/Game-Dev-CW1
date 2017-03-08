@@ -37,7 +37,11 @@ namespace Assets.Tiles.Scripts
         /// Sets the sprite.
         /// </summary>
         /// <param name="renderer">The renderer.</param>
-        public override void SetSprite(SpriteRenderer renderer) { renderer.sprite = _sprites[Random.Range(0, _sprites.Length)]; }
+        public override void SetSprite(SpriteRenderer renderer)
+        {
+            renderer.sprite = _sprites[Random.Range(0, 0)]; // _sprites.Length)];
+             renderer.transform.rotation = Quaternion.FromToRotation(Vector2.right, Direction);
+        }
 
         // Use this for initialization
         /// <summary>

@@ -51,7 +51,6 @@ namespace Assets.Tiles.Scripts
         /// </summary>
         public virtual void Awake()
         {
-            SetSprite(GetComponent<SpriteRenderer>());
             _playerMovementListeners = new List<IPlayerMovementListener>();
             StopGlowing();
         }
@@ -113,7 +112,7 @@ namespace Assets.Tiles.Scripts
         /// Gets the gold heat.
         /// </summary>
         /// <returns></returns>
-        public float GetGoldHeat()
+        public float GetGoldHeat(PlayerController player)
         {
             GameController gameController = GameController.GetGameController();
             float heat = 0;
@@ -121,11 +120,31 @@ namespace Assets.Tiles.Scripts
 
             foreach (Tile tile in coinSpawners)
             {
-                CoinSpawnerController coinSpawnerController = tile.GetComponent<CoinSpawnerController>();
+                CoinSpawnerController coinSpawnerController = tile as CoinSpawnerController;
                 float gold = coinSpawnerController.GetGoldAmount();
-                float distance = Mathf.Floor(Distance(coinSpawnerController) + 3 / 4f);
+                float distanceToTile = Mathf.Floor(Distance(coinSpawnerController) + 3 / 4);
+                float distanceFromClosestPlayer = 100;
+                foreach (PlayerController playerController in gameController.PlayerControllers)
+                {
+                    if (player != playerController)
+                    {
+                        distanceFromClosestPlayer = Mathf.Min(distanceFromClosestPlayer,
+                            Distance(playerController.GetCurrentTile()));
+                    }
+                }
 
-                heat = heat + gold / distance;
+                float tileHeat = gold / distanceToTile;
+                if (distanceFromClosestPlayer >= distanceToTile)
+                    tileHeat *= 2f;
+                else if (distanceFromClosestPlayer + 6 <= distanceToTile)
+                    tileHeat *= 1f;
+                else
+                    tileHeat *= 0.5f;
+                
+                if (distanceFromClosestPlayer < 0.5f)
+                    tileHeat = 0f;
+
+                heat = heat + tileHeat;
             }
 
             return heat;
@@ -185,7 +204,11 @@ namespace Assets.Tiles.Scripts
             renderer.sprite = _sprites[pos];
         }
 
-        public virtual void Start() { }
+        public virtual void Start()
+        {
+            SetSprite(GetComponent<SpriteRenderer>());
+            
+        }
 
         /// <summary>
         /// Stops the glowing.

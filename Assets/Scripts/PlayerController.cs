@@ -40,6 +40,8 @@ namespace Assets.Scripts
             get { return _money; }
             set { _money = value; }
         }
+
+        public List<Powerup> Powerups;
         //public int PlayerMoves { get; set; }
 
         #endregion Public Properties
@@ -139,6 +141,13 @@ namespace Assets.Scripts
             CanBePushed = true;
             HaveMoved = false;
             IsMyTurn = true;
+
+            CoinSpawnerController coinSpawner = GetCurrentTile() as CoinSpawnerController;
+            if (coinSpawner != null && coinSpawner.GetGoldAmount() > 0)
+            {
+                StayStill();
+                Debug.Log("Player " + Id + " is still stealing gold");  
+            }
         }
 
         #endregion Public Methods
@@ -209,9 +218,10 @@ namespace Assets.Scripts
             _animationPath = new Queue<Vector3>();
             _tilePos = transform.position;
             CanBePushed = true;
+            Powerups = new List<Powerup>();
         }
 
-        private Tile GetCurrentTile()
+        public Tile GetCurrentTile()
         {
             return _gameController.GetGameTile((int) _tilePos.x, (int) _tilePos.y);
         }
@@ -233,7 +243,7 @@ namespace Assets.Scripts
                     Tile finalTile = river.DestinationTile;
                     if (finalTile.IsValidMove) destinationTile = finalTile;
                 }
-                float heat = destinationTile.GetGoldHeat();
+                float heat = destinationTile.GetGoldHeat(this);
                 if (heat > highestHeat)
                 {
                     highestHeat = heat;
@@ -276,6 +286,7 @@ namespace Assets.Scripts
         /// <param name="newTile">The new tile.</param>
         private void MovePlayer(Tile oldTile, Tile newTile)
         {
+            HaveMoved = true;
             oldTile.CurrentPlayer = null;
             _animationPath.Enqueue(_tilePos);
             newTile.CurrentPlayer = this;

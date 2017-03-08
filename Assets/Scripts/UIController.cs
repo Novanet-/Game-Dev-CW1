@@ -107,6 +107,7 @@ namespace Assets.Scripts
             GameController.NextTurn();
         }
 
+
         /// <summary>
         /// Shows the win splash.
         /// </summary>
