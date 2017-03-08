@@ -111,7 +111,7 @@ namespace Assets.Scripts
                         break;
 
                     case 5:
-                        if (gameController != null) _glowTile.SetValidMove();
+                        if (gameController != null) _glowTile.Glow();
                         uiController.ToggleButtonGlowing(_btnRollDice, false);
                         uiController.ToggleButtonGlowing(_btnDie1, false);
                         uiController.ToggleButtonGlowing(_btnDie2, false);
