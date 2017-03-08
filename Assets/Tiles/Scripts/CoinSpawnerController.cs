@@ -25,6 +25,11 @@ namespace Assets.Tiles.Scripts
         public void Awake()
         {
             base.Awake();
+
+            GameObject tile = Instantiate(TilePrefab, transform);
+            tile.transform.position = transform.position;
+
+            _timeForMoreGold = Random.Range(4, 7);
             GameObject goldObject = Instantiate(GoldPrefab, transform);
             goldObject.transform.position = transform.position;
             gold = goldObject.GetComponent<GoldController>();
@@ -58,11 +63,6 @@ namespace Assets.Tiles.Scripts
         public override void Start()
         {
             base.Start();
-            GameObject tile = Instantiate(TilePrefab, transform);
-            tile.transform.position = transform.position;
-
-            _timeForMoreGold = Random.Range(4, 7);
-
             GameController controller = GameController.GetGameController();
             controller.AddRoundEndListener(this);
         }
@@ -73,6 +73,18 @@ namespace Assets.Tiles.Scripts
             if (doneMoving)
                 gold.PlayerTouched(player);
         }
+
+        public void OnMouseEnter()
+        {
+            UIController.GetUIController().TooltipText = gold.Gold.ToString();
+        }
+
+
+        public void OnMouseExit()
+        {
+            UIController.GetUIController().TooltipText = "";
+        }
+
 
         #endregion Public Methods
 

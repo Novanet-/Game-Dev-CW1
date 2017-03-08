@@ -69,6 +69,24 @@ namespace Assets.Tiles.Scripts
             }
         }
 
+        public void OnMouseEnter()
+        {
+            if (Direction == Vector2.down)
+                UIController.GetUIController().TooltipText = "Down";
+            else if (Direction == Vector2.up)
+                UIController.GetUIController().TooltipText = "Up";
+            else if (Direction == Vector2.right)
+                UIController.GetUIController().TooltipText = "Right";
+            else if (Direction == Vector2.left)
+                UIController.GetUIController().TooltipText = "Left";
+        }
+
+
+        public void OnMouseExit()
+        {
+            UIController.GetUIController().TooltipText = "";
+        }
+
         // Update is called once per frame
         private void Update() { }
 

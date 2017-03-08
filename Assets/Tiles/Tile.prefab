@@ -22,6 +22,7 @@ GameObject:
   - component: {fileID: 212756814776865058}
   - component: {fileID: 114628006853181734}
   - component: {fileID: 114800795512404562}
+  - component: {fileID: 61343798975147750}
   m_Layer: 9
   m_Name: Tile
   m_TagString: Untagged
@@ -42,6 +43,20 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!61 &61343798975147750
+BoxCollider2D:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1442128544956010}
+  m_Enabled: 0
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_Offset: {x: 0, y: 0}
+  serializedVersion: 2
+  m_Size: {x: 1, y: 1}
 --- !u!114 &114628006853181734
 MonoBehaviour:
   m_ObjectHideFlags: 1
