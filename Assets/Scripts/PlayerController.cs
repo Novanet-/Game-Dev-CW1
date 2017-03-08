@@ -13,8 +13,8 @@ namespace Assets.Scripts
         #region Public Fields
 
         public float speed;
-        #endregion Public Fields
 
+        #endregion Public Fields
 
         #region Private Fields
 
@@ -26,27 +26,29 @@ namespace Assets.Scripts
         [SerializeField] private Sprite[] _spriteTextures;
 
         private Vector2 _tilePos;
+        private AudioController _audioController = AudioController.GetAudioController();
 
         #endregion Private Fields
-
 
         #region Public Properties
 
         public bool CanBePushed { get; set; }
         public int Id { get; set; }
         public bool IsAI { get; set; }
-        public int Money { get { return _money; } set { _money = value; } }
+        public int Money
+        {
+            get { return _money; }
+            set { _money = value; }
+        }
         //public int PlayerMoves { get; set; }
 
         #endregion Public Properties
-
 
         #region Private Properties
 
         private bool IsMyTurn { get; set; }
 
         #endregion Private Properties
-
 
         #region Public Methods
 
@@ -62,10 +64,10 @@ namespace Assets.Scripts
             HashSet<Stack<Tile>> paths = GetPath(gameController.GetGameTile((int) _tilePos.x, (int) _tilePos.y), new Stack<Tile>(), dice1);
             paths.UnionWith(GetPath(gameController.GetGameTile((int) _tilePos.x, (int) _tilePos.y), new Stack<Tile>(), dice2));
             _glowingTiles = new HashSet<Tile>();
-                foreach (Stack<Tile> path in paths)
-                {
-                    GlowPathEndpoints(path);
-                }
+            foreach (Stack<Tile> path in paths)
+            {
+                GlowPathEndpoints(path);
+            }
             Stack<Tile> doNothing = new Stack<Tile>();
             doNothing.Push(GetCurrentTile());
             GlowPathEndpoints(doNothing);
@@ -100,7 +102,10 @@ namespace Assets.Scripts
             Tile oldTile = gameController.GetGameTile((int) _tilePos.x, (int) _tilePos.y);
             _tilePos = newTile.transform.position;
 
-            if (newTile.CanLandOn()) { MovePlayer(oldTile, newTile); }
+            if (newTile.CanLandOn())
+            {
+                MovePlayer(oldTile, newTile);
+            }
             else
             {
                 _tilePos = oldPos;
@@ -118,7 +123,10 @@ namespace Assets.Scripts
             GetComponent<Outline>().enabled = false;
             if (_glowingTiles == null) return;
 
-            foreach (Tile tile in _glowingTiles) { tile.StopGlowing(); }
+            foreach (Tile tile in _glowingTiles)
+            {
+                tile.StopGlowing();
+            }
         }
 
         /// <summary>
@@ -134,7 +142,6 @@ namespace Assets.Scripts
         }
 
         #endregion Public Methods
-
 
         #region Private Methods
 
@@ -297,6 +304,7 @@ namespace Assets.Scripts
                 {
                     if (_animationPath.Count == 0)
                     {
+                        _audioController.PlaySoundOnce(_audioController.MoveSound, 0.2f);
                         _gameController.NextTurn();
                     }
                 }
