@@ -27,6 +27,8 @@ namespace Assets.Scripts
 
 
         [SerializeField] private Toggle[] _aiToggleArray;
+        private GUIStyle guiStyleFore;
+        private GUIStyle guiStyleBack;
 
         #endregion Private Fields
 
@@ -169,6 +171,19 @@ namespace Assets.Scripts
             _scoreboardController.UpdateCurrentTurn(GameController.ActivePlayer);
         }
 
+        void OnGUI()
+        {
+            if (TooltipText != "")
+            {
+                var x = Event.current.mousePosition.x;
+                var y = Event.current.mousePosition.y;
+                GUI.Label(new Rect(x - 149, y + 40, 300, 60), TooltipText, guiStyleBack);
+                GUI.Label(new Rect(x - 150, y + 40, 300, 60), TooltipText, guiStyleFore);
+            }
+        }
+
+        public string TooltipText { get; set; }
+
         #endregion Public Methods
 
         #region Private Methods
@@ -179,6 +194,7 @@ namespace Assets.Scripts
         private void Awake()
         {
             _uiController = this;
+            TooltipText = "";
         }
 
         /// <summary>
@@ -196,6 +212,15 @@ namespace Assets.Scripts
                 _aiToggleArray[i].isOn = !isPlayer1;
                 OnAICheckboxValueChange(i);
             }
+
+            guiStyleFore = new GUIStyle();
+            guiStyleFore.normal.textColor = Color.white;
+            guiStyleFore.alignment = TextAnchor.UpperCenter;
+            guiStyleFore.wordWrap = true;
+            guiStyleBack = new GUIStyle();
+            guiStyleBack.normal.textColor = Color.black;
+            guiStyleBack.alignment = TextAnchor.UpperCenter;
+            guiStyleBack.wordWrap = true;
         }
 
         #endregion Private Methods

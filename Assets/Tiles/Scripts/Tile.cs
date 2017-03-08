@@ -223,6 +223,9 @@ namespace Assets.Tiles.Scripts
 
         public virtual void PlayerMovedOver(PlayerController player, bool doneMoving)
         {
+
         }
+
+
     }
 }

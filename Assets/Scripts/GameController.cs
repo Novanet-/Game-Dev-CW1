@@ -296,7 +296,6 @@ namespace Assets.Scripts
             if (!Input.GetMouseButtonDown(0)) return;
 
             Vector3 mouseClick = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            Debug.Log(mouseClick);
             if (!IsInBounds(mouseClick)) return;
 
             Tile tile = GetGameTile(Mathf.RoundToInt(mouseClick.x), Mathf.RoundToInt(mouseClick.y));
