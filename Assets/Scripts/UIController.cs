@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -23,6 +24,9 @@ namespace Assets.Scripts
         [SerializeField] private Text _txtMovesLeft;
         [SerializeField] private Text _txtTurnNumber;
         [SerializeField] private Text _txtWinSplash;
+
+
+        [SerializeField] private Toggle[] _aiToggleArray;
 
         #endregion Private Fields
 
@@ -63,6 +67,17 @@ namespace Assets.Scripts
         public void OnClickChooseDice(int dieNumber)
         {
             //        ActivePlayer.PlayerMoves = RollDice(_dieNumber)
+        }
+
+        public void OnAICheckboxValueChange(int toggleID)
+        {
+            if (GameController == null) return;
+
+            List<PlayerController> playerControllers = GameController.PlayerControllers;
+            if (playerControllers.Count > toggleID)
+            {
+                playerControllers[toggleID].IsAI = _aiToggleArray[toggleID].isOn;
+            }
         }
 
         /// <summary>
@@ -174,6 +189,13 @@ namespace Assets.Scripts
             GameController = GameController.GetGameController();
             _scoreboardController = _pnlScoreboard.GetComponent<ScoreboardController>();
             _tutorialController = _pnlTutorial.GetComponent<TutorialController>();
+
+            for (var i = 0; i < _aiToggleArray.Length; i++)
+            {
+                bool isPlayer1 = i == 0;
+                _aiToggleArray[i].isOn = !isPlayer1;
+                OnAICheckboxValueChange(i);
+            }
         }
 
         #endregion Private Methods
