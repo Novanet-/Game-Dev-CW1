@@ -10,6 +10,7 @@ namespace Assets.Scripts
         private int _spriteNum;
         [SerializeField] private Sprite[] _sprites;
         private Tile _tile;
+        private AudioController _audioController = AudioController.GetAudioController();
 
         #endregion Private Fields
 
@@ -111,6 +112,7 @@ namespace Assets.Scripts
             var spriteRenderer = GetComponent<SpriteRenderer>();
             _spriteNum = Mathf.Clamp(_spriteNum - 1, 0, _sprites.Length - 1);
             spriteRenderer.sprite = _sprites[_spriteNum];
+            _audioController.PlaySoundOnce(_audioController.CoinSound, 0.7f);
         }
         // Update is called once per frame
         private void Update() { }
