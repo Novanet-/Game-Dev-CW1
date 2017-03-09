@@ -72,14 +72,16 @@ namespace Assets.Tiles.Scripts
             controller.AddRoundEndListener(this);
         }
 
-        public void OnMouseEnter()
+        public override void OnMouseEnter()
         {
+            base.OnMouseEnter();
             UIController.GetUIController().TooltipText = gold.Gold.ToString();
         }
 
 
-        public void OnMouseExit()
+        public override void OnMouseExit()
         {
+            base.OnMouseExit();
             UIController.GetUIController().TooltipText = "";
         }
 

@@ -256,6 +256,21 @@ namespace Assets.Tiles.Scripts
             }
         }
 
+        public virtual void OnMouseEnter()
+        {
+            if (IsValidMove)
+            {
+                UIController.GetUIController().TooltipText = "Valid Move";
+            }
+
+        }
+
+
+        public virtual void OnMouseExit()
+        {
+            UIController.GetUIController().TooltipText = "";
+        }
+
         #endregion Private Methods
 
 
