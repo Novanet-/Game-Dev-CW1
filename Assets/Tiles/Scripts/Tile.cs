@@ -261,7 +261,6 @@ namespace Assets.Tiles.Scripts
             if (IsValidMove)
             {
                 _pathArrows = new List<Tile>();
-                UIController.GetUIController().TooltipText = "Valid Move";
                 foreach (Tile tile in Path)
                 {
                     _pathArrows.Add(tile);

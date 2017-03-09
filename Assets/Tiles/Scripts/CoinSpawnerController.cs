@@ -26,8 +26,8 @@ namespace Assets.Tiles.Scripts
         {
             base.Awake();
 
-            GameObject tile = Instantiate(TilePrefab, transform);
-            tile.transform.position = transform.position;
+            //GameObject tile = Instantiate(TilePrefab, transform);
+            //tile.transform.position = transform.position;
 
             _timeForMoreGold = Random.Range(4, 7);
             GameObject goldObject = Instantiate(GoldPrefab, transform);
