@@ -1,32 +1,49 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using JetBrains.Annotations;
 using UnityEngine;
 using UnityEngine.UI;
 
 namespace Assets.Scripts
 {
-    public class UIController : MonoBehaviour
+    public class UIController : MonoBehaviour, ITurnListener
     {
         #region Private Fields
 
         private static UIController _uiController;
-        [SerializeField] private Button _btnDie1;
-        [SerializeField] private Button _btnDie2;
-        [SerializeField] private Button _btnRollDice;
-        [SerializeField] private string _playerWinString = "Player {0} wins!";
-        [SerializeField] private GameObject _pnlScoreboard;
-        [SerializeField] private GameObject _pnlTutorial;
+        [SerializeField]
+        private Button _btnDie1;
+        [SerializeField]
+        private Button _btnDie2;
+        [SerializeField]
+        private Button _btnRollDice;
+        [SerializeField]
+        private string _playerWinString = "Player {0} wins!";
+        [SerializeField]
+        private GameObject _pnlScoreboard;
+        [SerializeField]
+        private GameObject _pnlTutorial;
+        [SerializeField]
+        private GameObject _pnlPowerupBar;
         private ScoreboardController _scoreboardController;
         private TutorialController _tutorialController;
-        [SerializeField] private Text _txtCurrentPlayer;
-        [SerializeField] private Text _txtDie1;
-        [SerializeField] private Text _txtDie2;
-        [SerializeField] private Text _txtMovesLeft;
-        [SerializeField] private Text _txtTurnNumber;
-        [SerializeField] private Text _txtWinSplash;
+        [SerializeField]
+        private Text _txtCurrentPlayer;
+        [SerializeField]
+        private Text _txtDie1;
+        [SerializeField]
+        private Text _txtDie2;
+        [SerializeField]
+        private Text _txtMovesLeft;
+        [SerializeField]
+        private Text _txtTurnNumber;
+        [SerializeField]
+        private Text _txtWinSplash;
 
 
-        [SerializeField] private Toggle[] _aiToggleArray;
+        [SerializeField]
+        private Toggle[] _aiToggleArray;
         private GUIStyle guiStyleFore;
         private GUIStyle guiStyleBack;
 
@@ -40,7 +57,8 @@ namespace Assets.Scripts
 
         #region Private Properties
 
-        [HideInInspector] private GameController GameController { get; set; }
+        [HideInInspector]
+        private GameController GameController { get; set; }
 
         #endregion Private Properties
 
@@ -193,6 +211,18 @@ namespace Assets.Scripts
             }
         }
 
+        public void UpdatePowerupBar(PlayerController controller)
+        {
+                Debug.Log("Updateing Player "+ controller.Id + " powerups!");
+            List<Powerup> powerups = controller.Powerups;
+            for (int i = 0; i < powerups.Count; i++)
+            {
+                Powerup powerup = powerups[i];
+                Debug.Log(powerup);
+                powerup.transform.position = new Vector2(GameController.Width + i, 0);
+            }
+        }
+
         public string TooltipText { get; set; }
 
         #endregion Public Methods
@@ -232,6 +262,17 @@ namespace Assets.Scripts
             guiStyleBack.normal.textColor = Color.black;
             guiStyleBack.alignment = TextAnchor.UpperCenter;
             guiStyleBack.wordWrap = true;
+
+            GameController.AddTurnListener(this);
+        }
+
+        public void OnTurnStart(PlayerController player)
+        {
+            UpdatePowerupBar(player);
+        }
+
+        public void OnTurnEnd(PlayerController player)
+        {
         }
 
         #endregion Private Methods

@@ -15,22 +15,22 @@ public class PowerupSpawner : MonoBehaviour, IRoundEndListener
     }
 
 
-	// Use this for initialization
-	void Start () {
+    // Use this for initialization
+    void Start()
+    {
         GameController gameController = GameController.GetGameController();
         gameController.AddRoundEndListener(this);
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+    }
 
     public void OnRoundEnd(int roundNumber)
     {
-       GameController gameController = GameController.GetGameController();
-        List<Tile> paths =  gameController.TilebyType[TileType.Path];
+        GameController gameController = GameController.GetGameController();
+        List<Tile> paths = gameController.TilebyType[TileType.Path];
         Tile randomTile;
         Debug.Log("Generating a Powerup!");
         do

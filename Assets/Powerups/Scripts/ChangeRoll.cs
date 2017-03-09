@@ -10,13 +10,13 @@ public class ChangeRoll : Powerup {
 	{
 	    ToolTip = "Adds 1 to your dice rolls";
 	}
-	
+
 	// Update is called once per frame
 	void Update () {
-		
+
 	}
 
-    public override void Activate() 
+    public override void Activate()
     {
         UIController uiController = UIController.GetUIController();
         List<int> dice = Holder.Dice;
@@ -25,9 +25,9 @@ public class ChangeRoll : Powerup {
             dice[i]++;
         }
         uiController.SetDice(dice);
-        
+
         Holder.GetAvailibleMoves(dice);
         base.Activate();
     }
-    
+
 }

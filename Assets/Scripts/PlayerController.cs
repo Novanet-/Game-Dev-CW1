@@ -133,6 +133,11 @@ namespace Assets.Scripts
             {
                 tile.StopGlowing();
             }
+
+            foreach (Powerup powerup in Powerups)
+            {
+                powerup.Hide();
+            }
         }
 
         /// <summary>
@@ -157,6 +162,11 @@ namespace Assets.Scripts
             {
                 StayStill();
                 Debug.Log("Player " + Id + " is still stealing gold");  
+            }
+
+            foreach (Powerup powerup in Powerups)
+            {
+                powerup.Show();
             }
         }
 
