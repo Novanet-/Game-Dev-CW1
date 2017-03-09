@@ -88,14 +88,24 @@ namespace Assets.Scripts
         public void OnClickRollDice()
         {
             //        ActivePlayer.PlayerMoves = RollDice(_dieNumber)
-            int dieNumber = GameController.DieNumber;
-            int die1 = GameController.RollDice(dieNumber);
-            int die2 = GameController.RollDice(dieNumber);
-            _txtDie1.text = die1.ToString();
-            _txtDie2.text = die2.ToString();
+            int dieSize = GameController.DieSize;
+            int numberOfDice = GameController.NumberOfDice;
+            List<int> dice = new List<int>();
+            for (int i = 0; i < numberOfDice; i++)
+            {
+                int die = GameController.RollDice(dieSize);
+                dice.Add(die);
+            }
+            SetDice(dice);
             ToggleRollDice(false);
             //        ToggleSelectDie(true);
-            GameController.ActivePlayer.GetAvailibleMoves(die1, die2);
+            GameController.ActivePlayer.GetAvailibleMoves(dice);
+        }
+
+        public void SetDice(List<int> dice)
+        {
+            _txtDie1.text = dice[0].ToString();
+            _txtDie2.text = dice[1].ToString();
         }
 
         /// <summary>
