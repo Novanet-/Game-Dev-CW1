@@ -257,6 +257,10 @@ namespace Assets.Tiles.Scripts
             }
         }
 
+        private void Update()
+        {
+        }
+
         public virtual void OnMouseEnter()
         {
             if (IsValidMove)

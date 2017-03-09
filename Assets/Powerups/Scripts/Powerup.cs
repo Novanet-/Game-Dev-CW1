@@ -12,6 +12,7 @@ public abstract class Powerup : MonoBehaviour, IPlayerMovementListener
 	public virtual void Start ()
 	{
 	    ToolTip = "";
+	    _removeMovementListener = false;
 	}
 
 	// Update is called once per frame
@@ -44,7 +45,7 @@ public abstract class Powerup : MonoBehaviour, IPlayerMovementListener
 
     public void PickUp(PlayerController player)
     {
-        if (player == null)
+        if (player != null)
         {
             player.Powerups.Add(this);
             Holder = player;
@@ -83,19 +84,11 @@ public abstract class Powerup : MonoBehaviour, IPlayerMovementListener
 
     public virtual void OnMouseEnter()
     {
-        if (Tile != null)
-        {
-            Tile.Glow();
-        }
         UIController.GetUIController().TooltipText = ToolTip;
     }
 
     public virtual void OnMouseExit()
     {
-        if (Tile != null)
-        {
-            Tile.StopGlowing();
-        }
-        UIController.GetUIController().TooltipText = ToolTip;
+        UIController.GetUIController().TooltipText = "";
     }
 }

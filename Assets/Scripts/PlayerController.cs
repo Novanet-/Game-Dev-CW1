@@ -131,7 +131,8 @@ namespace Assets.Scripts
 
             foreach (Tile tile in _glowingTiles)
             {
-                tile.StopGlowing();
+
+                tile.SetValidMove(false);
             }
 
             foreach (Powerup powerup in Powerups)
