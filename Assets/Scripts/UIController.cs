@@ -7,32 +7,45 @@ using UnityEngine.UI;
 
 namespace Assets.Scripts
 {
-    public class UIController : MonoBehaviour
+    public class UIController : MonoBehaviour, ITurnListener
     {
         #region Private Fields
 
         private static UIController _uiController;
-        [SerializeField] private Button _btnDie1;
-        [SerializeField] private Button _btnDie2;
-        [SerializeField] private Button _btnRollDice;
-        [SerializeField] private string _playerWinString = "Player {0} wins!";
-        [SerializeField] private GameObject _pnlScoreboard;
-        [SerializeField] private GameObject _pnlTutorial;
-        [SerializeField] private GameObject _pnlPowerupBar;
+        [SerializeField]
+        private Button _btnDie1;
+        [SerializeField]
+        private Button _btnDie2;
+        [SerializeField]
+        private Button _btnRollDice;
+        [SerializeField]
+        private string _playerWinString = "Player {0} wins!";
+        [SerializeField]
+        private GameObject _pnlScoreboard;
+        [SerializeField]
+        private GameObject _pnlTutorial;
+        [SerializeField]
+        private GameObject _pnlPowerupBar;
         private ScoreboardController _scoreboardController;
         private TutorialController _tutorialController;
-        [SerializeField] private Text _txtCurrentPlayer;
-        [SerializeField] private Text _txtDie1;
-        [SerializeField] private Text _txtDie2;
-        [SerializeField] private Text _txtMovesLeft;
-        [SerializeField] private Text _txtTurnNumber;
-        [SerializeField] private Text _txtWinSplash;
+        [SerializeField]
+        private Text _txtCurrentPlayer;
+        [SerializeField]
+        private Text _txtDie1;
+        [SerializeField]
+        private Text _txtDie2;
+        [SerializeField]
+        private Text _txtMovesLeft;
+        [SerializeField]
+        private Text _txtTurnNumber;
+        [SerializeField]
+        private Text _txtWinSplash;
 
 
-        [SerializeField] private Toggle[] _aiToggleArray;
+        [SerializeField]
+        private Toggle[] _aiToggleArray;
         private GUIStyle guiStyleFore;
         private GUIStyle guiStyleBack;
-        private List<Powerup> _powerupBar;
 
         #endregion Private Fields
 
@@ -44,7 +57,8 @@ namespace Assets.Scripts
 
         #region Private Properties
 
-        [HideInInspector] private GameController GameController { get; set; }
+        [HideInInspector]
+        private GameController GameController { get; set; }
 
         #endregion Private Properties
 
@@ -184,7 +198,6 @@ namespace Assets.Scripts
             _txtTurnNumber.text = GameController.TurnNumber.ToString();
             _scoreboardController.UpdateScoreboard(GameController.PlayerControllers);
             _scoreboardController.UpdateCurrentTurn(GameController.ActivePlayer);
-            UpdatePowerupBar(GameController.ActivePlayer.Powerups);
         }
 
         void OnGUI()
@@ -198,24 +211,15 @@ namespace Assets.Scripts
             }
         }
 
-        public void UpdatePowerupBar([CanBeNull] List<Powerup> currentPlayerPowerups)
+        public void UpdatePowerupBar(PlayerController controller)
         {
-            if (currentPlayerPowerups != null)
+                Debug.Log("Updateing Player "+ controller.Id + " powerups!");
+            List<Powerup> powerups = controller.Powerups;
+            for (int i = 0; i < powerups.Count; i++)
             {
-//                if (!_powerupBar.SequenceEqual(currentPlayerPowerups))
-//                {
-                    _powerupBar = currentPlayerPowerups;
-//                    foreach (Transform child in _pnlPowerupBar.transform)
-//                    {
-//                        Destroy(child.gameObject);
-//                    }
-                    for (var i = 0; i < _powerupBar.Count; i++)
-                    {
-                        Powerup powerup = _powerupBar[i];
-                        SpriteRenderer renderer = powerup.gameObject.GetComponent<SpriteRenderer>();
-                        powerup.transform.position = new Vector2(GameController.Width +  i * renderer.sprite.textureRect.width, 0);
-                    }
-//                }
+                Powerup powerup = powerups[i];
+                Debug.Log(powerup);
+                powerup.transform.position = new Vector2(GameController.Width + i, 0);
             }
         }
 
@@ -259,7 +263,16 @@ namespace Assets.Scripts
             guiStyleBack.alignment = TextAnchor.UpperCenter;
             guiStyleBack.wordWrap = true;
 
-            _powerupBar = new List<Powerup>();
+            GameController.AddTurnListener(this);
+        }
+
+        public void OnTurnStart(PlayerController player)
+        {
+            UpdatePowerupBar(player);
+        }
+
+        public void OnTurnEnd(PlayerController player)
+        {
         }
 
         #endregion Private Methods

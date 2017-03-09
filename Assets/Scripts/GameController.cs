@@ -59,6 +59,7 @@ namespace Assets.Scripts
         private Tile[,] _gameGrid;
         [SerializeField] private int _height;
         private List<IRoundEndListener> _roundEndListeners;
+        private List<ITurnListener> _turnListeners;
         [SerializeField] private GameObject[] _tilePrefabs;
         private UIController _uiController;
 
@@ -116,6 +117,26 @@ namespace Assets.Scripts
             _roundEndListeners.Add(listener);
         }
 
+        /// <summary>
+        /// Removes the round end listener.
+        /// </summary>
+        /// <param name="listener">The listener.</param>
+        public void RemoveRoundEndListener(IRoundEndListener listener)
+        {
+            _roundEndListeners.Remove(listener);
+        }
+
+        public void AddTurnListener(ITurnListener listener)
+        {
+            _turnListeners.Add(listener);
+        }
+
+        public void RemoveTurnListener(ITurnListener listener)
+        {
+            _turnListeners.Remove(listener);
+        }
+
+
         public Tile GetGameTile(int x, int y)
         {
             return _gameGrid[x, y];
@@ -141,6 +162,10 @@ namespace Assets.Scripts
         /// </summary>
         public void NextTurn()
         {
+            foreach (ITurnListener listener in _turnListeners)
+            {
+                listener.OnTurnEnd(ActivePlayer);
+            }
             ActivePlayer.OnTurnEnd(this);
 
             CheckIfWin();
@@ -157,18 +182,14 @@ namespace Assets.Scripts
                 }
             }
 
+            foreach (ITurnListener listener in _turnListeners)
+            {
+                listener.OnTurnStart(ActivePlayer);
+            }
             ActivePlayer.OnTurnStart(this);
             _uiController.ToggleRollDice(true);
         }
 
-        /// <summary>
-        /// Removes the round end listener.
-        /// </summary>
-        /// <param name="listener">The listener.</param>
-        public void RemoveRoundEndListener(IRoundEndListener listener)
-        {
-            _roundEndListeners.Remove(listener);
-        }
 
         /// <summary>
         /// Rolls the dice.
@@ -193,6 +214,7 @@ namespace Assets.Scripts
             GameInProgress = true;
             _gameController = this;
             _roundEndListeners = new List<IRoundEndListener>();
+            _turnListeners = new List<ITurnListener>();
             _gameGrid = new Tile[Width, Height];
 
 
@@ -288,7 +310,6 @@ namespace Assets.Scripts
                 //TODO: What happens on win
                 _uiController.ShowWinSplash(firstPlace);
                 _uiController.ToggleInteraction(false);
-                GameInProgress = false;
             }
         }
 
