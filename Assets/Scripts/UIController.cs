@@ -213,13 +213,13 @@ namespace Assets.Scripts
 
         public void UpdatePowerupBar(PlayerController controller)
         {
-                Debug.Log("Updateing Player "+ controller.Id + " powerups!");
-            List<Powerup> powerups = controller.Powerups;
-            for (int i = 0; i < powerups.Count; i++)
+            Debug.Log("Updateing Player "+ controller.Id + " powerups!");
+            int i = 0;
+            foreach (Powerup powerup in controller.Powerups)
             {
-                Powerup powerup = powerups[i];
                 Debug.Log(powerup);
-                    powerup.transform.position = new Vector2(GameController.Width + i, 0);
+                powerup.transform.position = new Vector2(GameController.Width + i, 0);
+                i++;
             }
         }
 

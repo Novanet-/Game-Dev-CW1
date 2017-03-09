@@ -40,9 +40,19 @@ public abstract class Powerup : MonoBehaviour, IPlayerMovementListener
 
     public virtual void Activate()
     {
+        Debug.Log("Before List Removeal");
+        foreach (Powerup powerup in Holder.Powerups)
+        {
+            Debug.Log(powerup);
+        }
         Holder.Powerups.Remove(this);
+        Debug.Log("AFter list Removeal");
+        foreach (Powerup powerup in Holder.Powerups)
+        {
+            Debug.Log(powerup);
+        }
         UIController.GetUIController().UpdatePowerupBar(Holder);
-        Destroy(this);
+        Destroy(gameObject);
     }
 
     public void PickUp(PlayerController player)
