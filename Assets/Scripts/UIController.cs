@@ -178,8 +178,8 @@ namespace Assets.Scripts
             {
                 var x = Event.current.mousePosition.x;
                 var y = Event.current.mousePosition.y;
-                GUI.Label(new Rect(x - 149, y + 40, 300, 60), TooltipText, guiStyleBack);
-                GUI.Label(new Rect(x - 150, y + 40, 300, 60), TooltipText, guiStyleFore);
+                GUI.Label(new Rect(x - 120, y + 10, 300, 60), TooltipText, guiStyleBack);
+                GUI.Label(new Rect(x - 121, y + 10, 300, 60), TooltipText, guiStyleFore);
             }
         }
 
