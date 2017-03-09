@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Defense : MonoBehaviour {
+public class Defense : Powerup{
 
 	// Use this for initialization
 	void Start () {
@@ -13,4 +13,5 @@ public class Defense : MonoBehaviour {
 	void Update () {
 		
 	}
+
 }

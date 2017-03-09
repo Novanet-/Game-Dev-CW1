@@ -18,7 +18,6 @@ public class ChangeRoll : Powerup {
 
     public override void Activate() 
     {
-        Holder.Powerups.Remove(this);
         UIController uiController = UIController.GetUIController();
         List<int> dice = Holder.Dice;
         for (int i = 0; i < dice.Count; i++)
@@ -28,6 +27,7 @@ public class ChangeRoll : Powerup {
         uiController.SetDice(dice);
         
         Holder.GetAvailibleMoves(dice);
+        base.Activate();
     }
     
 }

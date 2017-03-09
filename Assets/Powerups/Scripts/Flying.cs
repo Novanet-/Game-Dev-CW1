@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Flying : MonoBehaviour {
+public class Flying : Powerup{
 
 	// Use this for initialization
 	void Start () {
@@ -13,4 +13,10 @@ public class Flying : MonoBehaviour {
 	void Update () {
 		
 	}
+
+    public override void Activate()
+    {
+        Holder.GetAvailibleMoves(Holder.Dice, true);
+        base.Activate();
+    }
 }
