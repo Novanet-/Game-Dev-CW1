@@ -76,9 +76,21 @@ namespace Assets.Scripts
                     "As your aim to to collect gold, you'll want to make your way towards one of the many gold spawners that are scattered around the map\nDo this now by clicking on a green tile that will get you closer to a gold spawner.";
             TutorialPages[6] =
                     "Well Done! The other players will now take their turns, they have the same goal as you, so they might try and beat you to a gold spawner!";
-            TutorialPages[7] =
-                    "Additionally, some of the tiles on the map are rivers, these push you an extra tile in a specified direction when you land on them";
-            TutorialPages[8] = "And that's pretty much the whole game, feel free to keep playing! Have fun!";
+            TutorialPages[7] = "A player has won the game when they have gained have a gold difference of +50 compared with the player with the least gold";
+            TutorialPages[8] = "If you have managed to get your character into a good location, instead of moving a number of squares indicated by the dice\nYou can skip your turn by pressing the \"Skip Turn\" button";
+            TutorialPages[9] = "When a player lands on a gold spawner, they are forced to stay on the spawner until all the gold has been collected from it. Keep this in mind when going for the gold.";
+
+            TutorialPages[10] =
+                    "Additionally, some of the tiles on the map are rivers, these push you an extra tile in a specified direction when you land on them\nYou can see this direction by hovering over the river tile";
+            TutorialPages[11] = "In the centre of the map is the jail.\nWhen a player moves to this tile, any players who are currently standing on a coin spawner will be caught stealing.";
+            TutorialPages[12] = "Players who are caught stealing lose 20 gold, lose their next turn, and the gold spawner they were stealing from is also wiped clean \nUse this to overtake the other players";
+            TutorialPages[13] = "Every so often, powerups will spawn around the map, whenever you walk over them, they will be added to your inventory\nYou can save these for alter, but once you use them they are gone";
+            TutorialPages[14] = "There are three types of powerups, each gives you a different bonus";
+            TutorialPages[15] = "Lucky - Add 1 to both of your dice rolls";
+            TutorialPages[16] = "Flying - You can move over walls for one turn";
+            TutorialPages[17] = "Defence - If a player uses the jail to catch you stealing, this will get you out of jail";
+            TutorialPages[18] = "And that's pretty much the whole game, feel free to keep playing! Have fun!";
+
         }
 
         /// <summary>
