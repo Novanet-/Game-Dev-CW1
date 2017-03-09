@@ -38,10 +38,11 @@ namespace Assets.Scripts
         public int Money
         {
             get { return _money; }
-            set { _money = value; }
+            set { _money = Math.Max(value, 0); }
         }
 
         public List<Powerup> Powerups;
+        private bool _disabled;
         //public int PlayerMoves { get; set; }
 
         #endregion Public Properties
@@ -144,6 +145,7 @@ namespace Assets.Scripts
 
             if (Disabled)
             {
+                Disabled = false;
                 EndTurn();
             }
 
@@ -369,15 +371,31 @@ namespace Assets.Scripts
             return _spriteTextures[this.Id - 1];
         }
 
-        public void Disable()
-        {
-            Disabled = true;
-            Debug.Log("Player " + Id + " is disabled!");
-            Money = Money - 20;
-            SpriteRenderer renderer = GetComponent<SpriteRenderer>();
-            renderer.color = Color.black;
-        }
 
-        public bool Disabled { get; set; }
+        public bool Disabled
+        {
+            get { return _disabled; }
+            set
+            {
+                SpriteRenderer renderer = GetComponent<SpriteRenderer>();
+                if (value)
+                {
+
+                    Debug.Log("Player " + Id + " is disabled!");
+                    renderer.color = Color.black;
+                    CoinSpawnerController coinSpawner = GetCurrentTile() as CoinSpawnerController;
+                    if (coinSpawner != null) 
+                        coinSpawner.EmptyOfGold();
+                    Money = Money - 20;
+                }
+                else
+                {
+                    Debug.Log("Player " + Id + " is not disabled!");
+                    renderer.color = Color.white;
+
+                }
+                _disabled = value;
+            }
+        }
     }
 }

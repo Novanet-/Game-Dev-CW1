@@ -30,7 +30,7 @@ public class Jail : Tile, IPlayerMovementListener
             {
                 if (playerController.GetCurrentTile() is CoinSpawnerController)
                 {
-                    playerController.Disable();
+                    playerController.Disabled = true;
                 }
             }
         }

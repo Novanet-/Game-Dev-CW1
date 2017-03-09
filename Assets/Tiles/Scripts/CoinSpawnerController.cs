@@ -42,6 +42,11 @@ namespace Assets.Tiles.Scripts
         /// <returns></returns>
         public int GetGoldAmount() { return gold.Gold; }
 
+        public void EmptyOfGold()
+        {
+            gold.RemoveGold();
+        }
+
         /// <summary>
         /// Called when [round end].
         /// </summary>
@@ -50,7 +55,7 @@ namespace Assets.Tiles.Scripts
         {
             if (--_timeForMoreGold != 0) return;
 
-            gold.GetGold();
+            gold.SpawnGold();
             _timeForMoreGold = Random.Range(4, 7);
             _goldSpawnTime = Time.time;
         }
