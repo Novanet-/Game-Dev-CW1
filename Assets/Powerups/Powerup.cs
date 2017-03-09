@@ -1,8 +1,10 @@
 ﻿using Assets.Scripts;
 using UnityEngine;
 
-public abstract class Powerup : MonoBehaviour {
+public abstract class Powerup : MonoBehaviour
+{
 
+    private PlayerController holder;
 	// Use this for initialization
 	public virtual void Start ()
 	{
@@ -13,12 +15,18 @@ public abstract class Powerup : MonoBehaviour {
 	void Update () {
 	}
 
-    public string ToolTip { get; private set; }
+    public string ToolTip { get; protected set; }
 
     public abstract void Activate(GameController gameController, PlayerController currentPlayer);
 
     public void Activate()
     {
-        Activate(GameController.GetGameController(), GameController.GetGameController().ActivePlayer);
+        Activate(GameController.GetGameController(), holder);
+    }
+
+    public void PickUp(PlayerController player)
+    {
+        player.Powerups.Add(this);
+        holder = player;
     }
 }
