@@ -64,6 +64,8 @@ namespace Assets.Scripts
             GameController gameController = GameController.GetGameController();
             Dice = dice;
 
+            RemoveMoves();
+
             HashSet<Stack<Tile>> paths = new HashSet<Stack<Tile>>();
             foreach (int die in Dice)
             {
@@ -129,16 +131,22 @@ namespace Assets.Scripts
             GetComponent<Outline>().enabled = false;
             if (_glowingTiles == null) return;
 
-            foreach (Tile tile in _glowingTiles)
-            {
-
-                tile.SetValidMove(false);
-            }
+            RemoveMoves();
 
             foreach (Powerup powerup in Powerups)
             {
                 powerup.Hide();
             }
+        }
+
+        public void RemoveMoves()
+        {
+            if (_glowingTiles == null) return;
+            foreach (Tile tile in _glowingTiles)
+            {
+                tile.SetValidMove(false);
+            }
+            _glowingTiles = null;
         }
 
         /// <summary>

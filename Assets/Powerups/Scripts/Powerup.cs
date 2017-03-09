@@ -7,20 +7,18 @@ public abstract class Powerup : MonoBehaviour, IPlayerMovementListener
 
     protected PlayerController Holder;
     private Tile _tile;
-    private bool _removeMovementListener;
     // Use this for initialization
 	public virtual void Start ()
 	{
 	    ToolTip = "";
-	    _removeMovementListener = false;
 	}
 
 	// Update is called once per frame
 	void Update () {
-	    if (_removeMovementListener)
+	    if (Holder != null && Tile != null)
 	    {
-	        _removeMovementListener = false;
             Tile.RemovePlayerMovementListener(this);
+	        Tile = null;
 	    }
 	}
 
@@ -32,14 +30,18 @@ public abstract class Powerup : MonoBehaviour, IPlayerMovementListener
         set
         {
             _tile = value;
-            transform.position = Tile.transform.position;
-            Tile.AddPlayerMovementListener(this);
+            if (Tile != null)
+            {
+                transform.position = Tile.transform.position;
+                Tile.AddPlayerMovementListener(this);
+            }
         }
     }
 
     public virtual void Activate()
     {
         Holder.Powerups.Remove(this);
+        UIController.GetUIController().UpdatePowerupBar(Holder);
         Destroy(this);
     }
 
@@ -49,7 +51,6 @@ public abstract class Powerup : MonoBehaviour, IPlayerMovementListener
         {
             player.Powerups.Add(this);
             Holder = player;
-            _removeMovementListener = true;
             UIController.GetUIController().UpdatePowerupBar(player);
         }
 
@@ -87,6 +88,14 @@ public abstract class Powerup : MonoBehaviour, IPlayerMovementListener
         UIController.GetUIController().TooltipText = ToolTip;
     }
 
+    public virtual void OnMouseOver()
+    {
+        if (Input.GetMouseButtonDown(0))
+            if (Holder != null && GameController.GetGameController().ActivePlayer == Holder)
+        {
+            Activate();
+        }
+    }
     public virtual void OnMouseExit()
     {
         UIController.GetUIController().TooltipText = "";

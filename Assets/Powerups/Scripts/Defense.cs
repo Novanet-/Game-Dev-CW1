@@ -14,4 +14,7 @@ public class Defense : Powerup{
 		
 	}
 
+    public override void Activate()
+    {
+    }
 }

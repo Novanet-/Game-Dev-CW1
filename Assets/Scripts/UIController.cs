@@ -219,7 +219,7 @@ namespace Assets.Scripts
             {
                 Powerup powerup = powerups[i];
                 Debug.Log(powerup);
-                powerup.transform.position = new Vector2(GameController.Width + i, 0);
+                    powerup.transform.position = new Vector2(GameController.Width + i, 0);
             }
         }
 
