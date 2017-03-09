@@ -21,6 +21,7 @@ GameObject:
   - component: {fileID: 4977501021390990}
   - component: {fileID: 212162028934291146}
   - component: {fileID: 114619412738288408}
+  - component: {fileID: 114719439521071198}
   m_Layer: 10
   m_Name: Player
   m_TagString: Player
@@ -52,7 +53,28 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: db7fdd75b7e63584caa1223cdc16530e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  speed: 10
   _money: 0
+  _spriteTextures:
+  - {fileID: 21300004, guid: cb8d512c02b5e334cadc56bd4512cb17, type: 3}
+  - {fileID: 21300004, guid: c074b5b222572fc4e8d06ec981bb7e1b, type: 3}
+  - {fileID: 21300004, guid: cb0e34acaa4d05f44b2926728a3710fe, type: 3}
+  - {fileID: 21300004, guid: 4f0725d0bfd85d743a7386a7f31c6981, type: 3}
+--- !u!114 &114719439521071198
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1942373800801728}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fbf3575480402db40813e763382412fb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  color: 0
+  eraseRenderer: 0
+  originalLayer: 0
+  originalMaterials: []
 --- !u!212 &212162028934291146
 SpriteRenderer:
   m_ObjectHideFlags: 1
