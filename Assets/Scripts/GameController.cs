@@ -207,7 +207,7 @@ namespace Assets.Scripts
                 {
                     GameObject tileToMake = _tilePrefabs[0];
                     Vector2 facing = Vector2.zero;
-                    TileType type = TileType.Path;
+                    TileType type;
                     switch (_map[15 - y, x])
                     {
                         case 'C':
@@ -215,8 +215,13 @@ namespace Assets.Scripts
                             break;
 
                         case 'G':
-                            tileToMake = _tilePrefabs[(int)TileType.Gold];
-                            type = TileType.Gold;
+                            tileToMake = _tilePrefabs[(int)TileType.CoinSpawner];
+                            type = TileType.CoinSpawner;
+                            break;
+
+                        case 'J':
+                            tileToMake = _tilePrefabs[(int) TileType.Jail];
+                            type = TileType.Jail;
                             break;
 
                         case 'W':
@@ -249,6 +254,7 @@ namespace Assets.Scripts
                             break;
 
                         default:
+                            type = TileType.Path;
                             tileToMake = _tilePrefabs[(int)TileType.Path];
                             break;
                     }
