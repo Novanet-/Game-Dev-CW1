@@ -59,7 +59,7 @@ namespace Assets.Scripts
         /// Gets the availible moves.
         /// </summary>
         /// <param name="dice">The dice.</param>
-        public void GetAvailibleMoves(List<int>  dice)
+        public void GetAvailibleMoves(List<int>  dice, bool flying = false)
         {
             GameController gameController = GameController.GetGameController();
             Dice = dice;
@@ -67,7 +67,7 @@ namespace Assets.Scripts
             HashSet<Stack<Tile>> paths = new HashSet<Stack<Tile>>();
             foreach (int die in Dice)
             {
-                paths.UnionWith(GetPath(gameController.GetGameTile((int) _tilePos.x, (int) _tilePos.y), new Stack<Tile>(), die));
+                paths.UnionWith(GetPath(gameController.GetGameTile((int) _tilePos.x, (int) _tilePos.y), new Stack<Tile>(), die, flying));
             }
             _glowingTiles = new HashSet<Tile>();
             foreach (Stack<Tile> path in paths)
@@ -175,8 +175,9 @@ namespace Assets.Scripts
         /// <param name="tile">The tile.</param>
         /// <param name="path">The path.</param>
         /// <param name="remainingMoves">The remaining moves.</param>
+        /// <param name="flying"></param>
         /// <returns></returns>
-        private static HashSet<Stack<Tile>> GetPath(Tile tile, Stack<Tile> path, int remainingMoves)
+        private static HashSet<Stack<Tile>> GetPath(Tile tile, Stack<Tile> path, int remainingMoves, bool flying)
         {
             var routes = new HashSet<Stack<Tile>>();
             if (remainingMoves == 0)
@@ -197,7 +198,7 @@ namespace Assets.Scripts
                     var route = new Stack<Tile>(path.Reverse());
 
                     route.Push(tile);
-                    routes.UnionWith(GetPath(neighbour, route, remainingMoves));
+                    routes.UnionWith(GetPath(neighbour, route, remainingMoves, flying));
                 }
             }
 
@@ -384,6 +385,16 @@ namespace Assets.Scripts
                 if (value)
                 {
 
+                    foreach (Powerup powerup in Powerups)
+                    {
+                        Defense defense = powerup as Defense;
+                        if (defense != null)
+                        {
+                            defense.Activate();
+                            _disabled = false;
+                            return;
+                        }
+                    }
                     Debug.Log("Player " + Id + " is disabled!");
                     renderer.color = Color.black;
                     CoinSpawnerController coinSpawner = GetCurrentTile() as CoinSpawnerController;
@@ -407,5 +418,6 @@ namespace Assets.Scripts
         }
 
         public List<int> Dice { get; private set; }
+
     }
 }

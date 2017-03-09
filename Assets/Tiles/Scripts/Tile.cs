@@ -154,15 +154,21 @@ namespace Assets.Tiles.Scripts
         /// Gets the neighbours.
         /// </summary>
         /// <returns></returns>
-        public List<Tile> GetNeighbours()
+        public List<Tile> GetNeighbours(bool includeWalls = false)
         {
             GameController gameController = GameController.GetGameController();
+            List<Tile> list = new List<Tile>();
+            foreach (var direction in _directions)
+            {
+                var pos = transform.position + direction;
+                if (gameController.IsInBounds(pos))
+                {
+                    var tile = gameController.GetGameTile((int) pos.x, (int) pos.y);
+                    if (includeWalls || tile.CanPassThrough()) list.Add(tile);
+                }
+            }
             return
-                    _directions.Select(direction => transform.position + direction)
-                               .Where(pos => gameController.IsInBounds(pos))
-                               .Select(pos => gameController.GetGameTile((int) pos.x, (int) pos.y))
-                               .Where(tile => tile.CanPassThrough())
-                               .ToList();
+                    list;
         }
 
         /// <summary>

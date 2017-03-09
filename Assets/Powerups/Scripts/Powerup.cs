@@ -36,7 +36,11 @@ public abstract class Powerup : MonoBehaviour, IPlayerMovementListener
         }
     }
 
-    public abstract void Activate();
+    public virtual void Activate()
+    {
+        Holder.Powerups.Remove(this);
+        Destroy(this);
+    }
 
     public void PickUp(PlayerController player)
     {
