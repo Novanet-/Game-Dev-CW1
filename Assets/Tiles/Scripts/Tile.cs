@@ -260,15 +260,33 @@ namespace Assets.Tiles.Scripts
         {
             if (IsValidMove)
             {
+                _pathArrows = new List<Tile>();
                 UIController.GetUIController().TooltipText = "Valid Move";
+                foreach (Tile tile in Path)
+                {
+                    _pathArrows.Add(tile);
+                    tile.gameObject.GetComponent<SpriteRenderer>().color = Color.red;
+                       
+                }
             }
 
         }
+
+        private List<Tile> _pathArrows;
 
 
         public virtual void OnMouseExit()
         {
             UIController.GetUIController().TooltipText = "";
+            if (_pathArrows != null)
+            {
+                foreach (Tile tile in _pathArrows)
+                {
+                    tile.gameObject.GetComponent<SpriteRenderer>().color = Color.white;
+                }
+                _pathArrows = null;
+            }
+
         }
 
         #endregion Private Methods

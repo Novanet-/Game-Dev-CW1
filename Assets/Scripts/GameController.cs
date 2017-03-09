@@ -310,6 +310,7 @@ namespace Assets.Scripts
                 //TODO: What happens on win
                 _uiController.ShowWinSplash(firstPlace);
                 _uiController.ToggleInteraction(false);
+                GameInProgress = false;
             }
         }
 
