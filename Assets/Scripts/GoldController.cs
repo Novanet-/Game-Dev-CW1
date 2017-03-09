@@ -97,11 +97,11 @@ namespace Assets.Scripts
             {
                 player.Money = player.Money + 10;
                 Gold = Gold - 10;
-                Debug.Log("Log Given Gold to Player " + player.Id + ", remaining gold: " + Gold);
+                Debug.Log("Log Given CoinSpawner to Player " + player.Id + ", remaining gold: " + Gold);
             }
             else
             {
-                Debug.Log("No Gold Here! Player " + player.Id + ", has gone without!");
+                Debug.Log("No CoinSpawner Here! Player " + player.Id + ", has gone without!");
             }
 
         }

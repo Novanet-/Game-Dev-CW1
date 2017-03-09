@@ -116,7 +116,7 @@ namespace Assets.Tiles.Scripts
         {
             GameController gameController = GameController.GetGameController();
             float heat = 0;
-            ICollection<Tile> coinSpawners = gameController.TilebyType[TileType.Gold];
+            ICollection<Tile> coinSpawners = gameController.TilebyType[TileType.CoinSpawner];
 
             foreach (Tile tile in coinSpawners)
             {

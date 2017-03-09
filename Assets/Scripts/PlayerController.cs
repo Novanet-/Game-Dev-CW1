@@ -142,12 +142,22 @@ namespace Assets.Scripts
             HaveMoved = false;
             IsMyTurn = true;
 
+            if (Disabled)
+            {
+                EndTurn();
+            }
+
             CoinSpawnerController coinSpawner = GetCurrentTile() as CoinSpawnerController;
             if (coinSpawner != null && coinSpawner.GetGoldAmount() > 0)
             {
                 StayStill();
                 Debug.Log("Player " + Id + " is still stealing gold");  
             }
+        }
+
+        private void EndTurn()
+        {
+            _gameController.NextTurn();
         }
 
         #endregion Public Methods
@@ -316,7 +326,7 @@ namespace Assets.Scripts
                     if (_animationPath.Count == 0)
                     {
                         _audioController.PlaySoundOnce(_audioController.MoveSound, 0.2f);
-                        _gameController.NextTurn();
+                        EndTurn();
                     }
                 }
                 else
@@ -333,6 +343,7 @@ namespace Assets.Scripts
 
         public void OnGameStart(GameController gameController)
         {
+            Disabled = false;
             IsMyTurn = false;
             HaveMoved = false;
             GetComponent<Outline>().enabled = false;
@@ -357,5 +368,16 @@ namespace Assets.Scripts
         {
             return _spriteTextures[this.Id - 1];
         }
+
+        public void Disable()
+        {
+            Disabled = true;
+            Debug.Log("Player " + Id + " is disabled!");
+            Money = Money - 20;
+            SpriteRenderer renderer = GetComponent<SpriteRenderer>();
+            renderer.color = Color.black;
+        }
+
+        public bool Disabled { get; set; }
     }
 }

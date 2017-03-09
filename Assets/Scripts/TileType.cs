@@ -6,8 +6,8 @@ public enum TileType {
     Path,
     Wall,
     River,
-    Gold,
-    PlayerSpawner,
-    Jail
+    CoinSpawner,
+    Jail,
+    PlayerSpawner
     
 }
