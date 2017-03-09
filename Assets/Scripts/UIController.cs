@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using JetBrains.Annotations;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -16,6 +18,7 @@ namespace Assets.Scripts
         [SerializeField] private string _playerWinString = "Player {0} wins!";
         [SerializeField] private GameObject _pnlScoreboard;
         [SerializeField] private GameObject _pnlTutorial;
+        [SerializeField] private GameObject _pnlPowerupBar;
         private ScoreboardController _scoreboardController;
         private TutorialController _tutorialController;
         [SerializeField] private Text _txtCurrentPlayer;
@@ -29,6 +32,7 @@ namespace Assets.Scripts
         [SerializeField] private Toggle[] _aiToggleArray;
         private GUIStyle guiStyleFore;
         private GUIStyle guiStyleBack;
+        private List<Powerup> _powerupBar;
 
         #endregion Private Fields
 
@@ -180,6 +184,7 @@ namespace Assets.Scripts
             _txtTurnNumber.text = GameController.TurnNumber.ToString();
             _scoreboardController.UpdateScoreboard(GameController.PlayerControllers);
             _scoreboardController.UpdateCurrentTurn(GameController.ActivePlayer);
+            UpdatePowerupBar(GameController.ActivePlayer.Powerups);
         }
 
         void OnGUI()
@@ -190,6 +195,27 @@ namespace Assets.Scripts
                 var y = Event.current.mousePosition.y;
                 GUI.Label(new Rect(x - 120, y + 10, 300, 60), TooltipText, guiStyleBack);
                 GUI.Label(new Rect(x - 121, y + 10, 300, 60), TooltipText, guiStyleFore);
+            }
+        }
+
+        public void UpdatePowerupBar([CanBeNull] List<Powerup> currentPlayerPowerups)
+        {
+            if (currentPlayerPowerups != null)
+            {
+//                if (!_powerupBar.SequenceEqual(currentPlayerPowerups))
+//                {
+                    _powerupBar = currentPlayerPowerups;
+//                    foreach (Transform child in _pnlPowerupBar.transform)
+//                    {
+//                        Destroy(child.gameObject);
+//                    }
+                    for (var i = 0; i < _powerupBar.Count; i++)
+                    {
+                        Powerup powerup = _powerupBar[i];
+                        SpriteRenderer renderer = powerup.gameObject.GetComponent<SpriteRenderer>();
+                        powerup.transform.position = new Vector2(GameController.Width +  i * renderer.sprite.textureRect.width, 0);
+                    }
+//                }
             }
         }
 
@@ -232,6 +258,8 @@ namespace Assets.Scripts
             guiStyleBack.normal.textColor = Color.black;
             guiStyleBack.alignment = TextAnchor.UpperCenter;
             guiStyleBack.wordWrap = true;
+
+            _powerupBar = new List<Powerup>();
         }
 
         #endregion Private Methods

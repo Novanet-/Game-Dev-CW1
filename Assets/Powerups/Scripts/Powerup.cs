@@ -13,7 +13,7 @@ public abstract class Powerup : MonoBehaviour, IPlayerMovementListener
 	{
 	    ToolTip = "";
 	}
-	
+
 	// Update is called once per frame
 	void Update () {
 	    if (_removeMovementListener)
@@ -47,8 +47,8 @@ public abstract class Powerup : MonoBehaviour, IPlayerMovementListener
         player.Powerups.Add(this);
         Holder = player;
         _removeMovementListener = true;
-        
-        GetComponent<SpriteRenderer>().enabled = false;
+
+        //GetComponent<SpriteRenderer>().enabled = false;
     }
 
     public void PlayerLandsOn(PlayerController player)
