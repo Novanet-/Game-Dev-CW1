@@ -242,12 +242,16 @@ namespace Assets.Tiles.Scripts
             else if (oldPlayer != null && newPlayer == null) foreach (IPlayerMovementListener listener in _playerMovementListeners) { listener.PlayerLeaves(CurrentPlayer); }
         }
 
+        public virtual void CallPlayerMovedOver(PlayerController player, bool doneMoving)
+        {
+            foreach (IPlayerMovementListener playerMovementListener in _playerMovementListeners)
+            {
+                playerMovementListener.PlayerMovedOver(player, doneMoving);
+            }
+        }
+
         #endregion Private Methods
 
-        public virtual void PlayerMovedOver(PlayerController player, bool doneMoving)
-        {
-
-        }
 
 
     }

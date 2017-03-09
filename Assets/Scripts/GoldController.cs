@@ -112,16 +112,20 @@ namespace Assets.Scripts
 
         }
 
-        public void PlayerTouched(PlayerController player)
-        {
-            Debug.Log("Player " + player.Id + " Touched GoldSpawner!");
-            var spriteRenderer = GetComponent<SpriteRenderer>();
-            _spriteNum = Mathf.Clamp(_spriteNum - 1, 0, _sprites.Length - 1);
-            spriteRenderer.sprite = _sprites[_spriteNum];
-            _audioController.PlaySoundOnce(_audioController.CoinSound, 0.7f);
-        }
         // Update is called once per frame
         private void Update() { }
+
+        public void PlayerMovedOver(PlayerController player, bool doneMoving)
+        {
+            if (doneMoving)
+            {
+                Debug.Log("Player " + player.Id + " Touched GoldSpawner!");
+                var spriteRenderer = GetComponent<SpriteRenderer>();
+                _spriteNum = Mathf.Clamp(_spriteNum - 1, 0, _sprites.Length - 1);
+                spriteRenderer.sprite = _sprites[_spriteNum];
+                _audioController.PlaySoundOnce(_audioController.CoinSound, 0.7f);
+            }
+        }
 
         #endregion Private Methods
     }

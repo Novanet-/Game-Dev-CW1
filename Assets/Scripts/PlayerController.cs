@@ -58,14 +58,17 @@ namespace Assets.Scripts
         /// <summary>
         /// Gets the availible moves.
         /// </summary>
-        /// <param name="dice1">The dice1.</param>
-        /// <param name="dice2">The dice2.</param>
-        public void GetAvailibleMoves(int dice1, int dice2)
+        /// <param name="dice">The dice.</param>
+        public void GetAvailibleMoves(List<int>  dice)
         {
             GameController gameController = GameController.GetGameController();
+            Dice = dice;
 
-            HashSet<Stack<Tile>> paths = GetPath(gameController.GetGameTile((int) _tilePos.x, (int) _tilePos.y), new Stack<Tile>(), dice1);
-            paths.UnionWith(GetPath(gameController.GetGameTile((int) _tilePos.x, (int) _tilePos.y), new Stack<Tile>(), dice2));
+            HashSet<Stack<Tile>> paths = new HashSet<Stack<Tile>>();
+            foreach (int die in Dice)
+            {
+                paths.UnionWith(GetPath(gameController.GetGameTile((int) _tilePos.x, (int) _tilePos.y), new Stack<Tile>(), die));
+            }
             _glowingTiles = new HashSet<Tile>();
             foreach (Stack<Tile> path in paths)
             {
@@ -213,7 +216,7 @@ namespace Assets.Scripts
             {
                 _animationPath.Dequeue();
                 Tile tile = _gameController.GetGameTile((int) currentPos.x, (int) currentPos.y);
-                tile.PlayerMovedOver(this, _animationPath.Count == 0);
+                tile.CallPlayerMovedOver(this, _animationPath.Count == 0);
                 if (_animationPath.Count > 0) target = _animationPath.Peek();
                 else return;
             }
@@ -397,5 +400,12 @@ namespace Assets.Scripts
                 _disabled = value;
             }
         }
+
+        public List<int> getDice()
+        {
+            return Dice;
+        }
+
+        public List<int> Dice { get; private set; }
     }
 }

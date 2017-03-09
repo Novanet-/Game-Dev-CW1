@@ -54,6 +54,9 @@ TagManager:
   - name: Coins
     uniqueID: 2187706863
     locked: 0
+  - name: PowerUp
+    uniqueID: 3310682833
+    locked: 0
   - name: Token
     uniqueID: 1900433001
     locked: 0

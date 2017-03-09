@@ -43,4 +43,8 @@ public class Jail : Tile, IPlayerMovementListener
     public void PlayerRemainsOn(PlayerController player)
     {
     }
+
+    public void PlayerMovedOver(PlayerController player, bool doneMoving)
+    {
+    }
 }

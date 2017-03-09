@@ -43,6 +43,10 @@ namespace Assets.Tiles.Scripts
              renderer.transform.rotation = Quaternion.FromToRotation(Vector2.right, Direction);
         }
 
+        public void PlayerMovedOver(PlayerController player, bool doneMoving)
+        {
+        }
+
         // Use this for initialization
         /// <summary>
         /// Starts this instance.

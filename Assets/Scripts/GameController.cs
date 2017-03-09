@@ -20,7 +20,8 @@ namespace Assets.Scripts
         #region Internal Fields
 
         [SerializeField]
-        internal int DieNumber = 6;
+        internal int DieSize = 6;
+        internal int NumberOfDice = 2;
 
         #endregion Internal Fields
 
@@ -55,7 +56,6 @@ namespace Assets.Scripts
 
         [SerializeField] private int _activePlayerIndex;
         [SerializeField] private Canvas _cnvUi;
-        [SerializeField] private int _dieNumber = 6;
         private Tile[,] _gameGrid;
         [SerializeField] private int _height;
         private List<IRoundEndListener> _roundEndListeners;
@@ -71,7 +71,7 @@ namespace Assets.Scripts
 
         public int ActivePlayerIndex { get { return _activePlayerIndex; } private set { _activePlayerIndex = value % PlayerControllers.Count; } }
 
-        public Dictionary<TileType, ICollection<Tile>> TilebyType { get; private set; }
+        public Dictionary<TileType, List<Tile>> TilebyType { get; private set; }
 
         [NotNull]
         public PlayerController ActivePlayer
@@ -196,7 +196,7 @@ namespace Assets.Scripts
             _gameGrid = new Tile[Width, Height];
 
 
-            TilebyType = new Dictionary<TileType, ICollection<Tile>>();
+            TilebyType = new Dictionary<TileType, List<Tile>>();
             foreach (TileType type in Enum.GetValues(typeof(TileType)))
             {
                 TilebyType.Add(type, new List<Tile>());
