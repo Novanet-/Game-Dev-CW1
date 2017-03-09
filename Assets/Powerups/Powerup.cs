@@ -16,4 +16,9 @@ public abstract class Powerup : MonoBehaviour {
     public string ToolTip { get; private set; }
 
     public abstract void Activate(GameController gameController, PlayerController currentPlayer);
+
+    public void Activate()
+    {
+        Activate(GameController.GetGameController(), GameController.GetGameController().ActivePlayer);
+    }
 }
