@@ -174,10 +174,13 @@ namespace Assets.Tiles.Scripts
         /// <summary>
         /// Glows this instance.
         /// </summary>
-        public virtual void SetValidMove()
+        public virtual void SetValidMove(bool isValid)
         {
-            IsValidMove = true;
-            this.Glow();
+            IsValidMove = isValid;
+            if (isValid)
+                Glow();
+            else
+                StopGlowing();
         }
 
         /// <summary>
@@ -213,7 +216,6 @@ namespace Assets.Tiles.Scripts
         public virtual void Start()
         {
             SetSprite(GetComponent<SpriteRenderer>());
-            
         }
 
         /// <summary>
@@ -227,7 +229,6 @@ namespace Assets.Tiles.Scripts
         public void StopGlowing()
         {
             GetComponent<Outline>().enabled = false;
-            IsValidMove = false;
         }
 
         #endregion Public Methods
@@ -287,6 +288,8 @@ namespace Assets.Tiles.Scripts
             }
 
         }
+
+
 
         #endregion Private Methods
 

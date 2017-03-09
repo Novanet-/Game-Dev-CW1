@@ -226,7 +226,7 @@ namespace Assets.Scripts
             if (Vector3.Distance(currentPos, target) < 0.01)
             {
                 _animationPath.Dequeue();
-                Tile tile = _gameController.GetGameTile((int) currentPos.x, (int) currentPos.y);
+                Tile tile = _gameController.GetGameTile(Convert.ToInt32(currentPos.x), Convert.ToInt32(currentPos.y));
                 tile.CallPlayerMovedOver(this, _animationPath.Count == 0);
                 if (_animationPath.Count > 0) target = _animationPath.Peek();
                 else return;
@@ -290,7 +290,7 @@ namespace Assets.Scripts
             _glowingTiles.Add(endPoint);
             endPoint.Path = path.Reverse();
             if (!IsAI)
-                endPoint.SetValidMove();
+                endPoint.SetValidMove(true);
         }
 
         /// <summary>

@@ -80,4 +80,22 @@ public abstract class Powerup : MonoBehaviour, IPlayerMovementListener
     {
        GetComponent<SpriteRenderer>().enabled = true;
     }
+
+    public virtual void OnMouseEnter()
+    {
+        if (Tile != null)
+        {
+            Tile.Glow();
+        }
+        UIController.GetUIController().TooltipText = ToolTip;
+    }
+
+    public virtual void OnMouseExit()
+    {
+        if (Tile != null)
+        {
+            Tile.StopGlowing();
+        }
+        UIController.GetUIController().TooltipText = ToolTip;
+    }
 }
