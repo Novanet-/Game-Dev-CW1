@@ -44,12 +44,18 @@ namespace Assets.Scripts
         /// <summary>
         /// Gets the gold.
         /// </summary>
-        public void GetGold()
+        public void SpawnGold()
         {
             Gold = Gold + 10;
             var spriteRenderer = GetComponent<SpriteRenderer>();
             _spriteNum = Mathf.Clamp(_spriteNum + 1, 0, _sprites.Length - 1);
             spriteRenderer.sprite = _sprites[_spriteNum];
+        }
+
+        public void RemoveGold()
+        {
+            Gold = 0;
+            GetComponent<SpriteRenderer>().sprite = _sprites[0];
         }
 
         /// <summary>
