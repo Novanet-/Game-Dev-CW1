@@ -77,8 +77,9 @@ namespace Assets.Tiles.Scripts
             }
         }
 
-        public void OnMouseEnter()
+        public override void OnMouseEnter()
         {
+            base.OnMouseEnter();
             if (Direction == Vector2.down)
                 UIController.GetUIController().TooltipText = "Down";
             else if (Direction == Vector2.up)
@@ -90,8 +91,9 @@ namespace Assets.Tiles.Scripts
         }
 
 
-        public void OnMouseExit()
+        public override void OnMouseExit()
         {
+            base.OnMouseExit();
             UIController.GetUIController().TooltipText = "";
         }
 
