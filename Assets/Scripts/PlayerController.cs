@@ -146,6 +146,7 @@ namespace Assets.Scripts
             foreach (Tile tile in _glowingTiles)
             {
                 tile.SetValidMove(false);
+                tile.Path = null;
             }
             _glowingTiles = null;
         }
