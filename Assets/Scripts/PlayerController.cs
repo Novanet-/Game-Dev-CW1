@@ -151,12 +151,14 @@ namespace Assets.Scripts
             _glowingTiles = null;
         }
 
+        public float TurnStartTime { get; set; }
         /// <summary>
         /// Called when [turn start].
         /// </summary>
         /// <param name="gameController">The game controller.</param>
         public void OnTurnStart(GameController gameController)
         {
+            TurnStartTime = Time.time;
             GetComponent<Outline>().enabled = true;
             CanBePushed = true;
             HaveMoved = false;
@@ -337,6 +339,7 @@ namespace Assets.Scripts
         /// <exception cref="System.Exception">ActivePlayer's Starting Position is Invalid!</exception>
         private void Start()
         {
+            TurnStartTime = -5;
         }
 
         // Update is called once per frame
@@ -354,8 +357,11 @@ namespace Assets.Scripts
                 {
                     if (_animationPath.Count == 0)
                     {
-                        _audioController.PlaySoundOnce(_audioController.MoveSound, 0.2f);
-                        EndTurn();
+                        if (Time.time > TurnStartTime + 0.1f)
+                        {
+                            _audioController.PlaySoundOnce(_audioController.MoveSound, 0.2f);
+                            EndTurn();
+                        }
                     }
                 }
                 else
