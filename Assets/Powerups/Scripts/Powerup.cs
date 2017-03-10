@@ -63,7 +63,6 @@ public abstract class Powerup : MonoBehaviour, IPlayerMovementListener
             if (player.Powerups.Contains(this) || player.Powerups.Count > 5) return;
             player.Powerups.Add(this);
             Holder = player;
-            UIController.GetUIController().UpdatePowerupBar(player);
         }
 
     }
