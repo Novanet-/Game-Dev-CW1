@@ -270,6 +270,10 @@ namespace Assets.Scripts
         public void OnTurnStart(PlayerController player)
         {
             UpdatePowerupBar(player);
+            List<int> dice = new List<int>();
+            dice.Add(0);
+            dice.Add(0);
+            SetDice(dice);
         }
 
         public void OnTurnEnd(PlayerController player)

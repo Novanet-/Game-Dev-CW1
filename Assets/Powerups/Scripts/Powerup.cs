@@ -18,6 +18,7 @@ public abstract class Powerup : MonoBehaviour, IPlayerMovementListener
 	    if (Holder != null && Tile != null)
 	    {
             Tile.RemovePlayerMovementListener(this);
+	        Tile.HasPowerUp = false;
 	        Tile = null;
 	    }
 	}

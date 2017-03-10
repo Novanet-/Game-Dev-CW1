@@ -31,6 +31,7 @@ namespace Assets.Tiles.Scripts
         public Vector2 Direction { get; set; }
         public bool IsValidMove { get; set; }
         public IEnumerable<Tile> Path { get; set; }
+        public bool HasPowerUp { get; set; }
 
         #endregion Public Properties
 
@@ -53,6 +54,7 @@ namespace Assets.Tiles.Scripts
         {
             _playerMovementListeners = new List<IPlayerMovementListener>();
             StopGlowing();
+            HasPowerUp = false;
         }
 
         /// <summary>

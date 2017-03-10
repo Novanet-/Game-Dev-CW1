@@ -36,7 +36,7 @@ public class PowerupSpawner : MonoBehaviour, IRoundEndListener
         do
         {
             randomTile = paths[Random.Range(0, paths.Count)];
-        } while (randomTile.CurrentPlayer != null);
+        } while (randomTile.CurrentPlayer != null || randomTile.HasPowerUp);
 
         GameObject randomPowerupPrefab = _powerupsPreFabs[Random.Range(0, _powerupsPreFabs.Length)];
 
