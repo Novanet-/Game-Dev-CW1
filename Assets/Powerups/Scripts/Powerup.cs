@@ -86,6 +86,8 @@ public abstract class Powerup : MonoBehaviour, IPlayerMovementListener
     public void Hide()
     {
        GetComponent<SpriteRenderer>().enabled = false;
+       transform.position = new Vector2(-100, -100);
+
     }
 
     public void Show()

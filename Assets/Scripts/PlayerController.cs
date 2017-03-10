@@ -159,6 +159,7 @@ namespace Assets.Scripts
             CanBePushed = true;
             HaveMoved = false;
             IsMyTurn = true;
+            Dice = new List<int>();
 
             if (Disabled)
             {
@@ -429,11 +430,6 @@ namespace Assets.Scripts
                 }
                 _disabled = value;
             }
-        }
-
-        public List<int> getDice()
-        {
-            return Dice;
         }
 
         public List<int> Dice { get; private set; }
