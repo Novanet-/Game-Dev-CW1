@@ -209,18 +209,34 @@ namespace Assets.Scripts
                 GUI.Label(new Rect(x - 120, y + 10, 300, 60), TooltipText, guiStyleBack);
                 GUI.Label(new Rect(x - 121, y + 10, 300, 60), TooltipText, guiStyleFore);
             }
+            UpdatePowerupBar();
         }
 
-        public void UpdatePowerupBar(PlayerController controller)
+        public void UpdatePowerupBar()
         {
-            Debug.Log("Updateing Player "+ controller.Id + " powerups!");
-            int i = 0;
-            foreach (Powerup powerup in controller.Powerups)
+
+            foreach (PlayerController playerController in GameController.PlayerControllers)
             {
-                if (powerup == null) continue;
-                Debug.Log(powerup);
-                powerup.transform.position = new Vector2(GameController.Width + i, 0);
-                i++;
+
+                if (playerController == GameController.ActivePlayer)
+                {
+                    int i = 0;
+                    foreach (Powerup powerup in playerController.Powerups)
+                    {
+                        if (powerup == null) continue;
+                        powerup.transform.position = new Vector2(GameController.Width + i, 0);
+                        powerup.Show();
+                        i++;
+                    }
+                }
+                else
+                {
+                    foreach (Powerup powerup in playerController.Powerups)
+                    {
+                        if (powerup == null) continue;
+                        powerup.Hide();
+                    }
+                }
             }
         }
 
@@ -269,7 +285,6 @@ namespace Assets.Scripts
 
         public void OnTurnStart(PlayerController player)
         {
-            UpdatePowerupBar(player);
             List<int> dice = new List<int>();
             dice.Add(0);
             dice.Add(0);
