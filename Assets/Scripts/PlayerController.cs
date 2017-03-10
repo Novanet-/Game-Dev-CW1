@@ -178,11 +178,6 @@ namespace Assets.Scripts
                 Debug.Log("Player " + Id + " is still stealing gold");  
             }
 
-            foreach (Powerup powerup in Powerups)
-            {
-                if (powerup == null) continue;
-                powerup.Show();
-            }
         }
 
         private void EndTurn()
@@ -357,7 +352,7 @@ namespace Assets.Scripts
                 {
                     if (_animationPath.Count == 0)
                     {
-                        if (Time.time > TurnStartTime + 0.1f)
+                        if (Time.time > TurnStartTime + 0.2f)
                         {
                             _audioController.PlaySoundOnce(_audioController.MoveSound, 0.2f);
                             EndTurn();
