@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Assets.Tiles.Scripts
 {
-    public class CoinSpawnerController : Tile, IRoundEndListener
+    public class CoinSpawnerController : Tile, ITurnListener
     {
         #region Private Fields
 
@@ -29,7 +29,7 @@ namespace Assets.Tiles.Scripts
             //GameObject tile = Instantiate(TilePrefab, transform);
             //tile.transform.position = transform.position;
 
-            _timeForMoreGold = Random.Range(4, 7);
+            _timeForMoreGold = Random.Range(17, 25);
             GameObject goldObject = Instantiate(GoldPrefab, transform);
             goldObject.transform.position = transform.position;
             gold = goldObject.GetComponent<GoldController>();
@@ -51,12 +51,12 @@ namespace Assets.Tiles.Scripts
         /// Called when [round end].
         /// </summary>
         /// <param name="roundNumber">The round number.</param>
-        public void OnRoundEnd(int roundNumber)
+        public void OnTurnStart(PlayerController player)
         {
             if (--_timeForMoreGold != 0) return;
 
             gold.SpawnGold();
-            _timeForMoreGold = Random.Range(4, 7);
+            _timeForMoreGold = Random.Range(17, 25);
             _goldSpawnTime = Time.time;
         }
 
@@ -69,7 +69,7 @@ namespace Assets.Tiles.Scripts
         {
             base.Start();
             GameController controller = GameController.GetGameController();
-            controller.AddRoundEndListener(this);
+            controller.AddTurnListener(this);
             _goldSpawnTime = -2;
         }
 
@@ -123,6 +123,11 @@ namespace Assets.Tiles.Scripts
         {
             StopGlowing(2);
             if (Time.time < _goldSpawnTime + 2) { Glow(2); }
+        }
+
+
+        public void OnTurnEnd(PlayerController player)
+        {
         }
 
         #endregion Private Methods

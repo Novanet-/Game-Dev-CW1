@@ -7,6 +7,7 @@ public class Flying : Powerup{
 	// Use this for initialization
 	void Start () {
 		
+	    ToolTip = "Allows you to fly over walls!";
 	}
 	
 	// Update is called once per frame

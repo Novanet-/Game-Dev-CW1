@@ -3,7 +3,7 @@ using Assets.Scripts;
 using Assets.Tiles.Scripts;
 using UnityEngine;
 
-public class PowerupSpawner : MonoBehaviour, IRoundEndListener
+public class PowerupSpawner : MonoBehaviour, ITurnListener
 {
     public static PowerupSpawner Spawner { get; private set; }
     [SerializeField] private GameObject[] _powerupsPreFabs;
@@ -19,7 +19,8 @@ public class PowerupSpawner : MonoBehaviour, IRoundEndListener
     void Start()
     {
         GameController gameController = GameController.GetGameController();
-        gameController.AddRoundEndListener(this);
+        gameController.AddTurnListener(this);
+        TimeToPowerup = Random.Range(5, 15);
     }
 
     // Update is called once per frame
@@ -27,21 +28,31 @@ public class PowerupSpawner : MonoBehaviour, IRoundEndListener
     {
     }
 
-    public void OnRoundEnd(int roundNumber)
+    public void OnTurnStart(PlayerController player)
     {
-        GameController gameController = GameController.GetGameController();
-        List<Tile> paths = gameController.TilebyType[TileType.Path];
-        Tile randomTile;
-        Debug.Log("Generating a Powerup!");
-        do
+        if (--TimeToPowerup <= 0)
         {
-            randomTile = paths[Random.Range(0, paths.Count)];
-        } while (randomTile.CurrentPlayer != null || randomTile.HasPowerUp);
+            TimeToPowerup = Random.Range(5, 15);
+            GameController gameController = GameController.GetGameController();
+            List<Tile> paths = gameController.TilebyType[TileType.Path];
+            Tile randomTile;
+            do
+            {
+                randomTile = paths[Random.Range(0, paths.Count)];
+            } while (randomTile.CurrentPlayer != null || randomTile.HasPowerUp);
 
-        GameObject randomPowerupPrefab = _powerupsPreFabs[Random.Range(0, _powerupsPreFabs.Length)];
+            GameObject randomPowerupPrefab = _powerupsPreFabs[Random.Range(0, _powerupsPreFabs.Length)];
 
-        GameObject powerupObject = Instantiate(randomPowerupPrefab);
-        Powerup powerup = powerupObject.GetComponent<Powerup>();
-        powerup.Tile = randomTile;
+            GameObject powerupObject = Instantiate(randomPowerupPrefab);
+            Powerup powerup = powerupObject.GetComponent<Powerup>();
+            powerup.Tile = randomTile;
+        }
+    }
+
+    public int TimeToPowerup { get; set; }
+
+
+    public void OnTurnEnd(PlayerController player)
+    {
     }
 }
