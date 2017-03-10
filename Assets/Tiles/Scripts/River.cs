@@ -54,9 +54,9 @@ namespace Assets.Tiles.Scripts
         public override void Start()
         {
             base.Start();
+            PathColor = Color.yellow;
             AddPlayerMovementListener(this);
-            DestinationTile = GameController.GetGameController()
-                                     .GetGameTile((int) (transform.position.x + Direction.x), (int) (transform.position.y + Direction.y));
+            DestinationTile = GameController.GetGameController().GetGameTile((int) (transform.position.x + Direction.x), (int) (transform.position.y + Direction.y));
         }
 
         #endregion Public Methods

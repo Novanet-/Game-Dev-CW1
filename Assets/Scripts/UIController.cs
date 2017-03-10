@@ -213,13 +213,14 @@ namespace Assets.Scripts
 
         public void UpdatePowerupBar(PlayerController controller)
         {
-                Debug.Log("Updateing Player "+ controller.Id + " powerups!");
-            List<Powerup> powerups = controller.Powerups;
-            for (int i = 0; i < powerups.Count; i++)
+            Debug.Log("Updateing Player "+ controller.Id + " powerups!");
+            int i = 0;
+            foreach (Powerup powerup in controller.Powerups)
             {
-                Powerup powerup = powerups[i];
+                if (powerup == null) continue;
                 Debug.Log(powerup);
                 powerup.transform.position = new Vector2(GameController.Width + i, 0);
+                i++;
             }
         }
 
@@ -269,7 +270,12 @@ namespace Assets.Scripts
         public void OnTurnStart(PlayerController player)
         {
             UpdatePowerupBar(player);
+            List<int> dice = new List<int>();
+            dice.Add(0);
+            dice.Add(0);
+            SetDice(dice);
         }
+
 
         public void OnTurnEnd(PlayerController player)
         {
