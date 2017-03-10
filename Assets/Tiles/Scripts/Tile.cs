@@ -31,6 +31,7 @@ namespace Assets.Tiles.Scripts
         public Vector2 Direction { get; set; }
         public bool IsValidMove { get; set; }
         public IEnumerable<Tile> Path { get; set; }
+        public bool HasPowerUp { get; set; }
 
         #endregion Public Properties
 
@@ -53,6 +54,7 @@ namespace Assets.Tiles.Scripts
         {
             _playerMovementListeners = new List<IPlayerMovementListener>();
             StopGlowing();
+            HasPowerUp = false;
         }
 
         /// <summary>
@@ -174,10 +176,13 @@ namespace Assets.Tiles.Scripts
         /// <summary>
         /// Glows this instance.
         /// </summary>
-        public virtual void SetValidMove()
+        public virtual void SetValidMove(bool isValid)
         {
-            IsValidMove = true;
-            this.Glow();
+            IsValidMove = isValid;
+            if (isValid)
+                Glow();
+            else
+                StopGlowing();
         }
 
         /// <summary>
@@ -213,7 +218,7 @@ namespace Assets.Tiles.Scripts
         public virtual void Start()
         {
             SetSprite(GetComponent<SpriteRenderer>());
-            
+            PathColor = Color.green;
         }
 
         /// <summary>
@@ -227,7 +232,6 @@ namespace Assets.Tiles.Scripts
         public void StopGlowing()
         {
             GetComponent<Outline>().enabled = false;
-            IsValidMove = false;
         }
 
         #endregion Public Methods
@@ -256,21 +260,26 @@ namespace Assets.Tiles.Scripts
             }
         }
 
+        private void Update()
+        {
+        }
+
         public virtual void OnMouseEnter()
         {
             if (IsValidMove)
             {
                 _pathArrows = new List<Tile>();
-                UIController.GetUIController().TooltipText = "Valid Move";
                 foreach (Tile tile in Path)
                 {
                     _pathArrows.Add(tile);
-                    tile.gameObject.GetComponent<SpriteRenderer>().color = Color.red;
+                    tile.gameObject.GetComponent<SpriteRenderer>().color = tile.PathColor;
                        
                 }
             }
 
         }
+
+        public Color PathColor { get; set; }
 
         private List<Tile> _pathArrows;
 
@@ -288,6 +297,8 @@ namespace Assets.Tiles.Scripts
             }
 
         }
+
+
 
         #endregion Private Methods
 

@@ -16,6 +16,7 @@ public class Flying : Powerup{
 
     public override void Activate()
     {
+        if (Holder.Dice.Count < 2) return;
         Holder.GetAvailibleMoves(Holder.Dice, true);
         base.Activate();
     }

@@ -65,7 +65,7 @@ namespace Assets.Scripts
         private void InitTutorialPages()
         {
             TutorialPages[0] = "Hello.\n\nWelcome to Robbers\n\nPlease navigate the game tutorial using the buttons below to learn how to play.";
-            TutorialPages[1] = "Your goal is to collect gold, to win, you must have 20 more gold than the player with the least gold.";
+            TutorialPages[1] = "Your goal is to collect gold, to win, you must have 50 more gold than the player with the least gold.";
             TutorialPages[2] =
                     "There are two phases of your turn. Roll and Move\n\nTo roll, click the \"Roll Dice\" button on the left of your screen now.";
             TutorialPages[3] =
@@ -84,7 +84,7 @@ namespace Assets.Scripts
                     "Additionally, some of the tiles on the map are rivers, these push you an extra tile in a specified direction when you land on them\nYou can see this direction by hovering over the river tile";
             TutorialPages[11] = "In the centre of the map is the jail.\nWhen a player moves to this tile, any players who are currently standing on a coin spawner will be caught stealing.";
             TutorialPages[12] = "Players who are caught stealing lose 20 gold, lose their next turn, and the gold spawner they were stealing from is also wiped clean \nUse this to overtake the other players";
-            TutorialPages[13] = "Every so often, powerups will spawn around the map, whenever you walk over them, they will be added to your inventory\nYou can save these for alter, but once you use them they are gone";
+            TutorialPages[13] = "Every so often, powerups will spawn around the map, whenever you walk over them, they will be added to your inventory\nYou can save these for later, but once you use them they are gone";
             TutorialPages[14] = "There are three types of powerups, each gives you a different bonus";
             TutorialPages[15] = "Lucky - Add 1 to both of your dice rolls";
             TutorialPages[16] = "Flying - You can move over walls for one turn";

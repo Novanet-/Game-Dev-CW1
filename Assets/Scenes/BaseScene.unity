@@ -91,53 +91,6 @@ NavMeshSettings:
     cellSize: 0.16666667
     accuratePlacement: 0
   m_NavMeshData: {fileID: 0}
---- !u!1001 &1552042
-Prefab:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 4573076721414306, guid: 2682e2e9d2bb4d649ac5d519dbe13b92, type: 2}
-      propertyPath: m_LocalPosition.x
-      value: 10.380059
-      objectReference: {fileID: 0}
-    - target: {fileID: 4573076721414306, guid: 2682e2e9d2bb4d649ac5d519dbe13b92, type: 2}
-      propertyPath: m_LocalPosition.y
-      value: 7.445949
-      objectReference: {fileID: 0}
-    - target: {fileID: 4573076721414306, guid: 2682e2e9d2bb4d649ac5d519dbe13b92, type: 2}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4573076721414306, guid: 2682e2e9d2bb4d649ac5d519dbe13b92, type: 2}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4573076721414306, guid: 2682e2e9d2bb4d649ac5d519dbe13b92, type: 2}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4573076721414306, guid: 2682e2e9d2bb4d649ac5d519dbe13b92, type: 2}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4573076721414306, guid: 2682e2e9d2bb4d649ac5d519dbe13b92, type: 2}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 4573076721414306, guid: 2682e2e9d2bb4d649ac5d519dbe13b92, type: 2}
-      propertyPath: m_RootOrder
-      value: 8
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-  m_ParentPrefab: {fileID: 100100000, guid: 2682e2e9d2bb4d649ac5d519dbe13b92, type: 2}
-  m_IsPrefabParent: 0
---- !u!1 &1552043 stripped
-GameObject:
-  m_PrefabParentObject: {fileID: 1112390066763706, guid: 2682e2e9d2bb4d649ac5d519dbe13b92,
-    type: 2}
-  m_PrefabInternal: {fileID: 1552042}
 --- !u!1 &22439031
 GameObject:
   m_ObjectHideFlags: 0
@@ -2486,7 +2439,7 @@ MonoBehaviour:
   - {fileID: 1735148349812292, guid: 610839de9d5b4254cbe815a5156640c4, type: 2}
   - {fileID: 1428098173528816, guid: 8e6c88f666a29204cb8cb3b5d0c4a61b, type: 2}
   - {fileID: 1893418614078452, guid: 5c2474fdc5e5dd74cb264c8cf4605848, type: 2}
-  - {fileID: 1552043}
+  - {fileID: 1112390066763706, guid: 2682e2e9d2bb4d649ac5d519dbe13b92, type: 2}
   _width: 16
 --- !u!114 &1003379307
 MonoBehaviour:

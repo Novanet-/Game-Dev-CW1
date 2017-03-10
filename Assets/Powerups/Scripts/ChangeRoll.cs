@@ -20,6 +20,7 @@ public class ChangeRoll : Powerup {
     {
         UIController uiController = UIController.GetUIController();
         List<int> dice = Holder.Dice;
+        if (dice.Count < 2) return;
         for (int i = 0; i < dice.Count; i++)
         {
             dice[i]++;

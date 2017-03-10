@@ -64,10 +64,12 @@ namespace Assets.Scripts
             GameController gameController = GameController.GetGameController();
             Dice = dice;
 
+            RemoveMoves();
+
             HashSet<Stack<Tile>> paths = new HashSet<Stack<Tile>>();
             foreach (int die in Dice)
             {
-                paths.UnionWith(GetPath(gameController.GetGameTile((int) _tilePos.x, (int) _tilePos.y), new Stack<Tile>(), die, flying));
+                paths.UnionWith(GetPath(GetCurrentTile(), new Stack<Tile>(), die, flying));
             }
             _glowingTiles = new HashSet<Tile>();
             foreach (Stack<Tile> path in paths)
@@ -129,27 +131,39 @@ namespace Assets.Scripts
             GetComponent<Outline>().enabled = false;
             if (_glowingTiles == null) return;
 
-            foreach (Tile tile in _glowingTiles)
-            {
-                tile.StopGlowing();
-            }
+            RemoveMoves();
 
             foreach (Powerup powerup in Powerups)
             {
+                if (powerup == null) continue;
                 powerup.Hide();
             }
         }
 
+        public void RemoveMoves()
+        {
+            if (_glowingTiles == null) return;
+            foreach (Tile tile in _glowingTiles)
+            {
+                tile.SetValidMove(false);
+                tile.Path = null;
+            }
+            _glowingTiles = null;
+        }
+
+        public float TurnStartTime { get; set; }
         /// <summary>
         /// Called when [turn start].
         /// </summary>
         /// <param name="gameController">The game controller.</param>
         public void OnTurnStart(GameController gameController)
         {
+            TurnStartTime = Time.time;
             GetComponent<Outline>().enabled = true;
             CanBePushed = true;
             HaveMoved = false;
             IsMyTurn = true;
+            Dice = new List<int>();
 
             if (Disabled)
             {
@@ -166,6 +180,7 @@ namespace Assets.Scripts
 
             foreach (Powerup powerup in Powerups)
             {
+                if (powerup == null) continue;
                 powerup.Show();
             }
         }
@@ -201,7 +216,7 @@ namespace Assets.Scripts
             }
 
             remainingMoves--;
-            foreach (Tile neighbour in tile.GetNeighbours())
+            foreach (Tile neighbour in tile.GetNeighbours(flying))
             {
                 if (!path.Contains(neighbour))
                 {
@@ -226,7 +241,7 @@ namespace Assets.Scripts
             if (Vector3.Distance(currentPos, target) < 0.01)
             {
                 _animationPath.Dequeue();
-                Tile tile = _gameController.GetGameTile((int) currentPos.x, (int) currentPos.y);
+                Tile tile = _gameController.GetGameTile(Convert.ToInt32(currentPos.x), Convert.ToInt32(currentPos.y));
                 tile.CallPlayerMovedOver(this, _animationPath.Count == 0);
                 if (_animationPath.Count > 0) target = _animationPath.Peek();
                 else return;
@@ -290,7 +305,7 @@ namespace Assets.Scripts
             _glowingTiles.Add(endPoint);
             endPoint.Path = path.Reverse();
             if (!IsAI)
-                endPoint.SetValidMove();
+                endPoint.SetValidMove(true);
         }
 
         /// <summary>
@@ -324,6 +339,7 @@ namespace Assets.Scripts
         /// <exception cref="System.Exception">ActivePlayer's Starting Position is Invalid!</exception>
         private void Start()
         {
+            TurnStartTime = -5;
         }
 
         // Update is called once per frame
@@ -341,8 +357,11 @@ namespace Assets.Scripts
                 {
                     if (_animationPath.Count == 0)
                     {
-                        _audioController.PlaySoundOnce(_audioController.MoveSound, 0.2f);
-                        EndTurn();
+                        if (Time.time > TurnStartTime + 0.1f)
+                        {
+                            _audioController.PlaySoundOnce(_audioController.MoveSound, 0.2f);
+                            EndTurn();
+                        }
                     }
                 }
                 else
@@ -420,11 +439,6 @@ namespace Assets.Scripts
                 }
                 _disabled = value;
             }
-        }
-
-        public List<int> getDice()
-        {
-            return Dice;
         }
 
         public List<int> Dice { get; private set; }
