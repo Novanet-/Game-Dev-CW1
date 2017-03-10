@@ -70,6 +70,7 @@ namespace Assets.Tiles.Scripts
             base.Start();
             GameController controller = GameController.GetGameController();
             controller.AddRoundEndListener(this);
+            _goldSpawnTime = -2;
         }
 
         public override void OnMouseEnter()
