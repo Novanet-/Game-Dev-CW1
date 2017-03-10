@@ -69,7 +69,7 @@ namespace Assets.Scripts
             HashSet<Stack<Tile>> paths = new HashSet<Stack<Tile>>();
             foreach (int die in Dice)
             {
-                paths.UnionWith(GetPath(gameController.GetGameTile((int) _tilePos.x, (int) _tilePos.y), new Stack<Tile>(), die, flying));
+                paths.UnionWith(GetPath(GetCurrentTile(), new Stack<Tile>(), die, flying));
             }
             _glowingTiles = new HashSet<Tile>();
             foreach (Stack<Tile> path in paths)
@@ -135,6 +135,7 @@ namespace Assets.Scripts
 
             foreach (Powerup powerup in Powerups)
             {
+                if (powerup == null) continue;
                 powerup.Hide();
             }
         }
@@ -211,7 +212,7 @@ namespace Assets.Scripts
             }
 
             remainingMoves--;
-            foreach (Tile neighbour in tile.GetNeighbours())
+            foreach (Tile neighbour in tile.GetNeighbours(flying))
             {
                 if (!path.Contains(neighbour))
                 {

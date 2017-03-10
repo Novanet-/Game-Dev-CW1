@@ -217,6 +217,7 @@ namespace Assets.Scripts
             int i = 0;
             foreach (Powerup powerup in controller.Powerups)
             {
+                if (powerup == null) continue;
                 Debug.Log(powerup);
                 powerup.transform.position = new Vector2(GameController.Width + i, 0);
                 i++;
