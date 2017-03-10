@@ -5,8 +5,9 @@ using UnityEngine;
 public class Defense : Powerup{
 
 	// Use this for initialization
-	void Start () {
-		
+	void Start ()
+	{
+	    ToolTip = "Stops you from being caught stealing!";
 	}
 	
 	// Update is called once per frame

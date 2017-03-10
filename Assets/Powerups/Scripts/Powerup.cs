@@ -34,6 +34,7 @@ public abstract class Powerup : MonoBehaviour, IPlayerMovementListener
             if (Tile != null)
             {
                 transform.position = Tile.transform.position;
+                Tile.HasPowerUp = true;
                 Tile.AddPlayerMovementListener(this);
             }
         }
