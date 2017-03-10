@@ -178,6 +178,7 @@ namespace Assets.Scripts
 
             foreach (Powerup powerup in Powerups)
             {
+                if (powerup == null) continue;
                 powerup.Show();
             }
         }
