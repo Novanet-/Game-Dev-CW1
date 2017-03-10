@@ -149,18 +149,23 @@ namespace Assets.Tiles.Scripts
                 heat = heat + tileHeat;
             }
 
-            foreach (Tile Jail in gameController.TilebyType[TileType.Jail])
+            if (!(player.GetCurrentTile() is Jail))
             {
-                float goldDiff = 0;
-                foreach (PlayerController playerController in gameController.PlayerControllers)
+                foreach (Tile Jail in gameController.TilebyType[TileType.Jail])
                 {
-                    CoinSpawnerController spawner = playerController.GetCurrentTile() as CoinSpawnerController;
-                    if (spawner != null)
+                    float goldDiff = 0;
+                    foreach (PlayerController playerController in gameController.PlayerControllers)
                     {
-                        goldDiff += 40 + spawner.GetGoldAmount();
+                        CoinSpawnerController spawner = playerController.GetCurrentTile() as CoinSpawnerController;
+                        if (spawner != null)
+                        {
+                            goldDiff += 40 + spawner.GetGoldAmount();
+                        }
                     }
+                    float distanceToTile = Mathf.Floor(Distance(Jail) + 3 / 4);
+                    float tileHeat = goldDiff / distanceToTile;
+                    heat = heat + tileHeat;
                 }
-                float distanceToTile = Mathf.Floor(Distance(Jail) + 3 / 4);
             }
 
             return heat;
