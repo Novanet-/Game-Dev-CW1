@@ -218,6 +218,7 @@ namespace Assets.Tiles.Scripts
         public virtual void Start()
         {
             SetSprite(GetComponent<SpriteRenderer>());
+            PathColor = Color.green;
         }
 
         /// <summary>
@@ -271,12 +272,14 @@ namespace Assets.Tiles.Scripts
                 foreach (Tile tile in Path)
                 {
                     _pathArrows.Add(tile);
-                    tile.gameObject.GetComponent<SpriteRenderer>().color = Color.red;
+                    tile.gameObject.GetComponent<SpriteRenderer>().color = tile.PathColor;
                        
                 }
             }
 
         }
+
+        public Color PathColor { get; set; }
 
         private List<Tile> _pathArrows;
 
